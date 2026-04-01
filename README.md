@@ -388,3 +388,8 @@ server {
 sudo ln -s /etc/nginx/sites-available/blog_responsivo /etc/nginx/sites-enabled/
 sudo systemctl reload nginx
 ```
+
+<img width="1256" height="855" alt="image" src="https://github.com/user-attachments/assets/bda325df-b58c-4179-b227-ab755fa3d52d" />
+
+<img width="1257" height="861" alt="image" src="https://github.com/user-attachments/assets/301c8c33-18c1-44f7-898e-7cdd7e3487a6" />
+
