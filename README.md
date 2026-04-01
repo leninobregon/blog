@@ -68,6 +68,36 @@ Blog de tutoriales para **Lenin Obregón Espinoza** (Ingeniero Nicaragüense). S
 
 ---
 
+## 🏗️ Arquitectura PHP POO - MVC
+
+El blog está desarrollado con **Programación Orientada a Objetos (POO)** siguiendo el patrón **MVC (Modelo - Vista - Controlador)**.
+
+### 🔷 Modelo (Model)
+- Clases que gestionan la base de datos
+- Consultas SQL preparadas con PDO
+- Métodos CRUD reutilizables
+- Ejemplo: `User.php`, `Post.php`, `Comment.php`
+
+### 🔶 Vista (View)
+- Plantillas HTML con código PHP embebido
+- Variables pasadas desde los controladores
+- Layouts reutilizables (header, footer)
+- Ejemplo: `views/index.php`, `views/post.php`
+
+### 🔷 Controlador (Controller)
+- Recibe peticiones del usuario
+- Coordina Modelo y Vista
+- Maneja lógica de negocio
+- Ejemplo: `HomeController.php`, `PostController.php`
+
+### 🔄 Flujo de una Petición
+
+```
+Usuario → index.php (Router) → Controlador → Modelo → Vista → HTML
+```
+
+---
+
 ## 🚀 Instalación Rápida
 
 ### 🪟 Windows con XAMPP
@@ -93,6 +123,18 @@ Blog de tutoriales para **Lenin Obregón Espinoza** (Ingeniero Nicaragüense). S
 
 ---
 
+## 🧩 Clases del Core MVC
+
+| Clase | Descripción |
+|-------|-------------|
+| Database | Conexión PDO Singleton a la base de datos |
+| Session | Manejo seguro de sesiones PHP |
+| Router | Enrutador de URLs (simplificado en index.php) |
+| Controller | Clase base con métodos: view(), redirect(), json(), getBaseUrl() |
+| Model | Clase base con métodos CRUD: find(), findById(), save(), update(), delete() |
+
+---
+
 ## 📊 Estructura de la Base de Datos
 
 | Tabla | Descripción |
@@ -111,37 +153,67 @@ Blog de tutoriales para **Lenin Obregón Espinoza** (Ingeniero Nicaragüense). S
 
 ```
 blog_responsivo/
-├── index.php              # Página principal del blog
-├── post.php               # Vista de publicación individual
-├── auth.php               # Login y registro de usuarios
-├── profile.php            # Perfil de usuario logueado
-├── about.php              # Página Acerca de
-├── subscribe.php          # Suscripción al newsletter
-├── instalar.php           # Instalador automático
-├── header.php             # Header común con navegación
-├── footer.php             # Footer con newsletter
-├── config.php             # Configuración del sitio
-├── database.sql           # Script SQL completo
+├── index.php                  # Página principal (MVC Entry Point)
+├── autoload.php               # Carga automática de clases
+├── config.php                 # Configuración del sitio
+├── database.sql               # Script SQL completo
+├── instalar.php               # Instalador automático
+├── subscribe.php              # Suscripción al newsletter
+├── core/                      # Clases base del MVC
+│   ├── Database.php           # Conexión PDO (Singleton)
+│   ├── Session.php            # Manejo de sesiones
+│   ├── Router.php             # Enrutador de URLs
+│   ├── Controller.php         # Clase base controladores
+│   ├── Model.php              # Clase base modelos
+│   └── theme_colors.php       # Colores de los 20 temas
+├── models/                    # Modelos de datos
+│   ├── User.php               # Usuarios
+│   ├── Post.php               # Publicaciones
+│   ├── Comment.php            # Comentarios
+│   ├── Newsletter.php         # Newsletter
+│   ├── About.php              # Página Acerca de
+│   ├── VisitLog.php           # Registro de visitas
+│   └── SiteStats.php          # Estadísticas globales
+├── controllers/               # Controladores
+│   ├── HomeController.php     # Página principal
+│   ├── PostController.php     # Vista de publicación
+│   ├── AuthController.php     # Login y registro
+│   ├── AboutController.php    # Página Acerca de
+│   ├── ProfileController.php  # Perfil de usuario
+│   └── SubscribeController.php # Newsletter
+├── views/                     # Plantillas HTML
+│   ├── layouts/
+│   │   ├── header.php         # Header con navegación
+│   │   └── footer.php         # Footer con newsletter
+│   ├── index.php              # Vista principal
+│   ├── post.php               # Vista de publicación
+│   ├── about.php              # Vista Acerca de
+│   ├── profile.php            # Vista perfil
+│   ├── auth/
+│   │   └── login.php          # Vista login/registro
+│   └── errors/
+│       └── 404.php            # Página no encontrada
 ├── includes/
-│   └── functions.php      # Todas las funciones PHP
+│   ├── functions.php          # Funciones helper
+│   └── functions_helpers.php  # Funciones adicionales MVC
 ├── languages/
-│   ├── es.php             # Traducciones Español
-│   └── en.php             # Traducciones English
-├── db/                    # Respaldos de base de datos
-├── uploads/               # Imágenes subidas por usuarios
-├── admin/
-│   ├── dashboard.php      # Panel de control principal
-│   ├── index.php          # Editor de publicaciones
-│   ├── users.php          # Gestión de usuarios
-│   ├── about.php          # Editor de página Acerca de
-│   ├── newsletter.php     # Gestión de newsletter
-│   ├── backups.php        # Lista de respaldos
-│   ├── config.php         # Configuración admin
-│   ├── download_backup.php # Script de descarga
-│   └── login.php          # Login del panel admin
-└── user/
-    ├── index.php          # Panel de usuario
-    └── logout.php         # Cerrar sesión
+│   ├── es.php                 # Traducciones Español
+│   └── en.php                 # Traducciones English
+├── db/                        # Respaldos de base de datos
+├── uploads/                   # Imágenes subidas por usuarios
+├── admin/                     # Panel de administración (Procedural)
+│   ├── dashboard.php          # Panel de control principal
+│   ├── index.php              # Editor de publicaciones
+│   ├── users.php              # Gestión de usuarios
+│   ├── about.php              # Editor de página Acerca de
+│   ├── newsletter.php         # Gestión de newsletter
+│   ├── backups.php            # Lista de respaldos
+│   ├── config.php             # Configuración admin
+│   ├── download_backup.php    # Script de descarga
+│   └── login.php              # Login del panel admin
+└── user/                      # Panel de usuario (Procedural)
+    ├── index.php              # Panel de usuario
+    └── logout.php             # Cerrar sesión
 ```
 
 ---

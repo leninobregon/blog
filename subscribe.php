@@ -1,22 +1,20 @@
 <?php
-session_start();
-header('Cache-Control: no-cache, no-store, must-revalidate');
-include 'includes/functions.php';
+/**
+ * Subscribe Handler - Compatibilidad
+ * Redirige al controlador MVC
+ */
+require_once __DIR__ . '/autoload.php';
+Session::start();
 
-if($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = trim($_POST['email'] ?? '');
-    $name = trim($_POST['name'] ?? '');
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $email = $_POST['email'] ?? '';
+    $name = $_POST['name'] ?? '';
     
-    if(filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        if(subscribeNewsletter($email, $name)) {
-            $_SESSION['newsletter_success'] = '¡Gracias por suscribirte!';
-        } else {
-            $_SESSION['newsletter_error'] = 'Este email ya está suscrito o hubo un error.';
-        }
-    } else {
-        $_SESSION['newsletter_error'] = 'Email inválido.';
+    if ($email) {
+        $newsletterModel = new Newsletter();
+        $newsletterModel->subscribe($email, $name);
     }
 }
 
-header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? 'index.php'));
+header('Location: /');
 exit;
