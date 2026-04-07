@@ -1,4 +1,4 @@
-: <?php
+<?php
 /**
  * INSTALADOR AUTOMÁTICO - BLOG DE TUTORIALES
  * Compatible con XAMPP, LAMP y LEMP
