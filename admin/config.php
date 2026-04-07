@@ -248,6 +248,17 @@ $colors = getThemeColors(CONFIG['theme']);
                         <option value="orange" <?= CONFIG['theme']=='orange'?'selected':'' ?>>Naranja</option>
                         <option value="pink" <?= CONFIG['theme']=='pink'?'selected':'' ?>>Rosa</option>
                         <option value="teal" <?= CONFIG['theme']=='teal'?'selected':'' ?>>Teal</option>
+                        <option value="yellow" <?= CONFIG['theme']=='yellow'?'selected':'' ?>>Amarillo</option>
+                        <option value="cyan" <?= CONFIG['theme']=='cyan'?'selected':'' ?>>Cian</option>
+                        <option value="brown" <?= CONFIG['theme']=='brown'?'selected':'' ?>>Marrón</option>
+                        <option value="indigo" <?= CONFIG['theme']=='indigo'?'selected':'' ?>>Índigo</option>
+                        <option value="lime" <?= CONFIG['theme']=='lime'?'selected':'' ?>>Lima</option>
+                        <option value="amber" <?= CONFIG['theme']=='amber'?'selected':'' ?>>Ámbar</option>
+                        <option value="rose" <?= CONFIG['theme']=='rose'?'selected':'' ?>>Rojo Rosa</option>
+                        <option value="slate" <?= CONFIG['theme']=='slate'?'selected':'' ?>>Pizarra</option>
+                        <option value="emerald" <?= CONFIG['theme']=='emerald'?'selected':'' ?>>Esmeralda</option>
+                        <option value="sky" <?= CONFIG['theme']=='sky'?'selected':'' ?>>Cielo</option>
+                        <option value="violet" <?= CONFIG['theme']=='violet'?'selected':'' ?>>Violeta</option>
                     </select>
                 </div>
                 <div class="form-group">
