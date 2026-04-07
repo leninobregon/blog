@@ -73,6 +73,20 @@ CREATE TABLE IF NOT EXISTS visit_logs (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Tabla de auditoría (acciones de usuarios)
+CREATE TABLE IF NOT EXISTS audit_logs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    action VARCHAR(50) NOT NULL,
+    user_id INT,
+    username VARCHAR(50),
+    ip_address VARCHAR(45),
+    user_agent VARCHAR(255),
+    page VARCHAR(255),
+    details TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_created_at (created_at)
+);
+
 -- Tabla de Acerca de (editable desde admin)
 CREATE TABLE IF NOT EXISTS about (
     id INT AUTO_INCREMENT PRIMARY KEY,

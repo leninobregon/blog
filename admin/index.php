@@ -35,8 +35,10 @@ if($action === 'new' || $action === 'edit') {
         
         if($id && !empty($_POST['update'])) {
             updatePost($id, $title, $category, $content, $image, $video);
+            logAudit('post_update', $_SESSION['user_id'] ?? null, $_SESSION['username'] ?? 'admin', 'admin/index.php', "Updated post: $title (ID: $id)");
         } else {
-            savePost($title, $category, $content, $image, $video, $_SESSION['user_id']);
+            $newId = savePost($title, $category, $content, $image, $video, $_SESSION['user_id']);
+            logAudit('post_create', $_SESSION['user_id'] ?? null, $_SESSION['username'] ?? 'admin', 'admin/index.php', "Created post: $title (Category: $category)");
         }
         header('Location: index.php'); exit;
     }

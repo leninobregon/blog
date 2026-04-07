@@ -320,6 +320,23 @@ function logVisit($page, $ip, $userAgent, $referer = '') {
 }
 }
 
+if (!function_exists('logAudit')) {
+function logAudit($action, $userId = null, $username = 'guest', $page = '', $details = '') {
+    $pdo = getDB();
+    $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+    $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? '';
+    $stmt = $pdo->prepare("INSERT INTO audit_logs (action, user_id, username, ip_address, user_agent, page, details) VALUES (?, ?, ?, ?, ?, ?, ?)");
+    $stmt->execute([$action, $userId, $username, $ip, $userAgent, $page, $details]);
+}
+}
+
+if (!function_exists('getAuditLogs')) {
+function getAuditLogs($limit = 50) {
+    $pdo = getDB();
+    return $pdo->query("SELECT * FROM audit_logs ORDER BY created_at DESC LIMIT $limit")->fetchAll(PDO::FETCH_ASSOC);
+}
+}
+
 if (!function_exists('getVisitStats')) {
 function getVisitStats($days = 30) {
     $pdo = getDB();

@@ -207,7 +207,7 @@ $recentComments = getRecentComments(5);
 </head>
 <body>
     <nav class="navbar">
-        <h1><i class="fas fa-tachometer-alt"></i> Dashboard</h1>
+        <h1><i class="fas fa-tachometer-alt"></i> Dashboard <a href="audit.php" style="float:right;font-size:0.9rem;margin-left:1rem;"><i class="fas fa-shield-alt"></i> Auditoría</a></h1>
         <nav>
             <a href="../index.php"><i class="fas fa-home"></i> Inicio</a>
             <a href="index.php?action=new"><i class="fas fa-plus"></i> Nueva</a>
@@ -374,6 +374,112 @@ $recentComments = getRecentComments(5);
             </div>
         </div>
     </main>
+    
+    <!-- Audit Logs Panel -->
+    <div class="container" style="padding: 1rem;">
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h3><i class="fas fa-history"></i> Registro de Auditoría</h3>
+                <div style="display: flex; gap: 0.5rem;">
+                    <form method="POST" style="display: inline;">
+                        <input type="hidden" name="action" value="delete_old_logs">
+                        <button type="submit" class="btn btn-secondary" onclick="return confirm('¿Eliminar registros de más de 3 meses?')">
+                            <i class="fas fa-trash"></i> Eliminar > 3 meses
+                        </button>
+                    </form>
+                    <form method="POST" style="display: inline;" onsubmit="return confirm('¿Eliminar TODOS los registros de auditoría? Esta acción no se puede deshacer.')">
+                        <input type="hidden" name="action" value="delete_all_logs">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-trash-alt"></i> Eliminar Todo
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <?php
+            // Handle audit log actions
+            if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
+                $pdo = getDB();
+                if($_POST['action'] === 'delete_old_logs') {
+                    $pdo->exec("DELETE FROM audit_logs WHERE created_at < DATE_SUB(NOW(), INTERVAL 3 MONTH)");
+                    echo '<p style="color: #10b981; margin-bottom: 1rem;">✓ Registros de más de 3 meses eliminados</p>';
+                } elseif($_POST['action'] === 'delete_all_logs') {
+                    $pdo->exec("DELETE FROM audit_logs");
+                    echo '<p style="color: #10b981; margin-bottom: 1rem;">✓ Todos los registros eliminados</p>';
+                } elseif($_POST['action'] === 'delete_log' && isset($_POST['log_id'])) {
+                    $stmt = $pdo->prepare("DELETE FROM audit_logs WHERE id = ?");
+                    $stmt->execute([$_POST['log_id']]);
+                    echo '<p style="color: #10b981; margin-bottom: 1rem;">✓ Registro eliminado</p>';
+                }
+            }
+            
+            $auditLogs = getAuditLogs(30);
+            ?>
+            <div style="max-height: 400px; overflow-y: auto;">
+            <?php if(empty($auditLogs)): ?>
+                <p style="color: var(--text-secondary);">No hay registros de auditoría</p>
+            <?php else: ?>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background: var(--bg-secondary);">
+                            <th style="padding: 0.5rem; text-align: left;">Acción</th>
+                            <th style="padding: 0.5rem; text-align: left;">Usuario</th>
+                            <th style="padding: 0.5rem; text-align: left;">IP</th>
+                            <th style="padding: 0.5rem; text-align: left;">Detalles</th>
+                            <th style="padding: 0.5rem; text-align: left;">Fecha</th>
+                            <th style="padding: 0.5rem; text-align: center;">Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach($auditLogs as $log): ?>
+                        <tr style="border-bottom: 1px solid var(--border);">
+                            <td style="padding: 0.5rem;">
+                                <?php 
+                                $actionColors = [
+                                    'admin_login' => 'color: #10b981;',
+                                    'login_failed' => 'color: #ef4444;',
+                                    'post_create' => 'color: #3b82f6;',
+                                    'post_update' => 'color: #f59e0b;',
+                                    'post_delete' => 'color: #ef4444;',
+                                    'user_create' => 'color: #8b5cf6;',
+                                    'user_update' => 'color: #06b6d4;',
+                                    'user_delete' => 'color: #dc2626;',
+                                    'password_change' => 'color: #f97316;',
+                                    'comment_create' => 'color: #10b981;',
+                                ];
+                                $color = $actionColors[$log['action']] ?? 'color: var(--text);';
+                                ?>
+                                <span style="<?= $color ?> font-weight: 600;"><?= htmlspecialchars($log['action']) ?></span>
+                            </td>
+                            <td style="padding: 0.5rem;"><?= htmlspecialchars($log['username']) ?></td>
+                            <td style="padding: 0.5rem; font-family: monospace; font-size: 0.85rem;"><?= htmlspecialchars($log['ip_address']) ?></td>
+                            <td style="padding: 0.5rem; font-size: 0.85rem;"><?= htmlspecialchars(mb_substr($log['details'] ?? '', 0, 50)) ?>...</td>
+                            <td style="padding: 0.5rem; font-size: 0.85rem; color: var(--text-secondary);"><?= strftime('%d/%b %H:%M', strtotime($log['created_at'])) ?></td>
+                            <td style="padding: 0.5rem; text-align: center;">
+                                <?php 
+                                $actionIcons = [
+                                    'admin_login' => 'fa-sign-in-alt',
+                                    'login_failed' => 'fa-exclamation-triangle',
+                                    'post_create' => 'fa-plus',
+                                    'post_update' => 'fa-edit',
+                                    'post_delete' => 'fa-trash',
+                                    'user_create' => 'fa-user-plus',
+                                    'user_update' => 'fa-user-edit',
+                                    'user_delete' => 'fa-user-minus',
+                                    'password_change' => 'fa-key',
+                                    'comment_create' => 'fa-comment',
+                                ];
+                                $icon = $actionIcons[$log['action']] ?? 'fa-circle';
+                                ?>
+                                <i class="fas <?= $icon ?>"></i>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            <?php endif; ?>
+            </div>
+        </div>
+    </div>
     
     <div class="theme-float">
         <div class="theme-dot" onclick="setTheme('white')" title="Blanco" style="background: linear-gradient(135deg,#fff,#e2e8f0)"></div>

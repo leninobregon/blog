@@ -46,7 +46,9 @@ if(isset($_POST['create_user']) || isset($_POST['update_user'])) {
         }
         if(!empty($password)) {
             updateUserPassword($_POST['user_id'], $password);
+            logAudit('password_change', $_POST['user_id'], $username, 'admin/users.php', "Password changed for user ID: " . $_POST['user_id']);
         }
+        logAudit('user_update', $_POST['user_id'], $username, 'admin/users.php', "Updated user: $username (ID: " . $_POST['user_id'] . ")");
         $msg = 'Usuario actualizado';
     } else {
         try {
@@ -54,6 +56,8 @@ if(isset($_POST['create_user']) || isset($_POST['update_user'])) {
             $hash = password_hash($password, PASSWORD_DEFAULT);
             $stmt = $pdo->prepare("INSERT INTO users (username, email, password, role, first_name, last_name, phone, avatar, bio, facebook, twitter, telegram, instagram, youtube, linkedin, website) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
             $stmt->execute([$username, $email, $hash, $role, $firstName, $lastName, $phone, $avatar, $bio, $facebook, $twitter, $telegram, $instagram, $youtube, $linkedin, $website]);
+            $newUserId = $pdo->lastInsertId();
+            logAudit('user_create', $newUserId, $username, 'admin/users.php', "Created user: $username (Role: $role)");
             $msg = 'Usuario creado';
         } catch(Exception $e) {
             $msg = 'Error: usuario o email ya existe';
@@ -64,6 +68,10 @@ if(isset($_POST['create_user']) || isset($_POST['update_user'])) {
 
 // Delete User
 if(isset($_GET['delete'])) {
+    $userToDelete = getUser($_GET['delete']);
+    if($userToDelete) {
+        logAudit('user_delete', $_GET['delete'], $userToDelete['username'], 'admin/users.php', "Deleted user: " . $userToDelete['username']);
+    }
     deleteUser($_GET['delete']);
     header('Location: users.php'); exit;
 }

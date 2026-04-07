@@ -262,6 +262,8 @@ if (isset($_POST['action']) && $_POST['action'] === 'install') {
         
         $pdo->exec("CREATE TABLE IF NOT EXISTS `visit_logs` (`id` INT AUTO_INCREMENT PRIMARY KEY, `page` VARCHAR(255), `ip` VARCHAR(45), `user_agent` TEXT, `referer` VARCHAR(255), `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
         
+        $pdo->exec("CREATE TABLE IF NOT EXISTS `audit_logs` (`id` INT AUTO_INCREMENT PRIMARY KEY, `action` VARCHAR(50) NOT NULL, `user_id` INT, `username` VARCHAR(50), `ip_address` VARCHAR(45), `user_agent` VARCHAR(255), `page` VARCHAR(255), `details` TEXT, `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+        
         $pdo->exec("CREATE TABLE IF NOT EXISTS `about` (`id` INT AUTO_INCREMENT PRIMARY KEY, `title` VARCHAR(255) DEFAULT 'Acerca de Mí', `subtitle` VARCHAR(255), `description` TEXT, `experience` TEXT, `goals` TEXT, `photo` VARCHAR(255), `youtube_url` VARCHAR(255), `facebook_url` VARCHAR(255), `twitter_url` VARCHAR(255), `telegram_url` VARCHAR(255), `email` VARCHAR(100), `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
         
         $pdo->exec("CREATE TABLE IF NOT EXISTS `site_stats` (`id` INT AUTO_INCREMENT PRIMARY KEY, `total_hits` INT DEFAULT 0, `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");

@@ -15,9 +15,11 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
     $pass = $_POST['pass'] ?? '';
     if($user === 'admin' && $pass === 'blog$$') {
         $_SESSION['logged'] = true;
+        logAudit('admin_login', 1, 'admin', 'admin/login.php', 'Admin logged in successfully');
         header('Location: dashboard.php');
         exit;
     } else {
+        logAudit('login_failed', null, $user, 'admin/login.php', "Failed login attempt");
         $error = 'Credenciales incorrectas';
     }
 }
