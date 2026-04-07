@@ -341,122 +341,12 @@ sudo systemctl restart httpd
 
 ---
 
-### 🐧 Linux (RHEL/CentOS/RockyLinux) con LAMP
+### 🐧 Linux (Fedora) con LEMP (Nginx)
 
 ```bash
 # Actualizar sistema
 sudo dnf update -y
 
-# Instalar LAMP (Apache, MariaDB, PHP)
-sudo dnf install httpd mariadb-server php php-mysqlnd php-json php-zip php-curl php-xml php-mbstring git unzip -y
-
-# Habilitar e iniciar servicios
-sudo systemctl enable --now httpd mariadb
-sudo systemctl start httpd mariadb
-
-# Configurar MariaDB
-sudo mysql -u root
-```
-
-```sql
-CREATE DATABASE blog_tutoriales CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-CREATE USER 'bloguser'@'localhost' IDENTIFIED BY 'blogpass';
-GRANT ALL PRIVILEGES ON blog_tutoriales.* TO 'bloguser'@'localhost';
-FLUSH PRIVILEGES;
-EXIT;
-```
-
-```bash
-# Instalar herramientas adicionales si no están
-sudo dnf install php-gd php-intl -y
-
-# Descargar proyecto
-sudo dnf install git -y
-cd /var/www/html
-sudo git clone https://github.com/leninobregon/blog_v2.git blog_responsivo
-
-# Permisos
-sudo chown -R apache:apache /var/www/html/blog_responsivo
-sudo chmod -R 755 /var/www/html/blog_responsivo
-sudo chmod 777 /var/www/html/blog_responsivo/uploads
-sudo chmod 777 /var/www/html/blog_responsivo/db
-
-# Configurar firewall
-sudo firewall-cmd --permanent --add-service=http --add-service=https
-sudo firewall-cmd --reload
-
-# Reiniciar Apache
-sudo systemctl restart httpd
-
-# Ejecutar el instalador: http://localhost/blog_responsivo/instalar.php
-```
-
----
-
-### 🐧 Linux (RHEL/CentOS/Rocky/AlmaLinux) con LAMP
-
-```bash
-# Actualizar sistema
-sudo dnf update -y
-
-# Instalar Apache (httpd), MariaDB, PHP y herramientas
-sudo dnf install httpd mariadb-server php php-mysqlnd php-json php-zip php-curl php-xml php-mbstring php-gd php-intl git unzip -y
-
-# Habilitar servicios
-sudo systemctl enable httpd mariadb
-sudo systemctl start httpd mariadb
-
-# Verificar que Apache esté corriendo
-sudo systemctl status httpd
-php -v
-
-# Si el servicio no existe, verificar nombre
-systemctl list-units | grep httpd
-```
-
-```bash
-# Configurar MariaDB
-sudo mysql -u root
-```
-
-```sql
-CREATE DATABASE blog_tutoriales CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-CREATE USER 'bloguser'@'localhost' IDENTIFIED BY 'blogpass';
-GRANT ALL PRIVILEGES ON blog_tutoriales.* TO 'bloguser'@'localhost';
-FLUSH PRIVILEGES;
-EXIT;
-```
-
-```bash
-# Descargar proyecto
-cd /var/www/html
-sudo git clone https://github.com/leninobregon/blog_v2.git blog_responsivo
-
-# Permisos - RHEL usa apache:apache
-sudo chown -R apache:apache /var/www/html/blog_responsivo
-sudo chmod -R 755 /var/www/html/blog_responsivo
-sudo chmod 777 /var/www/html/blog_responsivo/uploads
-sudo chmod 777 /var/www/html/blog_responsivo/db
-
-# Abrir puertos en firewalld
-sudo firewall-cmd --permanent --add-service=http --add-service=https
-sudo firewall-cmd --reload
-
-# Permitir Apache en SELinux
-sudo setsebool -P httpd_can_network_connect 1
-sudo setsebool -P httpd_read_user_content 1
-
-# Reiniciar servicios
-sudo systemctl restart httpd
-
-# Verificar en navegador: http://localhost
-```
-
----
-
-### 🐧 Linux (RHEL/CentOS/Rocky/AlmaLinux) con LEMP (Nginx)
-
-```bash
 # Instalar EPEL y Nginx
 sudo dnf install epel-release -y
 sudo dnf install nginx -y
@@ -468,9 +358,14 @@ sudo dnf install php-fpm php-mysqlnd php-json php-zip php-curl php-xml php-mbstr
 sudo dnf install mariadb-server -y
 
 # Habilitar servicios
-sudo systemctl enable --now nginx mariadb php-fpm
+sudo systemctl enable nginx mariadb php-fpm
 sudo systemctl start nginx mariadb php-fpm
 
+# Verificar servicios
+sudo systemctl status nginx php-fpm
+```
+
+```bash
 # Configurar MariaDB
 sudo mysql -u root
 ```
@@ -501,7 +396,7 @@ sudo nano /etc/nginx/conf.d/blog_responsivo.conf
 ```nginx
 server {
     listen 80;
-    server_name tu-dominio.com;
+    server_name tu-servidor;
     root /var/www/html/blog_responsivo;
     index index.php index.html;
 
@@ -533,7 +428,169 @@ sudo systemctl restart nginx php-fpm
 sudo firewall-cmd --permanent --add-service=http --add-service=https
 sudo firewall-cmd --reload
 
-# Ejecutar el instalador: http://tu-servidor/blog_responsivo/instalar.php
+# Ejecutar el instalador: http://localhost/blog_responsivo/instalar.php
+```
+
+---
+
+### 🐧 Linux (RHEL/CentOS/Rocky/AlmaLinux) con LAMP
+
+```bash
+# 1. Actualizar sistema
+sudo dnf update -y
+
+# 2. Instalar Apache (httpd), MariaDB, PHP y herramientas
+sudo dnf install httpd mariadb-server php php-mysqlnd php-json php-zip php-curl php-xml php-mbstring php-gd php-intl git unzip -y
+
+# 3. Habilitar servicios al inicio
+sudo systemctl enable httpd mariadb
+
+# 4. Iniciar servicios
+sudo systemctl start httpd mariadb
+
+# 5. Verificar que Apache está corriendo
+sudo systemctl status httpd
+sudo httpd -v  # Ver versión de Apache
+
+# 6. Configurar firewall
+sudo firewall-cmd --permanent --add-service=http --add-service=https
+sudo firewall-cmd --reload
+
+# 7. Permitir Apache en SELinux
+sudo setsebool -P httpd_can_network_connect 1
+sudo setsebool -P httpd_read_user_content 1
+
+# 8. Verificar en navegador: http://localhost
+```
+
+#### Configurar archivo hosts (si necesitas dominio personalizado)
+
+```bash
+# Editar archivo hosts
+sudo nano /etc/hosts
+```
+
+Agregar esta línea:
+```
+127.0.0.1    blog.local
+```
+
+#### Configurar Apache para el blog
+
+```bash
+# Crear archivo de configuración del sitio
+sudo nano /etc/httpd/conf.d/blog_responsivo.conf
+```
+
+```apache
+<VirtualHost *:80>
+    ServerName blog.local
+    ServerAlias www.blog.local
+    DocumentRoot /var/www/html/blog_responsivo
+
+    <Directory /var/www/html/blog_responsivo>
+        Options -Indexes +FollowSymLinks
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+    ErrorLog /var/log/httpd/blog_error.log
+    CustomLog /var/log/httpd/blog_access.log combined
+</VirtualHost>
+```
+
+```bash
+# Verificar configuración de Apache
+sudo httpd -t
+
+# Reiniciar Apache
+sudo systemctl restart httpd
+
+# Acceder: http://blog.local/blog_responsivo/
+```
+
+---
+
+### 📥 Importar Base de Datos
+
+# Instalar MariaDB
+sudo dnf install mariadb-server -y
+
+# Habilitar servicios
+sudo systemctl enable nginx mariadb php-fpm
+sudo systemctl start nginx mariadb php-fpm
+
+# Verificar servicios
+sudo systemctl status nginx php-fpm
+```
+
+```bash
+# Configurar MariaDB
+sudo mysql -u root
+```
+
+```sql
+CREATE DATABASE blog_tutoriales CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER 'bloguser'@'localhost' IDENTIFIED BY 'blogpass';
+GRANT ALL PRIVILEGES ON blog_tutoriales.* TO 'bloguser'@'localhost';
+FLUSH PRIVILEGES;
+EXIT;
+```
+
+```bash
+# Descargar proyecto
+cd /var/www/html
+sudo git clone https://github.com/leninobregon/blog_v2.git blog_responsivo
+
+# Permisos - Nginx usa nginx:nginx
+sudo chown -R nginx:nginx /var/www/html/blog_responsivo
+sudo chmod -R 755 /var/www/html/blog_responsivo
+sudo chmod 777 /var/www/html/blog_responsivo/uploads
+sudo chmod 777 /var/www/html/blog_responsivo/db
+
+# Configurar Nginx
+sudo nano /etc/nginx/conf.d/blog_responsivo.conf
+```
+
+```nginx
+server {
+    listen 80;
+    server_name tu-servidor;
+    root /var/www/html/blog_responsivo;
+    index index.php index.html;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location ~ \.php$ {
+        fastcgi_pass unix:/run/php-fpm/www.sock;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+
+    location ~ /\.ht {
+        deny all;
+    }
+}
+```
+
+```bash
+# Verificar configuración
+sudo nginx -t
+
+# Reiniciar servicios
+sudo systemctl restart nginx php-fpm
+
+# Abrir puertos en firewalld
+sudo firewall-cmd --permanent --add-service=http --add-service=https
+sudo firewall-cmd --reload
+
+# Permitir Nginx en SELinux
+sudo setsebool -P httpd_can_network_connect 1
+
+# Ejecutar el instalador: http://localhost/blog_responsivo/instalar.php
 ```
 
 ---
