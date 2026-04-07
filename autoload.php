@@ -1,6 +1,6 @@
 <?php
 /**
- * Autoload - Carga automática de clases
+ * Autoload - Carga automática de clases + Cache
  */
 
 spl_autoload_register(function (string $class) {
@@ -18,6 +18,9 @@ spl_autoload_register(function (string $class) {
         }
     }
 });
+
+// Load SimpleCache for query optimization
+require_once __DIR__ . '/core/SimpleCache.php';
 
 // Load theme colors (functions.php already loads it for admin/user)
 if (!function_exists('getThemeColors')) {

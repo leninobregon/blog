@@ -1,11 +1,17 @@
 <?php
 /**
- * Post Model
+ * Post Model with Cache
  */
 class Post extends Model {
     protected string $table = 'posts';
     
     public function getWithAuthor(int $id): ?array {
+        $cacheKey = "post_{$id}";
+        $cached = SimpleCache::get($cacheKey, 60);
+        if ($cached !== null) {
+            return $cached;
+        }
+        
         $sql = "SELECT p.*, u.username as author_name 
                 FROM posts p 
                 LEFT JOIN users u ON p.author_id = u.id 
@@ -13,10 +19,20 @@ class Post extends Model {
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$id]);
         $result = $stmt->fetch();
+        
+        if ($result) {
+            SimpleCache::set($cacheKey, $result, 60);
+        }
         return $result ?: null;
     }
     
     public function getLatest(int $limit = 10, int $offset = 0, string $category = null, string $search = null): array {
+        $cacheKey = "posts_latest_{$limit}_{$offset}_{$category}_{$search}";
+        $cached = SimpleCache::get($cacheKey, 120);
+        if ($cached !== null) {
+            return $cached;
+        }
+        
         $sql = "SELECT p.*, u.username as author_name 
                 FROM posts p 
                 LEFT JOIN users u ON p.author_id = u.id";
@@ -43,25 +59,56 @@ class Post extends Model {
         
         $stmt = $this->db->prepare($sql);
         $stmt->execute($params);
-        return $stmt->fetchAll();
+        $result = $stmt->fetchAll();
+        
+        SimpleCache::set($cacheKey, $result, 120);
+        return $result;
     }
     
     public function getCategories(): array {
-        return $this->db->query("SELECT DISTINCT category FROM posts ORDER BY category")->fetchAll(PDO::FETCH_COLUMN);
+        $cached = SimpleCache::get('categories', 300);
+        if ($cached !== null) {
+            return $cached;
+        }
+        
+        $result = $this->db->query("SELECT DISTINCT category FROM posts ORDER BY category")->fetchAll(PDO::FETCH_COLUMN);
+        SimpleCache::set('categories', $result, 300);
+        return $result;
     }
     
     public function getRelated(int $postId, string $category, int $limit = 3): array {
+        $cacheKey = "related_{$category}_{$postId}_{$limit}";
+        $cached = SimpleCache::get($cacheKey, 180);
+        if ($cached !== null) {
+            return $cached;
+        }
+        
         $stmt = $this->db->prepare("SELECT id, title, category, created_at FROM posts WHERE category = ? AND id != ? ORDER BY created_at DESC LIMIT ?");
         $stmt->execute([$category, $postId, $limit]);
-        return $stmt->fetchAll();
+        $result = $stmt->fetchAll();
+        
+        SimpleCache::set($cacheKey, $result, 180);
+        return $result;
     }
     
     public function getMostViewed(int $limit = 5): array {
-        return $this->db->query("SELECT id, title, views FROM posts ORDER BY views DESC LIMIT {$limit}")->fetchAll();
+        $cached = SimpleCache::get('most_viewed_' . $limit, 300);
+        if ($cached !== null) {
+            return $cached;
+        }
+        
+        $result = $this->db->query("SELECT id, title, views FROM posts ORDER BY views DESC LIMIT {$limit}")->fetchAll();
+        SimpleCache::set('most_viewed_' . $limit, $result, 300);
+        return $result;
     }
     
     public function getArchives(): array {
-        return $this->db->query("
+        $cached = SimpleCache::get('archives', 3600);
+        if ($cached !== null) {
+            return $cached;
+        }
+        
+        $result = $this->db->query("
             SELECT DATE_FORMAT(created_at, '%Y-%m') as mes, 
                    MONTH(created_at) as mes_num,
                    YEAR(created_at) as anio,
@@ -71,10 +118,19 @@ class Post extends Model {
             ORDER BY mes DESC
             LIMIT 12
         ")->fetchAll();
+        
+        SimpleCache::set('archives', $result, 3600);
+        return $result;
     }
     
     public function getByMonth(string $mes, int $limit = 10, int $offset = 0): array {
-        return $this->db->query("
+        $cacheKey = "posts_month_{$mes}_{$limit}_{$offset}";
+        $cached = SimpleCache::get($cacheKey, 300);
+        if ($cached !== null) {
+            return $cached;
+        }
+        
+        $result = $this->db->query("
             SELECT p.*, u.username as author_name 
             FROM posts p 
             LEFT JOIN users u ON p.author_id = u.id 
@@ -82,10 +138,14 @@ class Post extends Model {
             ORDER BY p.created_at DESC 
             LIMIT {$limit} OFFSET {$offset}
         ")->fetchAll();
+        
+        SimpleCache::set($cacheKey, $result, 300);
+        return $result;
     }
     
     public function incrementViews(int $id): void {
         $this->db->exec("UPDATE {$this->table} SET views = views + 1 WHERE id = {$id}");
+        SimpleCache::delete("post_{$id}");
     }
     
     public function countAll(string $category = null): int {
@@ -96,6 +156,17 @@ class Post extends Model {
     }
     
     public function getCategoriesWithCount(): array {
-        return $this->db->query("SELECT category, COUNT(*) as count FROM posts GROUP BY category ORDER BY count DESC")->fetchAll();
+        $cached = SimpleCache::get('categories_with_count', 300);
+        if ($cached !== null) {
+            return $cached;
+        }
+        
+        $result = $this->db->query("SELECT category, COUNT(*) as count FROM posts GROUP BY category ORDER BY count DESC")->fetchAll();
+        SimpleCache::set('categories_with_count', $result, 300);
+        return $result;
+    }
+    
+    public function clearCache(): void {
+        SimpleCache::clear();
     }
 }
