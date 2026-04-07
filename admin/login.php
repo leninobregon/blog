@@ -141,7 +141,6 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <button type="submit"><i class="fas fa-sign-in-alt"></i> Iniciar Sesión</button>
         </form>
-        <a href="users.php" class="config-link"><i class="fas fa-users"></i> Gestionar Usuarios</a>
         <a href="../index.php" class="config-link"><i class="fas fa-home"></i> Volver al Blog</a>
     </div>
     
