@@ -283,6 +283,248 @@ EXIT;
 
 ---
 
+### 🐧 Linux (Fedora) con LAMP
+
+```bash
+# Actualizar sistema
+sudo dnf update -y
+
+# Instalar LAMP (Apache, MariaDB, PHP)
+sudo dnf install httpd mariadb-server php php-mysqlnd php-json php-zip php-curl php-xml php-mbstring php-gd php-intl git unzip -y
+
+# Habilitar e iniciar servicios
+sudo systemctl enable --now httpd mariadb
+sudo systemctl start httpd mariadb
+
+# Verificar servicios
+sudo systemctl status httpd mariadb
+php -v
+```
+
+```bash
+# Configurar MariaDB
+sudo mysql -u root
+```
+
+```sql
+CREATE DATABASE blog_tutoriales CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER 'bloguser'@'localhost' IDENTIFIED BY 'blogpass';
+GRANT ALL PRIVILEGES ON blog_tutoriales.* TO 'bloguser'@'localhost';
+FLUSH PRIVILEGES;
+EXIT;
+```
+
+```bash
+# Descargar proyecto
+cd /var/www/html
+sudo git clone https://github.com/leninobregon/blog_v2.git blog_responsivo
+
+# Permisos
+sudo chown -R apache:apache /var/www/html/blog_responsivo
+sudo chmod -R 755 /var/www/html/blog_responsivo
+sudo chmod 777 /var/www/html/blog_responsivo/uploads
+sudo chmod 777 /var/www/html/blog_responsivo/db
+
+# Configurar firewall
+sudo firewall-cmd --permanent --add-service=http --add-service=https
+sudo firewall-cmd --reload
+
+# Permitir Apache en SELinux (si está habilitado)
+sudo setsebool -P httpd_can_network_connect 1
+sudo setsebool -P httpd_read_user_content 1
+
+# Reiniciar Apache
+sudo systemctl restart httpd
+
+# Ejecutar el instalador: http://localhost/blog_responsivo/instalar.php
+```
+
+---
+
+### 🐧 Linux (RHEL/CentOS/RockyLinux) con LAMP
+
+```bash
+# Actualizar sistema
+sudo dnf update -y
+
+# Instalar LAMP (Apache, MariaDB, PHP)
+sudo dnf install httpd mariadb-server php php-mysqlnd php-json php-zip php-curl php-xml php-mbstring git unzip -y
+
+# Habilitar e iniciar servicios
+sudo systemctl enable --now httpd mariadb
+sudo systemctl start httpd mariadb
+
+# Configurar MariaDB
+sudo mysql -u root
+```
+
+```sql
+CREATE DATABASE blog_tutoriales CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER 'bloguser'@'localhost' IDENTIFIED BY 'blogpass';
+GRANT ALL PRIVILEGES ON blog_tutoriales.* TO 'bloguser'@'localhost';
+FLUSH PRIVILEGES;
+EXIT;
+```
+
+```bash
+# Instalar herramientas adicionales si no están
+sudo dnf install php-gd php-intl -y
+
+# Descargar proyecto
+sudo dnf install git -y
+cd /var/www/html
+sudo git clone https://github.com/leninobregon/blog_v2.git blog_responsivo
+
+# Permisos
+sudo chown -R apache:apache /var/www/html/blog_responsivo
+sudo chmod -R 755 /var/www/html/blog_responsivo
+sudo chmod 777 /var/www/html/blog_responsivo/uploads
+sudo chmod 777 /var/www/html/blog_responsivo/db
+
+# Configurar firewall
+sudo firewall-cmd --permanent --add-service=http --add-service=https
+sudo firewall-cmd --reload
+
+# Reiniciar Apache
+sudo systemctl restart httpd
+
+# Ejecutar el instalador: http://localhost/blog_responsivo/instalar.php
+```
+
+---
+
+### 🐧 Linux (RHEL/CentOS/Rocky/AlmaLinux) con LAMP
+
+```bash
+# Actualizar sistema
+sudo dnf update -y
+
+# Instalar Apache, MariaDB, PHP y herramientas
+sudo dnf install httpd mariadb-server php php-mysqlnd php-json php-zip php-curl php-xml php-mbstring git unzip -y
+
+# Habilitar servicios
+sudo systemctl enable --now httpd mariadb
+sudo systemctl start httpd mariadb
+
+# Configurar MariaDB
+sudo mysql -u root
+```
+
+```sql
+CREATE DATABASE blog_tutoriales CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER 'bloguser'@'localhost' IDENTIFIED BY 'blogpass';
+GRANT ALL PRIVILEGES ON blog_tutoriales.* TO 'bloguser'@'localhost';
+FLUSH PRIVILEGES;
+EXIT;
+```
+
+```bash
+# Descargar proyecto
+cd /var/www/html
+sudo git clone https://github.com/leninobregon/blog_v2.git blog_responsivo
+
+# Permisos
+sudo chown -R apache:apache /var/www/html/blog_responsivo
+sudo chmod -R 755 /var/www/html/blog_responsivo
+sudo chmod 777 /var/www/html/blog_responsivo/uploads
+sudo chmod 777 /var/www/html/blog_responsivo/db
+
+# Abrir puertos en firewalld
+sudo firewall-cmd --permanent --add-service=http --add-service=https
+sudo firewall-cmd --reload
+
+# Reiniciar servicios
+sudo systemctl restart httpd
+
+# Ejecutar el instalador: http://localhost/blog_responsivo/instalar.php
+```
+
+---
+
+### 🐧 Linux (RHEL/CentOS/Rocky/AlmaLinux) con LEMP (Nginx)
+
+```bash
+# Instalar EPEL y Nginx
+sudo dnf install epel-release -y
+sudo dnf install nginx -y
+
+# Instalar PHP-FPM y extensiones
+sudo dnf install php-fpm php-mysqlnd php-json php-zip php-curl php-xml php-mbstring php-gd php-intl -y
+
+# Instalar MariaDB
+sudo dnf install mariadb-server -y
+
+# Habilitar servicios
+sudo systemctl enable --now nginx mariadb php-fpm
+sudo systemctl start nginx mariadb php-fpm
+
+# Configurar MariaDB
+sudo mysql -u root
+```
+
+```sql
+CREATE DATABASE blog_tutoriales CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER 'bloguser'@'localhost' IDENTIFIED BY 'blogpass';
+GRANT ALL PRIVILEGES ON blog_tutoriales.* TO 'bloguser'@'localhost';
+FLUSH PRIVILEGES;
+EXIT;
+```
+
+```bash
+# Descargar proyecto
+cd /var/www/html
+sudo git clone https://github.com/leninobregon/blog_v2.git blog_responsivo
+
+# Permisos
+sudo chown -R nginx:nginx /var/www/html/blog_responsivo
+sudo chmod -R 755 /var/www/html/blog_responsivo
+sudo chmod 777 /var/www/html/blog_responsivo/uploads
+sudo chmod 777 /var/www/html/blog_responsivo/db
+
+# Configurar Nginx
+sudo nano /etc/nginx/conf.d/blog_responsivo.conf
+```
+
+```nginx
+server {
+    listen 80;
+    server_name tu-dominio.com;
+    root /var/www/html/blog_responsivo;
+    index index.php index.html;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location ~ \.php$ {
+        fastcgi_pass unix:/run/php-fpm/www.sock;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+
+    location ~ /\.ht {
+        deny all;
+    }
+}
+```
+
+```bash
+# Verificar configuración
+sudo nginx -t
+
+# Reiniciar servicios
+sudo systemctl restart nginx php-fpm
+
+# Abrir puertos en firewalld
+sudo firewall-cmd --permanent --add-service=http --add-service=https
+sudo firewall-cmd --reload
+
+# Ejecutar el instalador: http://tu-servidor/blog_responsivo/instalar.php
+```
+
+---
+
 ### 📥 Importar Base de Datos
 
 #### Opción 1: Desde el navegador
