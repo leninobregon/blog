@@ -336,6 +336,50 @@ sudo setsebool -P httpd_read_user_content 1
 # Reiniciar Apache
 sudo systemctl restart httpd
 
+# Verificar versión de Apache
+sudo httpd -v
+```
+
+#### Configurar archivo hosts (opcional)
+
+```bash
+sudo nano /etc/hosts
+```
+
+Agregar:
+```
+127.0.0.1    blog.local
+```
+
+#### Configurar VirtualHost para el blog
+
+```bash
+sudo nano /etc/httpd/conf.d/blog_responsivo.conf
+```
+
+```apache
+<VirtualHost *:80>
+    ServerName blog.local
+    DocumentRoot /var/www/html/blog_responsivo
+
+    <Directory /var/www/html/blog_responsivo>
+        Options -Indexes +FollowSymLinks
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+    ErrorLog /var/log/httpd/blog_error.log
+    CustomLog /var/log/httpd/blog_access.log combined
+</VirtualHost>
+```
+
+```bash
+# Verificar configuración
+sudo httpd -t
+
+# Reiniciar
+sudo systemctl restart httpd
+
 # Ejecutar el instalador: http://localhost/blog_responsivo/instalar.php
 ```
 
