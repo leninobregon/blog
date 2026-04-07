@@ -59,7 +59,9 @@ class PostController extends Controller {
             $comment = trim($_POST['comment'] ?? '');
             if ($comment) {
                 $commentModel->create($id, Session::get('user_id'), $comment);
-                redirect("/post.php?id={$id}");
+                $baseUrl = (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['SCRIPT_NAME']);
+                header("Location: {$baseUrl}/post.php?id={$id}");
+                exit;
             }
         }
         

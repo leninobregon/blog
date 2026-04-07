@@ -71,6 +71,14 @@ if (isset($routes[$method][$uri])) {
     exit;
 }
 
+// Handle POST to post.php for comments
+if ($method === 'POST' && $uri === '/post.php' && isset($_GET['id'])) {
+    require_once __DIR__ . '/autoload.php';
+    $postController = new PostController();
+    $postController->show((int)$_GET['id']);
+    exit;
+}
+
 // 404
 http_response_code(404);
 require __DIR__ . '/views/errors/404.php';

@@ -252,21 +252,21 @@ if (isset($_POST['action']) && $_POST['action'] === 'install') {
         $pdo->exec("USE `$db_name`");
         $response['logs'][] = ['type' => 'success', 'message' => "Base de datos '$db_name' creada"];
         
-        $pdo->exec("CREATE TABLE IF NOT EXISTS `users` (`id` INT AUTO_INCREMENT PRIMARY KEY, `username` VARCHAR(50) NOT NULL UNIQUE, `email` VARCHAR(100) NOT NULL UNIQUE, `password` VARCHAR(255) NOT NULL, `role` ENUM('admin','author','user') DEFAULT 'user', `first_name` VARCHAR(50), `last_name` VARCHAR(50), `phone` VARCHAR(20), `avatar` VARCHAR(255), `bio` TEXT, `facebook` VARCHAR(255), `twitter` VARCHAR(255), `telegram` VARCHAR(255), `instagram` VARCHAR(255), `youtube` VARCHAR(255), `linkedin` VARCHAR(255), `website` VARCHAR(255), `recovery_question` VARCHAR(255), `recovery_answer` VARCHAR(255), `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+        $pdo->exec("CREATE TABLE IF NOT EXISTS `users` (`id` INT AUTO_INCREMENT PRIMARY KEY, `username` VARCHAR(50) NOT NULL UNIQUE, `email` VARCHAR(100) NOT NULL UNIQUE, `password` VARCHAR(255) NOT NULL, `role` ENUM('admin','author','user') DEFAULT 'user', `first_name` VARCHAR(50), `last_name` VARCHAR(50), `phone` VARCHAR(20), `avatar` VARCHAR(255), `bio` TEXT, `facebook` VARCHAR(255), `twitter` VARCHAR(255), `telegram` VARCHAR(255), `instagram` VARCHAR(255), `youtube` VARCHAR(255), `linkedin` VARCHAR(255), `website` VARCHAR(255), `recovery_question` VARCHAR(255), `recovery_answer` VARCHAR(255), `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci");
         
-        $pdo->exec("CREATE TABLE IF NOT EXISTS `posts` (`id` INT AUTO_INCREMENT PRIMARY KEY, `title` VARCHAR(255) NOT NULL, `category` VARCHAR(100) NOT NULL, `content` TEXT NOT NULL, `image` VARCHAR(255), `video` VARCHAR(255), `author_id` INT, `views` INT DEFAULT 0, `tags` VARCHAR(500), `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+        $pdo->exec("CREATE TABLE IF NOT EXISTS `posts` (`id` INT AUTO_INCREMENT PRIMARY KEY, `title` VARCHAR(255) NOT NULL, `category` VARCHAR(100) NOT NULL, `content` TEXT NOT NULL, `image` VARCHAR(255), `video` VARCHAR(255), `author_id` INT, `views` INT DEFAULT 0, `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci");
         
-        $pdo->exec("CREATE TABLE IF NOT EXISTS `comments` (`id` INT AUTO_INCREMENT PRIMARY KEY, `post_id` INT NOT NULL, `user_id` INT NOT NULL, `content` TEXT NOT NULL, `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY (`post_id`) REFERENCES `posts`(`id`) ON DELETE CASCADE, FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+        $pdo->exec("CREATE TABLE IF NOT EXISTS `comments` (`id` INT AUTO_INCREMENT PRIMARY KEY, `post_id` INT NOT NULL, `user_id` INT NOT NULL, `content` TEXT NOT NULL, `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP, KEY `post_id` (`post_id`), KEY `user_id` (`user_id`), FOREIGN KEY (`post_id`) REFERENCES `posts`(`id`) ON DELETE CASCADE, FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci");
         
-        $pdo->exec("CREATE TABLE IF NOT EXISTS `newsletter` (`id` INT AUTO_INCREMENT PRIMARY KEY, `email` VARCHAR(100) NOT NULL UNIQUE, `name` VARCHAR(100), `active` TINYINT(1) DEFAULT 1, `token` VARCHAR(100), `last_sent` DATETIME NULL, `total_sent` INT DEFAULT 0, `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+        $pdo->exec("CREATE TABLE IF NOT EXISTS `newsletter` (`id` INT AUTO_INCREMENT PRIMARY KEY, `email` VARCHAR(100) NOT NULL UNIQUE, `name` VARCHAR(100), `active` TINYINT(1) DEFAULT 1, `token` VARCHAR(100), `last_sent` DATETIME NULL, `total_sent` INT DEFAULT 0, `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci");
         
         $pdo->exec("CREATE TABLE IF NOT EXISTS `visit_logs` (`id` INT AUTO_INCREMENT PRIMARY KEY, `page` VARCHAR(255), `ip` VARCHAR(45), `user_agent` TEXT, `referer` VARCHAR(255), `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
         
-        $pdo->exec("CREATE TABLE IF NOT EXISTS `audit_logs` (`id` INT AUTO_INCREMENT PRIMARY KEY, `action` VARCHAR(50) NOT NULL, `user_id` INT, `username` VARCHAR(50), `ip_address` VARCHAR(45), `user_agent` VARCHAR(255), `page` VARCHAR(255), `details` TEXT, `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP, INDEX idx_created_at (created_at)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+        $pdo->exec("CREATE TABLE IF NOT EXISTS `audit_logs` (`id` INT AUTO_INCREMENT PRIMARY KEY, `action` VARCHAR(50) NOT NULL, `user_id` INT, `username` VARCHAR(50), `ip_address` VARCHAR(45), `user_agent` VARCHAR(255), `page` VARCHAR(255), `details` TEXT, `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP, KEY `idx_created_at` (`created_at`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
         
-        $pdo->exec("CREATE TABLE IF NOT EXISTS `about` (`id` INT AUTO_INCREMENT PRIMARY KEY, `title` VARCHAR(255) DEFAULT 'Acerca de Mí', `subtitle` VARCHAR(255), `description` TEXT, `experience` TEXT, `goals` TEXT, `photo` VARCHAR(255), `youtube_url` VARCHAR(255), `facebook_url` VARCHAR(255), `twitter_url` VARCHAR(255), `telegram_url` VARCHAR(255), `email` VARCHAR(100), `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+        $pdo->exec("CREATE TABLE IF NOT EXISTS `about` (`id` INT AUTO_INCREMENT PRIMARY KEY, `title` VARCHAR(255) DEFAULT 'Acerca de Mí', `subtitle` VARCHAR(255) DEFAULT 'Ingeniero en Computación', `description` TEXT, `experience` TEXT, `goals` TEXT, `photo` VARCHAR(255), `youtube_url` VARCHAR(255), `facebook_url` VARCHAR(255), `twitter_url` VARCHAR(255), `telegram_url` VARCHAR(255), `email` VARCHAR(100), `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci");
         
-        $pdo->exec("CREATE TABLE IF NOT EXISTS `site_stats` (`id` INT AUTO_INCREMENT PRIMARY KEY, `total_hits` INT DEFAULT 0, `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+        $pdo->exec("CREATE TABLE IF NOT EXISTS `site_stats` (`id` INT AUTO_INCREMENT PRIMARY KEY, `total_hits` INT DEFAULT 0, `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci");
         
         $response['logs'][] = ['type' => 'success', 'message' => 'Todas las tablas creadas correctamente'];
         
@@ -275,9 +275,23 @@ if (isset($_POST['action']) && $_POST['action'] === 'install') {
         $stmt->execute([$admin_user, $admin_email, $hash]);
         $response['logs'][] = ['type' => 'success', 'message' => "Usuario administrador '$admin_user' creado"];
         
-        $stmt = $pdo->prepare("INSERT INTO about (id, title, subtitle, description) VALUES (1, 'Acerca de Mí', 'Ingeniero en Computación', 'Escribe aquí tu descripción personal...') ON DUPLICATE KEY UPDATE id = id");
+        $stmt = $pdo->prepare("INSERT INTO about (id, title, subtitle, description, experience, goals) VALUES (1, 'Acerca de Mí', 'Ingeniero en Computación', 'Escribe aquí tu descripción personal...', 'Networking|Administración de Servidores', 'Promover el uso de tecnologías de información') ON DUPLICATE KEY UPDATE id = id");
         $stmt->execute();
         $response['logs'][] = ['type' => 'success', 'message' => 'Datos iniciales insertados'];
+        
+        $posts = [
+            ['Bienvenido al Blog', 'General', "# Bienvenido\n\nEste es un blog de tutoriales sobre programación, Linux y seguridad."],
+            ['Introducción a Linux', 'Linux', "# Introducción a Linux\n\nLinux es un sistema operativo de código abierto.\n\n## Distribuciones\n- Ubuntu\n- Debian\n\n```bash\nls -la\ncd /home\n```"],
+            ['Tutorial de Python', 'Programación', "# Tutorial de Python\n\n```python\nnombre = \"Juan\"\nedad = 25\n```"],
+            ['Configurar SSH', 'Linux', "# Configurar SSH\r\n\r\n```bash\r\nsudo apt update\r\nsudo apt install openssh-server\r\nsudo systemctl start ssh\r\nsudo systemctl enable ssh\r\n```\r\n\r\n## Conectar\r\n```bash\r\nssh usuario@servidor\r\n```"],
+            ['Comandos Servidor', 'Linux', "# Comandos básicos servidor\n\n## Archivos\n```bash\nls -la\ncd /home\nmkdir carpeta\nrm archivo\ncp origen destino\nmv origen destino\n```\n\n## Paquetes\n```bash\nsudo apt update\nsudo apt upgrade\nsudo apt install nombre\n```"]
+        ];
+        
+        $postStmt = $pdo->prepare("INSERT INTO posts (title, category, content, author_id) VALUES (?, ?, ?, 1)");
+        foreach ($posts as $post) {
+            $postStmt->execute($post);
+        }
+        $response['logs'][] = ['type' => 'success', 'message' => 'Publicaciones de ejemplo creadas'];
         
         $pdo->exec("INSERT INTO site_stats (id, total_hits) VALUES (1, 0) ON DUPLICATE KEY UPDATE id = id");
         $response['logs'][] = ['type' => 'success', 'message' => 'Estadísticas inicializadas'];

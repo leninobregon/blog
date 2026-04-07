@@ -33,7 +33,7 @@ $search = $_GET['search'] ?? '';
 $where = '';
 $params = [];
 if($filter === 'login') {
-    $where = "WHERE action IN ('admin_login', 'login_failed')";
+    $where = "WHERE action IN ('admin_login', 'user_login', 'login_failed', 'user_logout')";
 } elseif($filter === 'posts') {
     $where = "WHERE action IN ('post_create', 'post_update', 'post_delete')";
 } elseif($filter === 'users') {
