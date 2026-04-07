@@ -232,7 +232,17 @@ if (!function_exists('addComment')) {
 function addComment($postId, $userId, $content) {
     $pdo = getDB();
     $stmt = $pdo->prepare("INSERT INTO comments (post_id, user_id, content) VALUES (?, ?, ?)");
-    return $stmt->execute([$postId, $userId, $content]);
+    $result = $stmt->execute([$postId, $userId, $content]);
+    
+    // Get user info for audit
+    $userStmt = $pdo->prepare("SELECT username FROM users WHERE id = ?");
+    $userStmt->execute([$userId]);
+    $user = $userStmt->fetch(PDO::FETCH_ASSOC);
+    
+    // Log comment
+    logAudit('comment_create', $userId, $user['username'] ?? 'unknown', 'post.php', "Comment added to post ID: $postId");
+    
+    return $result;
 }
 }
 

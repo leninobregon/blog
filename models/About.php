@@ -7,12 +7,12 @@ class About extends Model {
     
     public function get(): ?array {
         $cached = SimpleCache::get('about_data', 300);
-        if ($cached !== null) {
+        if (is_array($cached)) {
             return $cached;
         }
         
         $result = $this->findById(1);
-        if ($result) {
+        if (is_array($result)) {
             SimpleCache::set('about_data', $result, 300);
         }
         return $result;

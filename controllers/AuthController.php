@@ -54,6 +54,7 @@ class AuthController extends Controller {
                     $error = $currentLang === 'es' ? 'El usuario o email ya existe' : 'User or email already exists';
                 } else {
                     $userModel->register($data);
+                    logAudit('user_register', null, $data['username'], 'auth.php', "New user registered: " . $data['email']);
                     $success = $currentLang === 'es' ? 'Registro exitoso' : 'Registration successful';
                     $isLogin = false;
                 }
@@ -69,9 +70,11 @@ class AuthController extends Controller {
                     Session::set('user_id', $user['id']);
                     Session::set('username', $user['username']);
                     Session::set('role', $user['role']);
+                    logAudit('user_login', $user['id'], $user['username'], 'auth.php', "User logged in successfully");
                     $this->redirect($this->getBaseUrl() . '/');
                     return;
                 } else {
+                    logAudit('login_failed', null, $email, 'auth.php', "Failed login attempt");
                     $error = $currentLang === 'es' ? 'Credenciales incorrectas' : 'Invalid credentials';
                 }
             }
@@ -86,6 +89,9 @@ class AuthController extends Controller {
     }
     
     public function logout(): void {
+        $userId = Session::get('user_id');
+        $username = Session::get('username');
+        logAudit('user_logout', $userId, $username ?? 'unknown', 'auth.php', "User logged out");
         Session::destroy();
         $this->redirect($this->getBaseUrl() . '/');
     }

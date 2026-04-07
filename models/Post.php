@@ -8,7 +8,7 @@ class Post extends Model {
     public function getWithAuthor(int $id): ?array {
         $cacheKey = "post_{$id}";
         $cached = SimpleCache::get($cacheKey, 60);
-        if ($cached !== null) {
+        if (is_array($cached)) {
             return $cached;
         }
         
@@ -20,16 +20,16 @@ class Post extends Model {
         $stmt->execute([$id]);
         $result = $stmt->fetch();
         
-        if ($result) {
+        if (is_array($result)) {
             SimpleCache::set($cacheKey, $result, 60);
         }
         return $result ?: null;
     }
     
     public function getLatest(int $limit = 10, int $offset = 0, string $category = null, string $search = null): array {
-        $cacheKey = "posts_latest_{$limit}_{$offset}_{$category}_{$search}";
+        $cacheKey = "posts_latest_{$limit}_{$offset}_" . ($category ?? 'null') . "_" . ($search ?? 'null');
         $cached = SimpleCache::get($cacheKey, 120);
-        if ($cached !== null) {
+        if (is_array($cached)) {
             return $cached;
         }
         
@@ -67,7 +67,7 @@ class Post extends Model {
     
     public function getCategories(): array {
         $cached = SimpleCache::get('categories', 300);
-        if ($cached !== null) {
+        if (is_array($cached)) {
             return $cached;
         }
         
@@ -79,7 +79,7 @@ class Post extends Model {
     public function getRelated(int $postId, string $category, int $limit = 3): array {
         $cacheKey = "related_{$category}_{$postId}_{$limit}";
         $cached = SimpleCache::get($cacheKey, 180);
-        if ($cached !== null) {
+        if (is_array($cached)) {
             return $cached;
         }
         
@@ -93,7 +93,7 @@ class Post extends Model {
     
     public function getMostViewed(int $limit = 5): array {
         $cached = SimpleCache::get('most_viewed_' . $limit, 300);
-        if ($cached !== null) {
+        if (is_array($cached)) {
             return $cached;
         }
         
@@ -104,7 +104,7 @@ class Post extends Model {
     
     public function getArchives(): array {
         $cached = SimpleCache::get('archives', 3600);
-        if ($cached !== null) {
+        if (is_array($cached)) {
             return $cached;
         }
         
@@ -126,7 +126,7 @@ class Post extends Model {
     public function getByMonth(string $mes, int $limit = 10, int $offset = 0): array {
         $cacheKey = "posts_month_{$mes}_{$limit}_{$offset}";
         $cached = SimpleCache::get($cacheKey, 300);
-        if ($cached !== null) {
+        if (is_array($cached)) {
             return $cached;
         }
         
@@ -157,7 +157,7 @@ class Post extends Model {
     
     public function getCategoriesWithCount(): array {
         $cached = SimpleCache::get('categories_with_count', 300);
-        if ($cached !== null) {
+        if (is_array($cached)) {
             return $cached;
         }
         

@@ -38,6 +38,11 @@ if (!function_exists('getDB')) {
     require_once __DIR__ . '/includes/functions.php';
 }
 
+// Ensure logAudit is available for controllers
+if (!function_exists('logAudit')) {
+    require_once __DIR__ . '/includes/functions.php';
+}
+
 // Load helpers only if not already loaded
 if (!function_exists('parseMarkdown')) {
     require_once __DIR__ . '/includes/functions_helpers.php';
