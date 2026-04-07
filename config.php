@@ -4,7 +4,7 @@
   'email' => 'tu@email.com',
   'author' => 'Lenin Obregón',
   'description' => 'Tutoriales de Linux, Seguridad y más,',
-  'theme' => 'orange',
+  'theme' => 'black',
   'posts_per_page' => 10,
   'youtube' => 'https://www.youtube.com/@leninobregonespinoza2160',
   'telegram' => '',

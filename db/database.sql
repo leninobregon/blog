@@ -58,6 +58,8 @@ CREATE TABLE IF NOT EXISTS newsletter (
     name VARCHAR(100),
     active TINYINT(1) DEFAULT 1,
     token VARCHAR(100),
+    last_sent DATETIME NULL,
+    total_sent INT DEFAULT 0,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 

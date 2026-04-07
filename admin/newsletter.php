@@ -291,7 +291,7 @@ $activeSubscribers = getNewsletterSubscribers(true);
                                 </span>
                             </td>
                             <td><?= strftime('%d/%m/%Y', strtotime($sub['created_at'])) ?></td>
-                            <td><?= $sub['total_sent'] ?></td>
+                            <td><?= $sub['total_sent'] ?? 0 ?></td>
                             <td>
                                 <form method="POST" style="display: inline;">
                                     <input type="hidden" name="action" value="toggle">

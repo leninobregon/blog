@@ -5,16 +5,29 @@
 class Newsletter extends Model {
     protected string $table = 'newsletter';
     
-    public function subscribe(string $email, string $name = ''): bool {
+    public function subscribe(string $email, string $name = ''): array {
+        // Check if email already exists
+        $existing = $this->findAllWhere('email = ?', [$email]);
+        
+        if (!empty($existing)) {
+            if ($existing[0]['active'] == 1) {
+                return ['success' => false, 'message' => 'already_subscribed'];
+            } else {
+                // Reactivate subscription
+                $this->update($existing[0]['id'], ['active' => 1, 'name' => $name]);
+                return ['success' => true, 'message' => 'reactivated'];
+            }
+        }
+        
         try {
             $this->insert([
                 'email' => $email,
                 'name' => $name,
                 'active' => 1
             ]);
-            return true;
+            return ['success' => true, 'message' => 'subscribed'];
         } catch (\PDOException $e) {
-            return false; // Email already exists
+            return ['success' => false, 'message' => 'error'];
         }
     }
     

@@ -6,6 +6,12 @@
             <div class="newsletter-text">
                 <h3><i class="fas fa-envelope"></i> Newsletter</h3>
                 <p><?= $lang['sidebar_newsletter_desc'] ?? 'Suscríbete para recibir actualizaciones' ?></p>
+                <?php if(isset($_SESSION['subscribe_message'])): ?>
+                <p style="margin-top:10px;font-weight:600;color:<?= strpos($_SESSION['subscribe_message'], '¡Gracias') !== false ? '#10b981' : '#fbbf24' ?>;">
+                    <i class="fas fa-<?= strpos($_SESSION['subscribe_message'], '¡Gracias') !== false ? 'check-circle' : 'info-circle' ?>"></i> 
+                    <?= $_SESSION['subscribe_message'] ?>
+                </p>
+                <?php unset($_SESSION['subscribe_message']); endif; ?>
             </div>
             <form method="post" action="<?= $baseUrl ?>/subscribe.php" class="newsletter-form">
                 <input type="email" name="email" placeholder="<?= $lang['sidebar_email_placeholder'] ?? 'Tu correo...' ?>" required>
