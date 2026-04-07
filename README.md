@@ -399,13 +399,22 @@ sudo systemctl restart httpd
 # Actualizar sistema
 sudo dnf update -y
 
-# Instalar Apache, MariaDB, PHP y herramientas
-sudo dnf install httpd mariadb-server php php-mysqlnd php-json php-zip php-curl php-xml php-mbstring git unzip -y
+# Instalar Apache (httpd), MariaDB, PHP y herramientas
+sudo dnf install httpd mariadb-server php php-mysqlnd php-json php-zip php-curl php-xml php-mbstring php-gd php-intl git unzip -y
 
 # Habilitar servicios
-sudo systemctl enable --now httpd mariadb
+sudo systemctl enable httpd mariadb
 sudo systemctl start httpd mariadb
 
+# Verificar que Apache esté corriendo
+sudo systemctl status httpd
+php -v
+
+# Si el servicio no existe, verificar nombre
+systemctl list-units | grep httpd
+```
+
+```bash
 # Configurar MariaDB
 sudo mysql -u root
 ```
@@ -423,7 +432,7 @@ EXIT;
 cd /var/www/html
 sudo git clone https://github.com/leninobregon/blog_v2.git blog_responsivo
 
-# Permisos
+# Permisos - RHEL usa apache:apache
 sudo chown -R apache:apache /var/www/html/blog_responsivo
 sudo chmod -R 755 /var/www/html/blog_responsivo
 sudo chmod 777 /var/www/html/blog_responsivo/uploads
@@ -433,10 +442,14 @@ sudo chmod 777 /var/www/html/blog_responsivo/db
 sudo firewall-cmd --permanent --add-service=http --add-service=https
 sudo firewall-cmd --reload
 
+# Permitir Apache en SELinux
+sudo setsebool -P httpd_can_network_connect 1
+sudo setsebool -P httpd_read_user_content 1
+
 # Reiniciar servicios
 sudo systemctl restart httpd
 
-# Ejecutar el instalador: http://localhost/blog_responsivo/instalar.php
+# Verificar en navegador: http://localhost
 ```
 
 ---
