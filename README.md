@@ -310,7 +310,13 @@ sudo a2ensite blog_responsivo.conf --force
 sudo systemctl restart apache2
 ```
 
-11. **Agregar al archivo hosts** (si usas dominio local):
+11. **Deshabilitar sitio por defecto** (si carga la página de Apache):
+```bash
+sudo a2dissite 000-default.conf
+sudo systemctl restart apache2
+```
+
+12. **Agregar al archivo hosts** (si usas dominio local):
 ```bash
 sudo nano /etc/hosts
 ```
