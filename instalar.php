@@ -256,7 +256,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'install') {
         
         $pdo->exec("CREATE TABLE IF NOT EXISTS `posts` (`id` INT AUTO_INCREMENT PRIMARY KEY, `title` VARCHAR(255) NOT NULL, `category` VARCHAR(100) NOT NULL, `content` TEXT NOT NULL, `image` VARCHAR(255), `video` VARCHAR(255), `author_id` INT, `views` INT DEFAULT 0, `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci");
         
-        $pdo->exec("CREATE TABLE IF NOT EXISTS `comments` (`id` INT AUTO_INCREMENT PRIMARY KEY, `post_id` INT NOT NULL, `user_id` INT NOT NULL, `content` TEXT NOT NULL, `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP, KEY `post_id` (`post_id`), KEY `user_id` (`user_id`), FOREIGN KEY (`post_id`) REFERENCES `posts`(`id`) ON DELETE CASCADE, FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci");
+        $pdo->exec("CREATE TABLE IF NOT EXISTS `comments` (`id` INT AUTO_INCREMENT PRIMARY KEY, `post_id` INT NOT NULL, `user_id` INT NOT NULL, `content` TEXT NOT NULL, `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci");
         
         $pdo->exec("CREATE TABLE IF NOT EXISTS `newsletter` (`id` INT AUTO_INCREMENT PRIMARY KEY, `email` VARCHAR(100) NOT NULL UNIQUE, `name` VARCHAR(100), `active` TINYINT(1) DEFAULT 1, `token` VARCHAR(100), `last_sent` DATETIME NULL, `total_sent` INT DEFAULT 0, `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci");
         
