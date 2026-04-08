@@ -95,6 +95,9 @@ class AuthController extends Controller {
     }
     
     public function recover(): void {
+        error_reporting(E_ALL);
+        ini_set('display_errors', 1);
+        
         // Get language
         $currentLang = 'es';
         if (isset($_COOKIE['language']) && in_array($_COOKIE['language'], ['es', 'en'])) {
