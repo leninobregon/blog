@@ -100,11 +100,23 @@ Usuario → index.php (Router) → Controlador → Modelo → Vista → HTML
 
 ## 📋 Requisitos
 
+### Software
+
 | Requisito | Versión mínima |
 |-----------|----------------|
 | PHP | 7.4+ |
 | MySQL / MariaDB | 5.7+ |
 | Apache / Nginx | any |
+
+### Hardware
+
+| Nivel | CPU | RAM | Disco |
+|-------|-----|-----|-------|
+| **Mínimo** | 1 núcleo | 512 MB | 1 GB |
+| **Óptimo** | 2+ núcleos | 2 GB | 10 GB |
+| **Máximo** | 4+ núcleos | 4+ GB | 50+ GB |
+
+> **Nota**: El blog es ligero y funciona bien en un VPS básico (1 núcleo, 1 GB RAM). 50 GB es más que suficiente para el código, imágenes y datos.
 
 ---
 
