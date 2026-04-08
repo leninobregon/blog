@@ -1,6 +1,6 @@
 <?php return array (
   'site_name' => 'Mi Blog de Tutoriales',
-  'site_url' => 'http://localhost/proyecto/blog_responsivo',
+  'site_url' => '',
   'email' => 'tu@email.com',
   'author' => 'Lenin Obregón',
   'description' => 'Tutoriales de Linux, Seguridad y más,',

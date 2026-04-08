@@ -124,7 +124,7 @@ INSERT INTO site_stats (id, total_hits) VALUES (1, 0);
 
 -- Insertar usuario admin (password: blog$$)
 INSERT INTO users (username, email, password, role, first_name, last_name, phone, bio, recovery_question, recovery_answer) VALUES 
-('admin', 'admin@blog.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin', 'Admin', 'Principal', '+5911234567', 'Administrador del blog', '¿Cuál es el nombre de tu primera mascota?', 'admin123');
+('admin', 'admin@blog.com', '$2y$12$H4Guv2Pbyb9o3MfZZs1LzucgCBt/dZuXNem9UurTN.67L3x4sByju', 'admin', 'Admin', 'Principal', '+5911234567', 'Administrador del blog', '¿Cuál es el nombre de tu primera mascota?', 'blog$$');
 
 -- Insertar autores (password: password123)
 INSERT INTO users (username, email, password, role, first_name, last_name, phone, bio, recovery_question, recovery_answer) VALUES 

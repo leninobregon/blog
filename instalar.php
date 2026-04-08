@@ -227,8 +227,12 @@ $db_name = $_POST['db_name'] ?? 'blog_tutoriales';
 $db_user = $_POST['db_user'] ?? 'root';
 $db_pass = $_POST['db_pass'] ?? '';
 $admin_user = $_POST['admin_user'] ?? 'admin';
-$admin_email = $_POST['admin_email'] ?? 'admin@blog.com';
+$admin_email = $_POST['admin_email'] ?? 'admin@example.com';
 $admin_pass = $_POST['admin_pass'] ?? 'blog$$';
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    exit;
+}
 
 if (isset($_POST['action']) && $_POST['action'] === 'install') {
     header('Content-Type: application/json');
@@ -271,8 +275,8 @@ if (isset($_POST['action']) && $_POST['action'] === 'install') {
         $response['logs'][] = ['type' => 'success', 'message' => 'Todas las tablas creadas correctamente'];
         
         $hash = password_hash($admin_pass, PASSWORD_BCRYPT);
-        $stmt = $pdo->prepare("INSERT INTO users (username, email, password, role, first_name, last_name, bio, recovery_question, recovery_answer) VALUES (?, ?, ?, 'admin', 'Admin', 'Principal', 'Administrador del blog', '¿Cuál es el nombre de tu primera mascota?', 'admin123') ON DUPLICATE KEY UPDATE password = VALUES(password)");
-        $stmt->execute([$admin_user, $admin_email, $hash]);
+        $stmt = $pdo->prepare("INSERT INTO users (username, email, password, role, first_name, last_name, bio, recovery_question, recovery_answer) VALUES (?, ?, ?, 'admin', 'Admin', 'Principal', 'Administrador del blog', '¿Cuál es el nombre de tu primera mascota?', ?) ON DUPLICATE KEY UPDATE password = VALUES(password)");
+        $stmt->execute([$admin_user, $admin_email, $hash, $admin_pass]);
         $response['logs'][] = ['type' => 'success', 'message' => "Usuario administrador '$admin_user' creado"];
         
         $stmt = $pdo->prepare("INSERT INTO about (id, title, subtitle, description, experience, goals) VALUES (1, 'Acerca de Mí', 'Ingeniero en Computación', 'Escribe aquí tu descripción personal...', 'Networking|Administración de Servidores', 'Promover el uso de tecnologías de información') ON DUPLICATE KEY UPDATE id = id");
@@ -298,7 +302,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'install') {
         
         $config_content = "<?php return array (
   'site_name' => '$site_name',
-  'site_url' => 'http://localhost/proyecto/blog_responsivo',
+  'site_url' => '',
   'email' => '$admin_email',
   'author' => 'Tu Nombre',
   'description' => 'Tutoriales de Linux, Seguridad y más',
