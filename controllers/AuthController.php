@@ -95,28 +95,71 @@ class AuthController extends Controller {
     }
     
     public function recover(): void {
-        // Handle password recovery - search user by username or email
+        // Get language
+        $currentLang = 'es';
+        if (isset($_COOKIE['language']) && in_array($_COOKIE['language'], ['es', 'en'])) {
+            $currentLang = $_COOKIE['language'];
+        }
+        
+        // Get theme
+        $validThemes = ['white','blue','dark-blue','black','green','red','purple','orange','pink','teal','yellow','cyan','brown','indigo','lime','amber','rose','slate','emerald','sky','violet'];
+        $currentTheme = (isset($_COOKIE['theme']) && in_array($_COOKIE['theme'], $validThemes)) ? $_COOKIE['theme'] : 'blue';
+        $colors = getThemeColors($currentTheme);
+        
+        // Load language strings
+        $langFile = __DIR__ . '/../languages/' . $currentLang . '.php';
+        $lang = file_exists($langFile) ? require $langFile : require __DIR__ . '/../languages/es.php';
+        
+        $config = require __DIR__ . '/../config.php';
+        $baseUrl = $this->getBaseUrl();
+        
+        $error = '';
+        $success = '';
+        $user = null;
+        $showQuestion = false;
+        
+        // Handle password recovery
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $identifier = $_POST['identifier'] ?? '';
-            
-            $userModel = new User();
-            $user = $userModel->findByUsername($identifier) ?: $userModel->findByEmail($identifier);
-            
-            if ($user && !empty($user['recovery_question'])) {
-                // Show security question
-                $this->view('auth/recover', [
-                    'user' => $user,
-                    'showQuestion' => true
-                ]);
-                return;
-            } else {
-                $error = 'Usuario no encontrado o sin pregunta de seguridad';
+            if (isset($_POST['identifier'])) {
+                // Step 1: Search user
+                $identifier = $_POST['identifier'] ?? '';
+                $userModel = new User();
+                $user = $userModel->findByUsername($identifier) ?: $userModel->findByEmail($identifier);
+                
+                if ($user && !empty($user['recovery_question'])) {
+                    $showQuestion = true;
+                } else {
+                    $error = $currentLang === 'es' ? 'Usuario no encontrado o sin pregunta de seguridad' : 'User not found or no security question';
+                }
+            } elseif (isset($_POST['recovery_answer'])) {
+                // Step 2: Verify answer and change password
+                $userId = $_POST['user_id'] ?? '';
+                $answer = $_POST['recovery_answer'] ?? '';
+                $newPassword = $_POST['new_password'] ?? '';
+                $confirmPassword = $_POST['confirm_password'] ?? '';
+                
+                $userModel = new User();
+                $user = $userModel->findById($userId);
+                
+                if (!$user || strcasecmp($user['recovery_answer'], $answer) !== 0) {
+                    $error = $currentLang === 'es' ? 'Respuesta incorrecta' : 'Incorrect answer';
+                    $showQuestion = true;
+                } elseif ($newPassword !== $confirmPassword) {
+                    $error = $currentLang === 'es' ? 'Las contraseñas no coinciden' : 'Passwords do not match';
+                    $showQuestion = true;
+                } elseif (strlen($newPassword) < 6) {
+                    $error = $currentLang === 'es' ? 'La contraseña debe tener al menos 6 caracteres' : 'Password must be at least 6 characters';
+                    $showQuestion = true;
+                } else {
+                    // Change password
+                    $userModel->updatePassword($userId, $newPassword);
+                    $success = $currentLang === 'es' ? 'Contraseña cambiada correctamente. Ya puedes iniciar sesión.' : 'Password changed successfully. You can now login.';
+                }
             }
         }
         
-        $this->view('auth/recover', [
-            'error' => $error ?? ''
-        ]);
+        // Render standalone (without header/footer)
+        include __DIR__ . '/../views/auth/recover.php';
     }
     
     public function logout(): void {
