@@ -154,6 +154,7 @@ class AuthController extends Controller {
                     // Change password
                     $userModel->updatePassword($userId, $newPassword);
                     $success = $currentLang === 'es' ? 'Contraseña cambiada correctamente. Ya puedes iniciar sesión.' : 'Password changed successfully. You can now login.';
+                    $showSuccess = true;
                 }
             }
         }

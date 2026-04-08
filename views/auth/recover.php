@@ -21,6 +21,8 @@ if (empty($siteUrl)) {
 $baseUrl = rtrim($siteUrl, '/');
 
 $error = $error ?? '';
+$success = $success ?? '';
+$showSuccess = $showSuccess ?? false;
 $user = $user ?? null;
 $showQuestion = $showQuestion ?? false;
 ?>
