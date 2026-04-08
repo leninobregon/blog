@@ -279,6 +279,41 @@ sudo a2enmod rewrite
 sudo systemctl reload apache2
 ```
 
+10. **Configurar VirtualHost** (opcional - para acceder con dominio):
+```bash
+sudo nano /etc/apache2/sites-available/blog_responsivo.conf
+```
+
+```apache
+<VirtualHost *:80>
+    ServerName blog.local
+    DocumentRoot /var/www/html/blog_responsivo
+
+    <Directory /var/www/html/blog_responsivo>
+        Options -Indexes +FollowSymLinks
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+    ErrorLog ${APACHE_LOG_DIR}/blog_responsivo_error.log
+    CustomLog ${APACHE_LOG_DIR}/blog_responsivo_access.log combined
+</VirtualHost>
+```
+
+```bash
+sudo a2ensite blog_responsivo.conf
+sudo systemctl reload apache2
+```
+
+11. **Agregar al archivo hosts** (si usas dominio local):
+```bash
+sudo nano /etc/hosts
+```
+Agregar línea:
+```
+127.0.0.1    blog.local
+```
+
 > ⚠️ **NOTA**: El instalador ya no se incluye. Usa las opciones de arriba para importar la base de datos.
 
 ---
