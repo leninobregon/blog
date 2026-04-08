@@ -249,7 +249,7 @@ $isLogin = $isLogin ?? true;
         
         <?php if($isLogin): ?>
         <div style="text-align:center;margin-top:1rem;">
-            <a href="?action=recover" style="color:var(--primary);text-decoration:none;">
+            <a href="<?= $baseUrl ?>/recover.php" style="color:var(--primary);text-decoration:none;">
                 <i class="fas fa-question-circle"></i> <?= $currentLang === 'es' ? '¿Olvidaste tu contraseña?' : 'Forgot your password?' ?>
             </a>
         </div>

@@ -51,11 +51,13 @@ $routes = [
         '/post.php' => ['PostController', 'show'],
         '/about.php' => ['AboutController', 'index'],
         '/auth.php' => ['AuthController', 'login'],
+        '/recover.php' => ['AuthController', 'recover'],
         '/logout.php' => ['AuthController', 'logout'],
         '/profile.php' => ['ProfileController', 'index'],
     ],
     'POST' => [
         '/auth.php' => ['AuthController', 'login'],
+        '/recover.php' => ['AuthController', 'recover'],
         '/subscribe.php' => ['SubscribeController', 'handle'],
         '/profile.php' => ['ProfileController', 'index'],
     ]

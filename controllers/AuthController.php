@@ -83,9 +83,40 @@ class AuthController extends Controller {
         // Check if registering
         if (isset($_GET['action']) && $_GET['action'] === 'register') {
             $isLogin = false;
+            $showRecover = false;
+        } elseif (isset($_GET['action']) && $_GET['action'] === 'recover') {
+            $isLogin = false;
+            $showRecover = true;
+        } else {
+            $showRecover = false;
         }
         
         require __DIR__ . '/../views/auth/login.php';
+    }
+    
+    public function recover(): void {
+        // Handle password recovery - search user by username or email
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $identifier = $_POST['identifier'] ?? '';
+            
+            $userModel = new User();
+            $user = $userModel->findByUsername($identifier) ?: $userModel->findByEmail($identifier);
+            
+            if ($user && !empty($user['recovery_question'])) {
+                // Show security question
+                $this->view('auth/recover', [
+                    'user' => $user,
+                    'showQuestion' => true
+                ]);
+                return;
+            } else {
+                $error = 'Usuario no encontrado o sin pregunta de seguridad';
+            }
+        }
+        
+        $this->view('auth/recover', [
+            'error' => $error ?? ''
+        ]);
     }
     
     public function logout(): void {
