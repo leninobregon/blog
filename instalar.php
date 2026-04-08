@@ -230,7 +230,7 @@ $admin_user = $_POST['admin_user'] ?? 'admin';
 $admin_email = $_POST['admin_email'] ?? 'admin@example.com';
 $admin_pass = $_POST['admin_pass'] ?? 'blog$$';
 
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+if (!isset($_SERVER['REQUEST_METHOD']) || $_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
