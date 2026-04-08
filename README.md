@@ -110,16 +110,17 @@ Usuario → index.php (Router) → Controlador → Modelo → Vista → HTML
 
 ## 🚀 Instalación
 
-### Opción 1: Usar el instalador automático (recomendado)
-
-El instalador `instalar.php` crea automáticamente todas las tablas e inserta datos de ejemplo.
-
-### Opción 2: Importar base de datos manualmente
+### Opción 1: Importar base de datos manualmente (recomendado)
 
 Puedes importar el archivo SQL directamente:
-```bash
-mysql -u root -p blog_tutoriales < db/blog_tutoriales.sql
-```
+
+- **Con datos de ejemplo**: `db/blog_tutoriales.sql`
+- **Solo admin (vacío)**: `db/blog_tutoriales_empty.sql`
+
+### Opción 2: Usar phpMyAdmin
+
+1. Crea la base de datos `blog_tutoriales`
+2. Importa el archivo SQL elegido
 
 ---
 
@@ -141,20 +142,15 @@ mysql -u root -p blog_tutoriales < db/blog_tutoriales.sql
 
 4. **Instalar** (elige una opción):
 
-   **Opción A - Instalador**:
-   ```
-   http://localhost/proyecto/blog_responsivo/instalar.php
-   ```
+   **Opción A - Importar SQL (con datos de ejemplo)**:
+   - Ve a phpMyAdmin > blog_tutoriales > Importar
+   - Selecciona el archivo `db/blog_tutoriales.sql`
+   - Click en "Continuar"
 
-    **Opción B - Importar SQL (con datos de ejemplo)**:
-    - Ve a phpMyAdmin > blog_tutoriales > Importar
-    - Selecciona el archivo `db/blog_tutoriales.sql`
-    - Click en "Continuar"
-
-    **Opción C - Importar SQL (vacío, solo admin)**:
-    - Ve a phpMyAdmin > blog_tutoriales > Importar
-    - Selecciona el archivo `db/blog_tutoriales_empty.sql`
-    - Click en "Continuar"
+   **Opción B - Importar SQL (vacío, solo admin)**:
+   - Ve a phpMyAdmin > blog_tutoriales > Importar
+   - Selecciona el archivo `db/blog_tutoriales_empty.sql`
+   - Click en "Continuar"
 
 5. **Configurar credenciales** en `config.php`:
 ```php
@@ -166,7 +162,7 @@ mysql -u root -p blog_tutoriales < db/blog_tutoriales.sql
 ),
 ```
 
-> ⚠️ **SEGURIDAD**: Una vez instalado, elimina el archivo `instalar.php`
+> ⚠️ **NOTA**: El instalador ya no se incluye. Usa las opciones de arriba para importar la base de datos.
 
 ### URLs de Acceso
 
@@ -245,17 +241,12 @@ sudo chmod 777 /var/www/html/blog_responsivo/db
 
 7. **Instalar** (elige una opción):
 
-   **Opción A - Instalador**:
-   ```
-   http://tu-servidor/blog_responsivo/instalar.php
-   ```
-
-   **Opción B - Importar SQL (con datos de ejemplo)**:
+   **Opción A - Importar SQL (con datos de ejemplo)**:
    ```bash
    sudo mysql -u bloguser -p blog_tutoriales < /var/www/html/blog_responsivo/db/blog_tutoriales.sql
    ```
 
-   **Opción C - Importar SQL (vacío, solo admin)**:
+   **Opción B - Importar SQL (vacío, solo admin)**:
    ```bash
    sudo mysql -u bloguser -p blog_tutoriales < /var/www/html/blog_responsivo/db/blog_tutoriales_empty.sql
    ```
@@ -276,7 +267,7 @@ sudo a2enmod rewrite
 sudo systemctl reload apache2
 ```
 
-> ⚠️ **SEGURIDAD**: Una vez instalado, elimina el archivo `instalar.php`
+> ⚠️ **NOTA**: El instalador ya no se incluye. Usa las opciones de arriba para importar la base de datos.
 
 ---
 
@@ -368,17 +359,12 @@ sudo systemctl reload nginx
 
 9. **Instalar** (elige una opción):
 
-   **Opción A - Instalador**:
-   ```
-   http://tu-servidor/blog_responsivo/instalar.php
-   ```
-
-   **Opción B - Importar SQL (con datos de ejemplo)**:
+   **Opción A - Importar SQL (con datos de ejemplo)**:
    ```bash
    sudo mysql -u bloguser -p blog_tutoriales < /var/www/html/blog_responsivo/db/blog_tutoriales.sql
    ```
 
-   **Opción C - Importar SQL (vacío, solo admin)**:
+   **Opción B - Importar SQL (vacío, solo admin)**:
    ```bash
    sudo mysql -u bloguser -p blog_tutoriales < /var/www/html/blog_responsivo/db/blog_tutoriales_empty.sql
    ```
@@ -393,7 +379,7 @@ sudo systemctl reload nginx
 ),
 ```
 
-> ⚠️ **SEGURIDAD**: Una vez instalado, elimina el archivo `instalar.php`
+> ⚠️ **NOTA**: El instalador ya no se incluye. Usa las opciones de arriba para importar la base de datos.
 
 ---
 
@@ -494,20 +480,15 @@ sudo systemctl restart httpd
 
 11. **Instalar** (elige una opción):
 
-    **Opción A - Instalador**:
-    ```
-    http://tu-servidor/blog_responsivo/instalar.php
-    ```
+   **Opción A - Importar SQL (con datos de ejemplo)**:
+   ```bash
+   sudo mysql -u bloguser -p blog_tutoriales < /var/www/html/blog_responsivo/db/blog_tutoriales.sql
+   ```
 
-    **Opción B - Importar SQL (con datos de ejemplo)**:
-    ```bash
-    sudo mysql -u bloguser -p blog_tutoriales < /var/www/html/blog_responsivo/db/blog_tutoriales.sql
-    ```
-
-    **Opción C - Importar SQL (vacío, solo admin)**:
-    ```bash
-    sudo mysql -u bloguser -p blog_tutoriales < /var/www/html/blog_responsivo/db/blog_tutoriales_empty.sql
-    ```
+   **Opción B - Importar SQL (vacío, solo admin)**:
+   ```bash
+   sudo mysql -u bloguser -p blog_tutoriales < /var/www/html/blog_responsivo/db/blog_tutoriales_empty.sql
+   ```
 
 12. **Configurar credenciales** en `config.php`:
 ```php
@@ -519,7 +500,7 @@ sudo systemctl restart httpd
 ),
 ```
 
-> ⚠️ **SEGURIDAD**: Una vez instalado, elimina el archivo `instalar.php`
+> ⚠️ **NOTA**: El instalador ya no se incluye. Usa las opciones de arriba para importar la base de datos.
 
 ---
 
@@ -625,20 +606,15 @@ sudo setsebool -P httpd_can_network_connect 1
 
 11. **Instalar** (elige una opción):
 
-    **Opción A - Instalador**:
-    ```
-    http://tu-servidor/blog_responsivo/instalar.php
-    ```
+   **Opción A - Importar SQL (con datos de ejemplo)**:
+   ```bash
+   sudo mysql -u bloguser -p blog_tutoriales < /var/www/html/blog_responsivo/db/blog_tutoriales.sql
+   ```
 
-    **Opción B - Importar SQL (con datos de ejemplo)**:
-    ```bash
-    sudo mysql -u bloguser -p blog_tutoriales < /var/www/html/blog_responsivo/db/blog_tutoriales.sql
-    ```
-
-    **Opción C - Importar SQL (vacío, solo admin)**:
-    ```bash
-    sudo mysql -u bloguser -p blog_tutoriales < /var/www/html/blog_responsivo/db/blog_tutoriales_empty.sql
-    ```
+   **Opción B - Importar SQL (vacío, solo admin)**:
+   ```bash
+   sudo mysql -u bloguser -p blog_tutoriales < /var/www/html/blog_responsivo/db/blog_tutoriales_empty.sql
+   ```
 
 12. **Configurar credenciales** en `config.php`:
 ```php
@@ -650,7 +626,7 @@ sudo setsebool -P httpd_can_network_connect 1
 ),
 ```
 
-> ⚠️ **SEGURIDAD**: Una vez instalado, elimina el archivo `instalar.php`
+> ⚠️ **NOTA**: El instalador ya no se incluye. Usa las opciones de arriba para importar la base de datos.
 
 ---
 
@@ -707,8 +683,8 @@ sudo setsebool -P httpd_read_user_content 1
 ```
 
 8. **Instalar** (elige una opción):
-   - Opción A: `http://tu-servidor/blog_responsivo/instalar.php`
-   - Opción B: Importar `db/blog_tutoriales.sql`
+   - Opción A: Importar `db/blog_tutoriales.sql`
+   - Opción B: Importar `db/blog_tutoriales_empty.sql`
 
 9. **Configurar credenciales** en `config.php`
 
@@ -741,10 +717,10 @@ blog_responsivo/
 ├── index.php                  # Página principal (MVC Entry Point)
 ├── autoload.php               # Carga automática de clases
 ├── config.php                 # Configuración del sitio
-├── instalar.php               # Instalador automático
 ├── subscribe.php              # Suscripción al newsletter
 ├── db/
-│   └── blog_tutoriales.sql    # Script SQL completo
+│   ├── blog_tutoriales.sql    # Script SQL con datos de ejemplo
+│   └── blog_tutoriales_empty.sql  # Script SQL solo admin
 ├── core/                      # Clases base del MVC
 │   ├── Database.php           # Conexión PDO (Singleton)
 │   ├── Session.php            # Manejo de sesiones
