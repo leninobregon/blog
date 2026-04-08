@@ -17,9 +17,19 @@ class PostController extends Controller {
             return;
         }
         
-        // Increment views
-        $postModel->incrementViews($id);
-        $siteStats->incrementHits();
+        // Increment views - only for guests
+        if (!Session::isLoggedIn()) {
+            $postModel->incrementViews($id);
+            $sessionKey = 'last_visit_post_' . $id;
+            $lastVisit = Session::get($sessionKey);
+            $now = time();
+            
+            // Only count once per hour per post
+            if (!$lastVisit || ($now - $lastVisit) > 3600) {
+                $siteStats->incrementHits();
+                Session::set($sessionKey, $now);
+            }
+        }
         
         // Get comments
         $comments = $commentModel->getWithUser($id);

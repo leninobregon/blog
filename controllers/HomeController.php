@@ -16,15 +16,26 @@ class HomeController extends Controller {
         $perPage = 10;
         $offset = ($page - 1) * $perPage;
         
-        // Log visit
-        $visitLog = new VisitLog();
-        $visitLog->log(
-            $_SERVER['REQUEST_URI'] ?? '',
-            $_SERVER['REMOTE_ADDR'] ?? '',
-            $_SERVER['HTTP_USER_AGENT'] ?? '',
-            $_SERVER['HTTP_REFERER'] ?? ''
-        );
-        $siteStats->incrementHits();
+        // Log visit - only for guests (not logged in users)
+        // and only once per session per hour (to avoid counting every page view)
+        if (!Session::isLoggedIn()) {
+            $sessionKey = 'last_visit_' . md5($_SERVER['REMOTE_ADDR'] ?? 'guest');
+            $lastVisit = Session::get($sessionKey);
+            $now = time();
+            
+            // Only count if no visit in the last hour
+            if (!$lastVisit || ($now - $lastVisit) > 3600) {
+                $visitLog = new VisitLog();
+                $visitLog->log(
+                    $_SERVER['REQUEST_URI'] ?? '',
+                    $_SERVER['REMOTE_ADDR'] ?? '',
+                    $_SERVER['HTTP_USER_AGENT'] ?? '',
+                    $_SERVER['HTTP_REFERER'] ?? ''
+                );
+                $siteStats->incrementHits();
+                Session::set($sessionKey, $now);
+            }
+        }
         
         // Get posts
         if ($mes) {
