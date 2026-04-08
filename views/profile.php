@@ -132,6 +132,10 @@ $msgType = $msgType ?? '';
     <h2><i class="fas fa-key"></i> <?= $currentLang === 'es' ? 'Cambiar Contraseña' : 'Change Password' ?></h2>
     <form method="post">
         <input type="hidden" name="action" value="change_password">
+        <div class="form-group">
+            <label><i class="fas fa-envelope"></i> <?= $currentLang === 'es' ? 'Usuario o Email' : 'Username or Email' ?></label>
+            <input type="text" name="identifier" required>
+        </div>
         <div class="form-grid">
             <div class="form-group">
                 <label><i class="fas fa-lock"></i> <?= $currentLang === 'es' ? 'Contraseña Actual' : 'Current Password' ?></label>

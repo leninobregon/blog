@@ -247,6 +247,14 @@ $isLogin = $isLogin ?? true;
             </button>
         </form>
         
+        <?php if($isLogin): ?>
+        <div style="text-align:center;margin-top:1rem;">
+            <a href="?action=recover" style="color:var(--primary);text-decoration:none;">
+                <i class="fas fa-question-circle"></i> <?= $currentLang === 'es' ? '¿Olvidaste tu contraseña?' : 'Forgot your password?' ?>
+            </a>
+        </div>
+        <?php endif; ?>
+        
         <a href="<?= $baseUrl ?>/" class="back-link"><i class="fas fa-arrow-left"></i> <?= $currentLang === 'es' ? 'Volver al Blog' : 'Back to Blog' ?></a>
     </div>
     
