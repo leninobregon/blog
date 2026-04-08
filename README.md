@@ -205,7 +205,13 @@ sudo systemctl enable apache2 mariadb
 sudo systemctl start apache2 mariadb
 ```
 
-4. **Configurar MariaDB**:
+4. **IMPORTANTE: Configurar acceso root para PHP**:
+```bash
+sudo mysql -u root -p -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password; FLUSH PRIVILEGES;"
+```
+(presiona Enter cuando pida contraseña)
+
+5. **Configurar MariaDB**:
 ```bash
 sudo mysql -u root
 ```
@@ -400,7 +406,12 @@ sudo systemctl enable --now httpd mariadb
 sudo systemctl start httpd mariadb
 ```
 
-4. **Configurar MariaDB**:
+4. **IMPORTANTE: Configurar acceso root para PHP**:
+```bash
+sudo mysql -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password; FLUSH PRIVILEGES;"
+```
+
+5. **Configurar MariaDB**:
 ```bash
 sudo mysql -u root
 ```
@@ -634,11 +645,16 @@ sudo dnf install httpd mariadb-server php php-mysqlnd php-json php-zip php-curl 
 
 3. **Habilitar servicios**:
 ```bash
-sudo systemctl enable httpd mariadb
-sudo systemctl start httpd mariadb
+sudo systemctl enable nginx mariadb php-fpm
+sudo systemctl start nginx mariadb php-fpm
 ```
 
-4. **Configurar MariaDB**:
+4. **IMPORTANTE: Configurar acceso root para PHP**:
+```bash
+sudo mysql -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password; FLUSH PRIVILEGES;"
+```
+
+5. **Configurar MariaDB**:
 ```bash
 sudo mysql -u root
 ```
