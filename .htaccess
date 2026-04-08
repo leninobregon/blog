@@ -12,22 +12,11 @@ Options -Indexes
 # Bloquear acceso a la carpeta db desde fuera
 RewriteRule ^db/ - [F,L]
 
-# --- DETECCIÓN AUTOMÁTICA DE RUTA ---
-# Detecta automáticamente la ruta base del proyecto
-RewriteCond %{REQUEST_URI}::$0 ^(/.+)/(.*)::\2$
-RewriteRule .* - [E=BASE:%1]
-
-# --- URLs LIMPIAS ---
-# Permite entrar a /post en lugar de /post.php
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{REQUEST_FILENAME}\.php -f
-RewriteRule ^([^\.]+)$ %{ENV:BASE}/$1.php [NC,L]
-
 # --- MVC ROUTING ---
 # Redirige todo a index.php para el MVC
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ %{ENV:BASE}/index.php [L,QSA]
+RewriteRule ^(.*)$ index.php [L,QSA]
 
 # Redirigir errores 404 al blog
-ErrorDocument 404 %{ENV:BASE}/
+ErrorDocument 404 /
