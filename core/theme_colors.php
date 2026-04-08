@@ -3,6 +3,7 @@
  * Theme Colors Helper
  */
 
+if (!function_exists('getThemeColors')) {
 function getThemeColors(string $theme): array {
     $themes = [
         'white' => ['bg'=>'#ffffff','bg-secondary'=>'#f8f9fa','text'=>'#2d3748','text-secondary'=>'#718096','primary'=>'#3182ce','secondary'=>'#4a5568','accent'=>'#38a169','border'=>'#e2e8f0','code-bg'=>'#1a202c','code-text'=>'#90cdf4','link'=>'#3182ce','header-bg'=>'#2b6cb0','header-text'=>'#ffffff','font-main'=>'Poppins, sans-serif','font-code'=>'Fira Code, monospace'],
@@ -28,4 +29,5 @@ function getThemeColors(string $theme): array {
         'violet' => ['bg'=>'#f5f3ff','bg-secondary'=>'#ede9fe','text'=>'#4c1d95','text-secondary'=>'#7c3aed','primary'=>'#8b5cf6','secondary'=>'#a78bfa','accent'=>'#f472b6','border'=>'#ddd6fe','code-bg'=>'#4c1d95','code-text'=>'#ddd6fe','link'=>'#7c3aed','header-bg'=>'#6d28d9','header-text'=>'#ffffff','font-main'=>'Poppins, sans-serif','font-code'=>'Fira Code, monospace'],
     ];
     return $themes[$theme] ?? $themes['blue'];
+}
 }
