@@ -17,6 +17,8 @@ if (isset($_GET['lang'])) {
         setcookie('language', $_GET['lang'], time() + 31536000, '/');
     }
     $redir = strtok($_SERVER['REQUEST_URI'], '?');
+    $redir = rtrim($redir, '/');
+    if (empty($redir)) $redir = '/';
     header('Location: ' . $redir);
     exit;
 }
