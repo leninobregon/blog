@@ -302,7 +302,12 @@ sudo nano /etc/apache2/sites-available/blog_responsivo.conf
 
 ```bash
 sudo a2ensite blog_responsivo.conf
+sudo a2enmod rewrite
 sudo systemctl reload apache2
+
+# Si hay errores, usar:
+sudo a2ensite blog_responsivo.conf --force
+sudo systemctl restart apache2
 ```
 
 11. **Agregar al archivo hosts** (si usas dominio local):
