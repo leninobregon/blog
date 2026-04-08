@@ -153,6 +153,7 @@ $showQuestion = $showQuestion ?? false;
         <?php if($showQuestion && $user): ?>
         <!-- Step 2: Show security question -->
         <form method="post">
+            <input type="hidden" name="user_id" value="<?= $user['id'] ?? '' ?>">
             <div class="form-group">
                 <label><i class="fas fa-user"></i> <?= $currentLang === 'es' ? 'Usuario' : 'Username' ?></label>
                 <input type="text" value="<?= htmlspecialchars($user['username']) ?>" readonly style="background: var(--bg-secondary);">
