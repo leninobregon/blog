@@ -2,9 +2,6 @@
 /**
  * Password Recovery View
  */
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
 if (session_status() === PHP_SESSION_NONE) session_start();
 include __DIR__ . '/../../includes/functions.php';
 
@@ -13,6 +10,9 @@ $lang = getLanguageStrings($currentLang);
 $currentTheme = getActiveTheme();
 $colors = getThemeColors($currentTheme);
 $config = require __DIR__ . '/../../config.php';
+
+// Debug
+error_log("Theme: " . $currentTheme);
 
 $siteUrl = $config['site_url'] ?? '';
 if (empty($siteUrl)) {
@@ -39,7 +39,7 @@ $showQuestion = $showQuestion ?? false;
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            <?php foreach($colors as $k=>$v): ?><?= $k ?>: <?= $v ?>;<?php endforeach; ?>
+            <?php foreach($colors as $k=>$v): ?>--<?= $k ?>: <?= $v ?>;<?php endforeach; ?>
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
