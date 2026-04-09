@@ -1,10 +1,16 @@
-# Activar RewriteEngine
+# 1. Activar el motor de reescritura
 RewriteEngine On
 
-# Evitar listado de directorios
+# 2. Evitar listado de archivos (Seguridad)
 Options -Indexes
 
-# --- MVC ROUTING ---
+# 3. --- MVC ROUTING UNIVERSAL ---
+
+# Si el archivo solicitado NO existe
 RewriteCond %{REQUEST_FILENAME} !-f
+# Si la carpeta solicitada NO existe
 RewriteCond %{REQUEST_FILENAME} !-d
+
+# Redirigir a index.php de la carpeta actual
+# Nota: Quitamos la barra inicial "/" antes de index.php para que sea relativo
 RewriteRule ^(.*)$ index.php [L,QSA]
