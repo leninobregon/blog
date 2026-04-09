@@ -19,7 +19,15 @@ if (isset($_GET['lang'])) {
     $redir = strtok($_SERVER['REQUEST_URI'], '?');
     $redir = rtrim($redir, '/');
     if (empty($redir)) $redir = '/';
-    header('Location: ' . $redir);
+    
+    $scheme = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
+    $host = $_SERVER['HTTP_HOST'];
+    $port = '';
+    if (isset($_SERVER['SERVER_PORT']) && !in_array($_SERVER['SERVER_PORT'], [80, 443])) {
+        $port = ':' . $_SERVER['SERVER_PORT'];
+    }
+    $fullUrl = $scheme . '://' . $host . $port . $redir;
+    header('Location: ' . $fullUrl);
     exit;
 }
 
