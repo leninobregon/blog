@@ -176,6 +176,249 @@ Puedes importar el archivo SQL directamente:
 
 ---
 
+## 🐧 Linux (Debian/Ubuntu) con LAMP
+
+### Requisitos
+- Debian 11+ o Ubuntu 20.04+
+- Acceso root o sudo
+
+### Pasos
+
+1. **Actualizar sistema**:
+```bash
+sudo apt update && sudo apt upgrade -y
+```
+
+2. **Instalar LAMP**:
+```bash
+sudo apt install apache2 mariadb-server php php-mysql php-cli php-zip php-curl php-xml php-mbstring php-gd unzip git -y
+```
+
+3. **Habilitar servicios**:
+```bash
+sudo systemctl enable apache2 mariadb
+sudo systemctl start apache2 mariadb
+```
+
+4. **IMPORTANTE: Configurar acceso root para PHP**:
+```bash
+sudo mysql -u root -p -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password; FLUSH PRIVILEGES;"
+```
+(presiona Enter cuando pida contraseña)
+
+5. **Configurar MariaDB**:
+```bash
+sudo mysql -u root
+```
+
+```sql
+CREATE DATABASE blog_tutoriales CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER 'bloguser'@'localhost' IDENTIFIED BY 'blogpass';
+GRANT ALL PRIVILEGES ON blog_tutoriales.* TO 'bloguser'@'localhost';
+FLUSH PRIVILEGES;
+EXIT;
+```
+
+6. **Descargar proyecto**:
+```bash
+cd /var/www/html
+sudo git clone https://github.com/leninobregon/blog_v2.git blog_responsivo
+```
+
+7. **Permisos**:
+```bash
+sudo chown -R www-data:www-data /var/www/html/blog_responsivo
+sudo chmod -R 755 /var/www/html/blog_responsivo
+sudo chmod 777 /var/www/html/blog_responsivo/uploads
+sudo chmod 777 /var/www/html/blog_responsivo/db
+```
+
+8. **Instalar** (elige una opción):
+
+**Opción A - Importar SQL (con datos de ejemplo)**:
+```bash
+sudo mysql -u bloguser -p blog_tutoriales < /var/www/html/blog_responsivo/db/blog_tutoriales.sql
+```
+
+**Opción B - Importar SQL (vacío, solo admin)**:
+```bash
+sudo mysql -u bloguser -p blog_tutoriales < /var/www/html/blog_responsivo/db/blog_tutoriales_empty.sql
+```
+
+9. **Configurar credenciales** en `config.php`:
+```php
+'db' => array (
+  'host' => 'localhost',
+  'user' => 'bloguser',
+  'pass' => 'blogpass',
+  'name' => 'blog_tutoriales',
+),
+```
+
+10. **Habilitar Apache**:
+```bash
+sudo a2enmod rewrite
+sudo systemctl reload apache2
+```
+
+11. **Configurar VirtualHost** (opcional):
+```bash
+sudo nano /etc/apache2/sites-available/blog_responsivo.conf
+```
+
+```apache
+<VirtualHost *:80>
+    ServerName blog.local
+    DocumentRoot /var/www/html/blog_responsivo
+
+    <Directory /var/www/html/blog_responsivo>
+        Options -Indexes +FollowSymLinks
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+    ErrorLog ${APACHE_LOG_DIR}/blog_responsivo_error.log
+    CustomLog ${APACHE_LOG_DIR}/blog_responsivo_access.log combined
+</VirtualHost>
+```
+
+```bash
+sudo a2ensite blog_responsivo.conf
+sudo a2enmod rewrite
+sudo systemctl reload apache2
+
+# Si hay errores, usar:
+sudo a2ensite blog_responsivo.conf --force
+sudo systemctl restart apache2
+```
+
+12. **Deshabilitar sitio por defecto** (si carga la página de Apache):
+```bash
+sudo a2dissite 000-default.conf
+sudo systemctl restart apache2
+```
+
+13. **Agregar al archivo hosts** (si usas dominio local):
+```bash
+sudo nano /etc/hosts
+```
+Agregar línea:
+```
+127.0.0.1    blog.local
+```
+
+---
+
+## 🐧 Linux (Debian/Ubuntu) con LEMP (Nginx)
+
+### Requisitos
+- Debian 11+ o Ubuntu 20.04+
+- Acceso root o sudo
+
+### Pasos
+
+1. **Actualizar sistema**:
+```bash
+sudo apt update && sudo apt upgrade -y
+```
+
+2. **Instalar LEMP**:
+```bash
+sudo apt install nginx mariadb-server php-fpm php-mysql php-cli php-zip php-curl php-xml php-mbstring php-gd unzip git -y
+```
+
+3. **Habilitar servicios**:
+```bash
+sudo systemctl enable nginx mariadb php-fpm
+sudo systemctl start nginx mariadb php-fpm
+```
+
+4. **Configurar MariaDB**:
+```bash
+sudo mysql -u root
+```
+
+```sql
+CREATE DATABASE blog_tutoriales CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER 'bloguser'@'localhost' IDENTIFIED BY 'blogpass';
+GRANT ALL PRIVILEGES ON blog_tutoriales.* TO 'bloguser'@'localhost';
+FLUSH PRIVILEGES;
+EXIT;
+```
+
+5. **Descargar proyecto**:
+```bash
+cd /var/www/html
+sudo git clone https://github.com/leninobregon/blog_v2.git blog_responsivo
+```
+
+6. **Permisos**:
+```bash
+sudo chown -R www-data:www-data /var/www/html/blog_responsivo
+sudo chmod -R 755 /var/www/html/blog_responsivo
+sudo chmod 777 /var/www/html/blog_responsivo/uploads
+sudo chmod 777 /var/www/html/blog_responsivo/db
+```
+
+7. **Configurar Nginx**:
+```bash
+sudo nano /etc/nginx/sites-available/blog_responsivo
+```
+
+```nginx
+server {
+    listen 80;
+    server_name tu-servidor;
+    root /var/www/html/blog_responsivo;
+    index index.php index.html;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location ~ \.php$ {
+        include fastcgi_params;
+        fastcgi_pass unix:/run/php/php-fpm.sock;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    }
+
+    location ~ /\.ht {
+        deny all;
+    }
+}
+```
+
+8. **Habilitar sitio**:
+```bash
+sudo ln -s /etc/nginx/sites-available/blog_responsivo /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl reload nginx
+```
+
+9. **Instalar** (elige una opción):
+
+**Opción A - Importar SQL (con datos de ejemplo)**:
+```bash
+sudo mysql -u bloguser -p blog_tutoriales < /var/www/html/blog_responsivo/db/blog_tutoriales.sql
+```
+
+**Opción B - Importar SQL (vacío, solo admin)**:
+```bash
+sudo mysql -u bloguser -p blog_tutoriales < /var/www/html/blog_responsivo/db/blog_tutoriales_empty.sql
+```
+
+10. **Configurar credenciales** en `config.php`:
+```php
+'db' => array (
+  'host' => 'localhost',
+  'user' => 'bloguser',
+  'pass' => 'blogpass',
+  'name' => 'blog_tutoriales',
+),
+```
+
+---
+
 ## 🦊 Linux (Fedora) con LAMP
 
 ### Requisitos
