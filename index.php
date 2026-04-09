@@ -71,8 +71,13 @@ if (isset($routes[$method][$uri])) {
     [$controller, $action] = $routes[$method][$uri];
     $controllerInstance = new $controller();
     
-    if ($action === 'show' && isset($_GET['id'])) {
-        $controllerInstance->show((int)$_GET['id']);
+    if ($action === 'show') {
+        if (isset($_GET['id'])) {
+            $controllerInstance->show((int)$_GET['id']);
+        } else {
+            header('Location: /');
+            exit;
+        }
     } else {
         $controllerInstance->$action();
     }
