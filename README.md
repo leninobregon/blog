@@ -483,13 +483,13 @@ FLUSH PRIVILEGES;
 EXIT;
 ```
 
-5. **Descargar proyecto**:
+6. **Descargar proyecto**:
 ```bash
 cd /var/www/html
 sudo git clone https://github.com/leninobregon/blog_v2.git blog_responsivo
 ```
 
-6. **Permisos**:
+7. **Permisos**:
 ```bash
 sudo chown -R apache:apache /var/www/html/blog_responsivo
 sudo chmod -R 755 /var/www/html/blog_responsivo
@@ -497,19 +497,19 @@ sudo chmod 777 /var/www/html/blog_responsivo/uploads
 sudo chmod 777 /var/www/html/blog_responsivo/db
 ```
 
-7. **Configurar firewall**:
+8. **Configurar firewall**:
 ```bash
 sudo firewall-cmd --permanent --add-service=http --add-service=https
 sudo firewall-cmd --reload
 ```
 
-8. **Permitir Apache en SELinux**:
+9. **Permitir Apache en SELinux**:
 ```bash
 sudo setsebool -P httpd_can_network_connect 1
 sudo setsebool -P httpd_read_user_content 1
 ```
 
-9. **Configurar VirtualHost**:
+10. **Configurar VirtualHost**:
 ```bash
 sudo nano /etc/httpd/conf.d/blog_responsivo.conf
 ```
@@ -530,7 +530,6 @@ sudo nano /etc/httpd/conf.d/blog_responsivo.conf
 </VirtualHost>
 ```
 
-10. **Reiniciar Apache**:
 ```bash
 sudo httpd -t
 sudo systemctl restart httpd
@@ -557,8 +556,6 @@ sudo systemctl restart httpd
   'name' => 'blog_tutoriales',
 ),
 ```
-
-> ⚠️ **NOTA**: El instalador ya no se incluye. Usa las opciones de arriba para importar la base de datos.
 
 ---
 
@@ -589,7 +586,12 @@ sudo systemctl enable nginx mariadb php-fpm
 sudo systemctl start nginx mariadb php-fpm
 ```
 
-4. **Configurar MariaDB**:
+4. **IMPORTANTE: Configurar acceso root para PHP**:
+```bash
+sudo mysql -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password; FLUSH PRIVILEGES;"
+```
+
+5. **Configurar MariaDB**:
 ```bash
 sudo mysql -u root
 ```
@@ -602,13 +604,13 @@ FLUSH PRIVILEGES;
 EXIT;
 ```
 
-5. **Descargar proyecto**:
+6. **Descargar proyecto**:
 ```bash
 cd /var/www/html
 sudo git clone https://github.com/leninobregon/blog_v2.git blog_responsivo
 ```
 
-6. **Permisos**:
+7. **Permisos**:
 ```bash
 sudo chown -R nginx:nginx /var/www/html/blog_responsivo
 sudo chmod -R 755 /var/www/html/blog_responsivo
@@ -616,7 +618,7 @@ sudo chmod 777 /var/www/html/blog_responsivo/uploads
 sudo chmod 777 /var/www/html/blog_responsivo/db
 ```
 
-7. **Configurar Nginx**:
+8. **Configurar Nginx**:
 ```bash
 sudo nano /etc/nginx/conf.d/blog_responsivo.conf
 ```
@@ -645,24 +647,24 @@ server {
 }
 ```
 
-8. **Verificar y reiniciar**:
+9. **Verificar y reiniciar**:
 ```bash
 sudo nginx -t
 sudo systemctl restart nginx php-fpm
 ```
 
-9. **Configurar firewall**:
+10. **Configurar firewall**:
 ```bash
 sudo firewall-cmd --permanent --add-service=http --add-service=https
 sudo firewall-cmd --reload
 ```
 
-10. **Permitir Nginx en SELinux**:
+11. **Permitir Nginx en SELinux**:
 ```bash
 sudo setsebool -P httpd_can_network_connect 1
 ```
 
-11. **Instalar** (elige una opción):
+12. **Instalar** (elige una opción):
 
    **Opción A - Importar SQL (con datos de ejemplo)**:
    ```bash
@@ -674,7 +676,7 @@ sudo setsebool -P httpd_can_network_connect 1
    sudo mysql -u bloguser -p blog_tutoriales < /var/www/html/blog_responsivo/db/blog_tutoriales_empty.sql
    ```
 
-12. **Configurar credenciales** en `config.php`:
+13. **Configurar credenciales** en `config.php`:
 ```php
 'db' => array (
   'host' => 'localhost',
@@ -684,11 +686,13 @@ sudo setsebool -P httpd_can_network_connect 1
 ),
 ```
 
-> ⚠️ **NOTA**: El instalador ya no se incluye. Usa las opciones de arriba para importar la base de datos.
-
 ---
 
 ## 🐉 Linux (RHEL/CentOS/Rocky/AlmaLinux) con LAMP
+
+### Requisitos
+- RHEL 8+ / CentOS 8+ / Rocky 8+ / AlmaLinux 8+
+- Acceso root o sudo
 
 ### Pasos
 
@@ -704,8 +708,8 @@ sudo dnf install httpd mariadb-server php php-mysqlnd php-json php-zip php-curl 
 
 3. **Habilitar servicios**:
 ```bash
-sudo systemctl enable nginx mariadb php-fpm
-sudo systemctl start nginx mariadb php-fpm
+sudo systemctl enable httpd mariadb
+sudo systemctl start httpd mariadb
 ```
 
 4. **IMPORTANTE: Configurar acceso root para PHP**:
@@ -726,15 +730,80 @@ FLUSH PRIVILEGES;
 EXIT;
 ```
 
-5. **Descargar proyecto** y configurar (igual que Fedora)
+6. **Descargar proyecto**:
+```bash
+cd /var/www/html
+sudo git clone https://github.com/leninobregon/blog_v2.git blog_responsivo
+```
 
-6. **Configurar firewall**:
+7. **Permisos**:
+```bash
+sudo chown -R apache:apache /var/www/html/blog_responsivo
+sudo chmod -R 755 /var/www/html/blog_responsivo
+sudo chmod 777 /var/www/html/blog_responsivo/uploads
+sudo chmod 777 /var/www/html/blog_responsivo/db
+```
+
+8. **Configurar firewall**:
 ```bash
 sudo firewall-cmd --permanent --add-service=http --add-service=https
 sudo firewall-cmd --reload
 ```
 
-7. **Permitir Apache en SELinux**:
+9. **Permitir Apache en SELinux**:
+```bash
+sudo setsebool -P httpd_can_network_connect 1
+sudo setsebool -P httpd_read_user_content 1
+```
+
+10. **Configurar VirtualHost**:
+```bash
+sudo nano /etc/httpd/conf.d/blog_responsivo.conf
+```
+
+```apache
+<VirtualHost *:80>
+    ServerName tu-servidor
+    DocumentRoot /var/www/html/blog_responsivo
+
+    <Directory /var/www/html/blog_responsivo>
+        Options -Indexes +FollowSymLinks
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+    ErrorLog /var/log/httpd/blog_error.log
+    CustomLog /var/log/httpd/blog_access.log combined
+</VirtualHost>
+```
+
+11. **Reiniciar Apache**:
+```bash
+sudo httpd -t
+sudo systemctl restart httpd
+```
+
+12. **Instalar** (elige una opción):
+
+   **Opción A - Importar SQL (con datos de ejemplo)**:
+   ```bash
+   sudo mysql -u bloguser -p blog_tutoriales < /var/www/html/blog_responsivo/db/blog_tutoriales.sql
+   ```
+
+   **Opción B - Importar SQL (vacío, solo admin)**:
+   ```bash
+   sudo mysql -u bloguser -p blog_tutoriales < /var/www/html/blog_responsivo/db/blog_tutoriales_empty.sql
+   ```
+
+13. **Configurar credenciales** en `config.php`:
+```php
+'db' => array (
+  'host' => 'localhost',
+  'user' => 'bloguser',
+  'pass' => 'blogpass',
+  'name' => 'blog_tutoriales',
+),
+```
 ```bash
 sudo setsebool -P httpd_can_network_connect 1
 sudo setsebool -P httpd_read_user_content 1
