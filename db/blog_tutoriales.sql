@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 08-04-2026 a las 17:23:58
+-- Tiempo de generación: 10-04-2026 a las 00:56:58
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.0.30
 
@@ -96,7 +96,41 @@ INSERT INTO `audit_logs` (`id`, `action`, `user_id`, `username`, `ip_address`, `
 (22, 'admin_login', 1, 'admin', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'admin/login.php', 'Admin logged in successfully', '2026-04-08 09:05:16'),
 (23, 'user_login', 6, 'aobregon', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'auth.php', 'User logged in successfully', '2026-04-08 09:12:03'),
 (24, 'user_logout', 6, 'aobregon', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'auth.php', 'User logged out', '2026-04-08 09:12:34'),
-(25, 'user_login', 2, 'juanperez', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'auth.php', 'User logged in successfully', '2026-04-08 09:12:47');
+(25, 'user_login', 2, 'juanperez', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'auth.php', 'User logged in successfully', '2026-04-08 09:12:47'),
+(26, 'admin_login', 1, 'admin', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 OPR/129.0.0.0', 'admin/login.php', 'Admin logged in successfully', '2026-04-08 14:14:08'),
+(27, 'admin_login', 1, 'admin', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 OPR/129.0.0.0', 'admin/login.php', 'Admin logged in successfully', '2026-04-08 14:28:52'),
+(28, 'user_login', 6, 'aobregon', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 OPR/129.0.0.0', 'auth.php', 'User logged in successfully', '2026-04-08 14:32:56'),
+(29, 'user_logout', 6, 'aobregon', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 OPR/129.0.0.0', 'auth.php', 'User logged out', '2026-04-08 14:33:09'),
+(30, 'login_failed', NULL, 'aobregon', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'auth.php', 'Failed login attempt', '2026-04-08 16:36:04'),
+(31, 'user_login', 6, 'aobregon', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'auth.php', 'User logged in successfully', '2026-04-08 16:36:12'),
+(32, 'user_logout', 6, 'aobregon', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'auth.php', 'User logged out', '2026-04-08 16:36:42'),
+(33, 'login_failed', NULL, 'aobregon', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'auth.php', 'Failed login attempt', '2026-04-08 16:47:48'),
+(34, 'user_login', 6, 'aobregon', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'auth.php', 'User logged in successfully', '2026-04-08 16:47:54'),
+(35, 'user_logout', 6, 'aobregon', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'auth.php', 'User logged out', '2026-04-08 16:48:01'),
+(36, 'user_login', 6, 'aobregon', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 OPR/129.0.0.0', 'auth.php', 'User logged in successfully', '2026-04-08 16:56:19'),
+(37, 'user_logout', 6, 'aobregon', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 OPR/129.0.0.0', 'auth.php', 'User logged out', '2026-04-08 17:02:41'),
+(38, 'login_failed', NULL, 'aobregon', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'auth.php', 'Failed login attempt', '2026-04-09 07:33:32'),
+(39, 'login_failed', NULL, 'aobregon', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'auth.php', 'Failed login attempt', '2026-04-09 07:33:39'),
+(40, 'login_failed', NULL, 'aobregon', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'auth.php', 'Failed login attempt', '2026-04-09 16:27:17'),
+(41, 'login_failed', NULL, 'aobregon', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'auth.php', 'Failed login attempt', '2026-04-09 16:27:24'),
+(42, 'login_failed', NULL, 'aobregon', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'auth.php', 'Failed login attempt', '2026-04-09 16:27:31'),
+(43, 'user_login', 6, 'aobregon', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'auth.php', 'User logged in successfully', '2026-04-09 16:27:41'),
+(44, 'user_logout', 6, 'aobregon', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'auth.php', 'User logged out', '2026-04-09 16:27:51'),
+(45, 'admin_login', 1, 'admin', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'admin/login.php', 'Admin logged in successfully', '2026-04-09 16:28:02'),
+(46, 'user_login', 6, 'aobregon', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'auth.php', 'User logged in successfully', '2026-04-09 16:29:36'),
+(47, 'user_logout', 6, 'aobregon', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'auth.php', 'User logged out', '2026-04-09 16:30:25'),
+(48, 'login_failed', NULL, 'aobregon', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'auth.php', 'Failed login attempt', '2026-04-09 16:32:32'),
+(49, 'login_failed', NULL, 'aobregon', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'auth.php', 'Failed login attempt', '2026-04-09 16:32:38'),
+(50, 'user_login', 6, 'aobregon', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'auth.php', 'User logged in successfully', '2026-04-09 16:32:45'),
+(51, 'user_login', 6, 'aobregon', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'auth.php', 'User logged in successfully', '2026-04-09 16:50:14'),
+(52, 'user_logout', 6, 'aobregon', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'auth.php', 'User logged out', '2026-04-09 16:50:18'),
+(53, 'user_logout', 6, 'aobregon', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'auth.php', 'User logged out', '2026-04-09 16:50:29'),
+(54, 'user_login', 6, 'aobregon', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'auth.php', 'User logged in successfully', '2026-04-09 16:50:40'),
+(55, 'user_logout', 6, 'aobregon', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'auth.php', 'User logged out', '2026-04-09 16:52:48'),
+(56, 'admin_login', 1, 'admin', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'admin/login.php', 'Admin logged in successfully', '2026-04-09 16:53:54'),
+(57, 'user_delete', 3, 'maria-dev', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'admin/users.php', 'Deleted user: maria-dev', '2026-04-09 16:54:06'),
+(58, 'user_delete', 5, 'pepe123', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'admin/users.php', 'Deleted user: pepe123', '2026-04-09 16:54:10'),
+(59, 'user_update', 1, 'admin', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'admin/users.php', 'Updated user: admin (ID: 1)', '2026-04-09 16:54:30');
 
 -- --------------------------------------------------------
 
@@ -119,7 +153,9 @@ CREATE TABLE `comments` (
 INSERT INTO `comments` (`id`, `post_id`, `user_id`, `content`, `created_at`) VALUES
 (1, 11, 6, 'gracias', '2026-04-07 15:36:47'),
 (2, 12, 6, 'muchas, gracias por el post, esta interesante', '2026-04-07 15:38:54'),
-(3, 12, 6, 'bien', '2026-04-08 09:12:16');
+(3, 12, 6, 'bien', '2026-04-08 09:12:16'),
+(4, 3, 6, 'ok', '2026-04-09 16:27:49'),
+(5, 12, 6, 'ok', '2026-04-09 16:29:44');
 
 -- --------------------------------------------------------
 
@@ -168,18 +204,18 @@ CREATE TABLE `posts` (
 --
 
 INSERT INTO `posts` (`id`, `title`, `category`, `content`, `image`, `video`, `author_id`, `views`, `created_at`) VALUES
-(1, 'Bienvenido al Blog', 'General', '# Bienvenido\n\nEste es un blog de tutoriales sobre programación, Linux y seguridad.', NULL, NULL, 1, 5, '2026-04-01 15:07:39'),
+(1, 'Bienvenido al Blog', 'General', '# Bienvenido\n\nEste es un blog de tutoriales sobre programación, Linux y seguridad.', NULL, NULL, 1, 6, '2026-04-01 15:07:39'),
 (2, 'Introducción a Linux', 'Linux', '# Introducción a Linux\n\nLinux es un sistema operativo de código abierto.\n\n## Distribuciones\n- Ubuntu\n- Debian\n\n```bash\nls -la\ncd /home\n```', NULL, NULL, 1, 3, '2026-04-01 15:07:39'),
-(3, 'Tutorial de Python', 'Programación', '# Tutorial de Python\n\n```python\nnombre = \"Juan\"\nedad = 25\n```', NULL, NULL, 2, 1, '2026-04-01 15:07:39'),
+(3, 'Tutorial de Python', 'Programación', '# Tutorial de Python\n\n```python\nnombre = \"Juan\"\nedad = 25\n```', NULL, NULL, 2, 2, '2026-04-01 15:07:39'),
 (4, 'Configurar SSH', 'Linux', '# Configurar SSH\r\n\r\n```bash\r\nsudo apt update\r\nsudo apt install openssh-server\r\nsudo systemctl start ssh\r\nsudo systemctl enable ssh\r\n```\r\n\r\n## Conectar\r\n```bash\r\nssh usuario@servidor\r\n```', NULL, 'https://www.youtube.com/watch?v=c0HtiBbVsFQ', 1, 12, '2026-04-01 15:07:39'),
-(5, 'Comandos Servidor', 'Linux', '# Comandos básicos servidor\n\n## Archivos\n```bash\nls -la\ncd /home\nmkdir carpeta\nrm archivo\ncp origen destino\nmv origen destino\n```\n\n## Paquetes\n```bash\nsudo apt update\nsudo apt upgrade\nsudo apt install nombre\n```\n\n## Servicios\n```bash\nsudo systemctl status nginx\nsudo systemctl start nginx\nsudo systemctl stop nginx\nsudo systemctl restart nginx\n```\n\n## Usuarios\n```bash\nsudo adduser nombre\nsudo usermod -aG sudo nombre\n```', NULL, NULL, 1, 1, '2026-04-01 15:07:39'),
+(5, 'Comandos Servidor', 'Linux', '# Comandos básicos servidor\n\n## Archivos\n```bash\nls -la\ncd /home\nmkdir carpeta\nrm archivo\ncp origen destino\nmv origen destino\n```\n\n## Paquetes\n```bash\nsudo apt update\nsudo apt upgrade\nsudo apt install nombre\n```\n\n## Servicios\n```bash\nsudo systemctl status nginx\nsudo systemctl start nginx\nsudo systemctl stop nginx\nsudo systemctl restart nginx\n```\n\n## Usuarios\n```bash\nsudo adduser nombre\nsudo usermod -aG sudo nombre\n```', NULL, NULL, 1, 2, '2026-04-01 15:07:39'),
 (6, 'LAMP Debian/Ubuntu', 'Linux', '# LAMP Server\n\nLAMP = Linux + Apache + MySQL + PHP\n\n```bash\n# Apache\nsudo apt install apache2 -y\n\n# MySQL\nsudo apt install mariadb-server -y\nsudo mysql_secure_installation\n\n# PHP\nsudo apt install php libapache2-mod-php php-mysql -y\n\n# Verificar\necho \"<?php phpinfo(); ?>\" | sudo tee /var/www/html/info.php\n```', NULL, NULL, 1, 1, '2026-04-01 15:07:39'),
 (7, 'Firewall UFW', 'Linux', '# Firewall UFW\n\n```bash\n# Instalar\nsudo apt install ufw\n\n# Reglas\nsudo ufw allow ssh\nsudo ufw allow 80/tcp\nsudo ufw allow 443/tcp\n\n# Habilitar\nsudo ufw enable\n\n# Ver estado\nsudo ufw status\n```\n\n## Otras reglas\n```bash\nsudo ufw allow 22/tcp\nsudo ufw allow 3306/tcp  # MySQL\nsudo ufw allow 8080/tcp\n```', NULL, NULL, 1, 0, '2026-04-01 15:07:39'),
 (8, 'Servidor NFS', 'Linux', '# Servidor NFS\n\nNFS permite compartir archivos entre servidores.\n\n## Servidor\n```bash\nsudo apt install nfs-kernel-server\nsudo mkdir -p /var/nfs/compartido\nsudo chmod 777 /var/nfs/compartido\n\n# Editar /etc/exports\n/var/nfs/compartido 192.168.1.0/24(rw,sync,no_subtree_check)\n\nsudo exportfs -a\nsudo systemctl restart nfs-kernel-server\n```\n\n## Cliente\n```bash\nsudo apt install nfs-common\nsudo mkdir -p /mnt/nfs\nsudo mount 192.168.1.100:/var/nfs/compartido /mnt/nfs\n```', NULL, NULL, 1, 1, '2026-04-01 15:07:39'),
 (9, 'Nginx Reverse Proxy', 'Linux', '# Nginx como Proxy Inverso\n\n```bash\nsudo apt install nginx\n```\n\n## Configurar\n```nginx\nserver {\n    listen 80;\n    server_name mi-dominio.com;\n    \n    location / {\n        proxy_pass http://127.0.0.1:3000;\n        proxy_set_header Host $host;\n        proxy_set_header X-Real-IP $remote_addr;\n        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;\n    }\n}\n```\n\n## Activar\n```bash\nsudo ln -s /etc/nginx/sites-available/mi-dominio /etc/nginx/sites-enabled/\nsudo nginx -t\nsudo systemctl reload nginx\n```', NULL, NULL, 1, 0, '2026-04-01 15:07:39'),
 (10, 'Usuario Sudo', 'Linux', '# Crear Usuario Sudo\n\n```bash\n# Crear usuario\nsudo adduser nombre_usuario\n\n# Agregar a grupo sudo\nsudo usermod -aG sudo nombre_usuario\n\n# Verificar\nsu - nombre_usuario\nsudo whoami\n# Debe mostrar: root\n```\n\n## Editar sudoers\n```bash\nsudo visudo\n# Agregar:\nnombre_usuario ALL=(ALL:ALL) ALL\n```', NULL, NULL, 1, 1, '2026-04-01 15:07:39'),
-(11, 'Redes Sociales', 'General', '*Las redes sociales son plataformas digitales que facilitan la comunicación, interacción y creación de comunidades en tiempo real. Permiten compartir información, fotos y videos, actuando como canales estratégicos para usuarios y empresas. Las más populares incluyen Facebook, YouTube, WhatsApp, Instagram y TikTok, evolucionando la comunicación hacia un entorno altamente dinámico e interconectado. \r\nCyberclick\r\nCyberclick\r\n +4\r\nTipos de Redes Sociales\r\nHorizontales: Generales, sin temática específica (ej. Facebook, Instagram).\r\nVerticales: Enfocadas a un público o tema concreto, ya sea profesional (LinkedIn), ocio, o contenido audiovisual (YouTube). \r\nRD Station\r\nRD Station\r\n \r\n\r\nPrincipales Ventajas y Desventajas\r\nVentajas: Inmediatez, democratización de la información, potencial alcance de exposición y oportunidades laborales.\r\nDesventajas: Riesgo de adicción, exposición a contenidos inapropiados, impacto negativo en la salud mental y ciberacoso. \r\nFacultad de Comunicación - Universidad ORT Uruguay\r\nFacultad de Comunicación - Universidad ORT Uruguay\r\n\r\n \r\nEvolución e Historia\r\nSurgieron a principios de los 2000 (ej. SixDegrees, Friendster) y vivieron un auge con la llegada de plataformas como YouTube (2005) y la consolidación de Facebook en 2008. Actualmente, muchas aplicaciones de mensajería (WhatsApp, Telegram) se consideran redes sociales por sus funcionalidades de comunidad y contenido compartido. \r\nCEI: Centro de Estudios de Innovación\r\nCEI: Centro de Estudios de Innovación\r\n\r\n *', NULL, '', 2, 69, '2026-04-01 15:18:38'),
-(12, 'Inteligencía Artificial', 'General', 'a Inteligencia Artificial (IA) es un conjunto de tecnologías que permiten a las computadoras simular la inteligencia humana para aprender, razonar, resolver problemas y generar contenido. Abarca disciplinas como el aprendizaje automático (machine learning) y el procesamiento del lenguaje, automatizando tareas avanzadas para mejorar la eficiencia y la toma de decisiones. \r\nGoogle Cloud\r\nGoogle Cloud\r\n +2\r\nAquí hay información clave sobre la IA:\r\n¿Qué hace?: Los sistemas de IA pueden entender el lenguaje humano, reconocer imágenes, tomar decisiones, aprender de nuevas experiencias y crear contenidos originales (IA generativa).\r\nComponentes Fundamentales: Se basa en tres pilares: sistemas computacionales, grandes volúmenes de datos y algoritmos avanzados (código).\r\nAplicaciones Comunes: Incluye asistentes virtuales (como Alexa), motores de búsqueda, vehículos autónomos, reconocimiento facial y recomendaciones personalizadas en compras y entretenimiento.\r\nHistoria: El término fue acuñado en 1956 durante el Dartmouth Summer Research Project on Artificial Intelligence.\r\nRiesgos: La IA enfrenta desafíos como el sesgo en los datos, problemas de seguridad y la necesidad de proteger la privacidad de la información. \r\nIBM\r\nIBM\r\n +7\r\nLos principales beneficios de la IA incluyen la automatización de tareas repetitivas, el análisis predictivo para mejorar pronósticos y la capacidad de fomentar la innovación en áreas como la medicina, las finanzas y la manufactura.\r\n\r\nGracias', NULL, '', 2, 11, '2026-04-07 15:37:56');
+(11, 'Redes Sociales', 'General', '*Las redes sociales son plataformas digitales que facilitan la comunicación, interacción y creación de comunidades en tiempo real. Permiten compartir información, fotos y videos, actuando como canales estratégicos para usuarios y empresas. Las más populares incluyen Facebook, YouTube, WhatsApp, Instagram y TikTok, evolucionando la comunicación hacia un entorno altamente dinámico e interconectado. \r\nCyberclick\r\nCyberclick\r\n +4\r\nTipos de Redes Sociales\r\nHorizontales: Generales, sin temática específica (ej. Facebook, Instagram).\r\nVerticales: Enfocadas a un público o tema concreto, ya sea profesional (LinkedIn), ocio, o contenido audiovisual (YouTube). \r\nRD Station\r\nRD Station\r\n \r\n\r\nPrincipales Ventajas y Desventajas\r\nVentajas: Inmediatez, democratización de la información, potencial alcance de exposición y oportunidades laborales.\r\nDesventajas: Riesgo de adicción, exposición a contenidos inapropiados, impacto negativo en la salud mental y ciberacoso. \r\nFacultad de Comunicación - Universidad ORT Uruguay\r\nFacultad de Comunicación - Universidad ORT Uruguay\r\n\r\n \r\nEvolución e Historia\r\nSurgieron a principios de los 2000 (ej. SixDegrees, Friendster) y vivieron un auge con la llegada de plataformas como YouTube (2005) y la consolidación de Facebook en 2008. Actualmente, muchas aplicaciones de mensajería (WhatsApp, Telegram) se consideran redes sociales por sus funcionalidades de comunidad y contenido compartido. \r\nCEI: Centro de Estudios de Innovación\r\nCEI: Centro de Estudios de Innovación\r\n\r\n *', NULL, '', 2, 70, '2026-04-01 15:18:38'),
+(12, 'Inteligencía Artificial', 'General', 'a Inteligencia Artificial (IA) es un conjunto de tecnologías que permiten a las computadoras simular la inteligencia humana para aprender, razonar, resolver problemas y generar contenido. Abarca disciplinas como el aprendizaje automático (machine learning) y el procesamiento del lenguaje, automatizando tareas avanzadas para mejorar la eficiencia y la toma de decisiones. \r\nGoogle Cloud\r\nGoogle Cloud\r\n +2\r\nAquí hay información clave sobre la IA:\r\n¿Qué hace?: Los sistemas de IA pueden entender el lenguaje humano, reconocer imágenes, tomar decisiones, aprender de nuevas experiencias y crear contenidos originales (IA generativa).\r\nComponentes Fundamentales: Se basa en tres pilares: sistemas computacionales, grandes volúmenes de datos y algoritmos avanzados (código).\r\nAplicaciones Comunes: Incluye asistentes virtuales (como Alexa), motores de búsqueda, vehículos autónomos, reconocimiento facial y recomendaciones personalizadas en compras y entretenimiento.\r\nHistoria: El término fue acuñado en 1956 durante el Dartmouth Summer Research Project on Artificial Intelligence.\r\nRiesgos: La IA enfrenta desafíos como el sesgo en los datos, problemas de seguridad y la necesidad de proteger la privacidad de la información. \r\nIBM\r\nIBM\r\n +7\r\nLos principales beneficios de la IA incluyen la automatización de tareas repetitivas, el análisis predictivo para mejorar pronósticos y la capacidad de fomentar la innovación en áreas como la medicina, las finanzas y la manufactura.\r\n\r\nGracias', NULL, '', 2, 22, '2026-04-07 15:37:56');
 
 -- --------------------------------------------------------
 
@@ -198,7 +234,7 @@ CREATE TABLE `site_stats` (
 --
 
 INSERT INTO `site_stats` (`id`, `total_hits`, `updated_at`) VALUES
-(1, 513, '2026-04-08 09:13:52');
+(1, 570, '2026-04-09 16:53:14');
 
 -- --------------------------------------------------------
 
@@ -234,12 +270,10 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `email`, `password`, `role`, `first_name`, `last_name`, `phone`, `avatar`, `bio`, `facebook`, `twitter`, `telegram`, `instagram`, `youtube`, `linkedin`, `website`, `recovery_question`, `recovery_answer`, `created_at`) VALUES
-(1, 'admin', 'admin@blog.com', '$2y$12$H4Guv2Pbyb9o3MfZZs1LzucgCBt/dZuXNem9UurTN.67L3x4sByju', 'admin', 'Admin', 'Principal', '+5911234567', 'uploads/69cd97feb0466.jpg', 'Administrador del blog', '', '', '', '', 'www.youtube.com/@leninobregonespinoza2160', '', '', '¿Cuál es el nombre de tu primera mascota?', 'blog$$', '2026-04-01 15:07:39'),
+(1, 'admin', 'admin@blog.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin', 'Admin', 'Principal', '+505 81996802', 'uploads/69cd97feb0466.jpg', 'Administrador del blog', '', '', '', '', 'www.youtube.com/@leninobregonespinoza2160', '', '', '¿Cuál es el nombre de tu primera mascota?', 'admin123', '2026-04-01 15:07:39'),
 (2, 'juanperez', 'juan@email.com', '$2y$10$YYr6n0XSWU.DhUPZIzL2m.1yuyFVK1SYilaO7KaesX3bm4E5FbxFS', 'author', 'Juan', 'Perez', '+5912234567', NULL, 'Desarrollador web', '', '', '', '', '', '', '', '¿Cuál es tu ciudad natal?', 'lapaz', '2026-04-01 15:07:39'),
-(3, 'maria-dev', 'maria@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'author', 'Maria', 'Garcia', '+5913234567', NULL, 'Desarrolladora Python', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '¿Cuál es tu comida favorita?', 'pizza', '2026-04-01 15:07:39'),
 (4, 'carloslopez', 'carlos@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'user', 'Carlos', 'Lopez', '+5914234567', NULL, 'Sysadmin', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '¿Cuál es el nombre de tu mejor amigo?', 'luis', '2026-04-01 15:07:39'),
-(5, 'pepe123', 'pepe@email.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'user', 'Jose', 'Ruiz', '+5915234567', NULL, 'Estudiante', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '¿Cuál es el nombre de tu escuela primaria?', 'sanignacio', '2026-04-01 15:07:39'),
-(6, 'aobregon', 'aobregon@gmail.com', '$2y$10$LXujJbYDTBhQtJJu0k.PyunmyHNqoyvKtCJE0.TVFjqGX948fagFG', 'user', 'Arian', 'Obregon', '+50598999999', 'uploads/69cd97d2df438.avif', '', '', '', '', '', '', '', '', '¿Cuál es el nombre de tu primera mascota?', 'chigui', '2026-04-01 16:05:48');
+(6, 'aobregon', 'aobregon@gmail.com', '$2y$10$QCUtMparyWPOGZ0.3CtU3eA3Pw9kvb7p7dKn1/AHRDLj0DhmcoYPK', 'user', 'Arian', 'Obregon', '+50598999999', 'uploads/69cd97d2df438.avif', '', '', '', '', '', '', '', '', '¿Cuál es el nombre de tu primera mascota?', 'chigui', '2026-04-01 16:05:48');
 
 -- --------------------------------------------------------
 
@@ -900,7 +934,51 @@ INSERT INTO `visit_logs` (`id`, `page`, `ip`, `user_agent`, `referer`, `created_
 (634, '/proyecto/blog_responsivo/', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'http://localhost/proyecto/blog_responsivo/post.php?id=12', '2026-04-08 09:12:31'),
 (635, '/proyecto/blog_responsivo/', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'http://localhost/proyecto/blog_responsivo/', '2026-04-08 09:12:34'),
 (636, '/proyecto/blog_responsivo/', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'http://localhost/proyecto/blog_responsivo/auth.php', '2026-04-08 09:12:47'),
-(637, '/proyecto/blog_responsivo/index.php', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'http://localhost/proyecto/blog_responsivo/user/index.php', '2026-04-08 09:13:48');
+(637, '/proyecto/blog_responsivo/index.php', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'http://localhost/proyecto/blog_responsivo/user/index.php', '2026-04-08 09:13:48'),
+(638, '/', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', '', '2026-04-08 14:13:24'),
+(639, '/', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 OPR/129.0.0.0', '', '2026-04-08 14:13:51'),
+(640, '//', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 OPR/129.0.0.0', 'http://192.168.5.54:81/auth.php', '2026-04-08 14:13:58'),
+(641, '//index.php', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 OPR/129.0.0.0', 'http://192.168.5.54:81//admin/login.php', '2026-04-08 14:14:17'),
+(642, '/', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 OPR/129.0.0.0', '', '2026-04-08 14:27:02'),
+(643, '//?cat=Linux', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 OPR/129.0.0.0', 'http://192.168.5.54:81//post.php?id=11', '2026-04-08 14:28:14'),
+(644, '//?mes=2026-04', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 OPR/129.0.0.0', 'http://192.168.5.54:81//?cat=Linux', '2026-04-08 14:28:21'),
+(645, '/', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 OPR/129.0.0.0', 'http://192.168.5.54:81//lenin@ejemplo.com', '2026-04-08 14:28:41'),
+(646, '//index.php', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 OPR/129.0.0.0', 'https://192.168.5.54:4443//admin/login.php', '2026-04-08 14:31:33'),
+(647, '//', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 OPR/129.0.0.0', 'https://192.168.5.54:4443//auth.php', '2026-04-08 14:31:36'),
+(648, '//?cat=Linux', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 OPR/129.0.0.0', 'https://192.168.5.54:4443//', '2026-04-08 14:32:32'),
+(649, '//', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 OPR/129.0.0.0', 'https://192.168.5.54:4443//auth.php', '2026-04-08 14:32:56'),
+(650, '//', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 OPR/129.0.0.0', 'https://192.168.5.54:4443//profile.php', '2026-04-08 14:33:09'),
+(651, '/', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', '', '2026-04-08 16:34:27'),
+(652, '//', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'https://192.168.5.54:4443/auth.php?action=register', '2026-04-08 16:35:08'),
+(653, '//', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'https://192.168.5.54:4443//auth.php?action=register', '2026-04-08 16:35:21'),
+(654, '//', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'https://192.168.5.54:4443//auth.php', '2026-04-08 16:36:12'),
+(655, '//', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'https://192.168.5.54:4443//profile.php', '2026-04-08 16:36:42'),
+(656, '//', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'https://192.168.5.54:4443/auth.php?action=register', '2026-04-08 16:40:10'),
+(657, '//', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'https://192.168.5.54:4443/auth.php', '2026-04-08 16:41:37'),
+(658, '//', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'https://192.168.5.54:4443//auth.php?action=register', '2026-04-08 16:41:56'),
+(659, '//', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'https://192.168.5.54:4443//auth.php?action=login', '2026-04-08 16:45:53'),
+(660, '//', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'https://192.168.5.54:4443//auth.php', '2026-04-08 16:46:52'),
+(661, '//', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'https://192.168.5.54:4443//', '2026-04-08 16:46:54'),
+(662, '//', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'https://192.168.5.54:4443//auth.php', '2026-04-08 16:47:54'),
+(663, '//', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'https://192.168.5.54:4443//profile.php', '2026-04-08 16:48:01'),
+(664, '//', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36', 'https://192.168.5.54:4443//auth.php', '2026-04-08 16:49:24'),
+(665, '//', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 OPR/129.0.0.0', 'https://192.168.5.54:4443//auth.php', '2026-04-08 16:54:11'),
+(666, '//', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 OPR/129.0.0.0', 'https://192.168.5.54:4443//', '2026-04-08 16:54:13'),
+(667, '/', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 OPR/129.0.0.0', '', '2026-04-08 16:55:48'),
+(668, '//', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 OPR/129.0.0.0', 'https://192.168.5.54:4443//auth.php', '2026-04-08 16:56:19'),
+(669, '//', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 OPR/129.0.0.0', 'https://192.168.5.54:4443//', '2026-04-08 17:02:41'),
+(670, '/', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', '', '2026-04-08 20:28:02'),
+(671, '//', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'https://192.168.5.54:4443//auth.php', '2026-04-09 07:34:13'),
+(672, '//', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'https://192.168.5.54:4443//about.php', '2026-04-09 09:34:36'),
+(673, '//', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'https://192.168.5.54:4443//about.php', '2026-04-09 11:38:46'),
+(674, '/proyecto/blog_responsivo/', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'http://localhost/proyecto/', '2026-04-09 15:43:51'),
+(675, '/proyecto/blog_responsivo/', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'http://localhost/proyecto/blog_responsivo/post.php?id=3', '2026-04-09 16:27:51'),
+(676, '/', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', '', '2026-04-09 16:29:28'),
+(677, '//', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'https://192.168.5.54:4443//profile.php', '2026-04-09 16:30:25'),
+(678, '/proyecto/blog_responsivo/', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'http://localhost/proyecto/', '2026-04-09 16:50:05'),
+(679, '/proyecto/blog_responsivo/', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'http://localhost/proyecto/blog_responsivo/', '2026-04-09 16:50:18'),
+(680, '//', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'https://192.168.5.54:4443//profile.php', '2026-04-09 16:50:29'),
+(681, '//', '192.168.5.54', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0', 'https://192.168.5.54:4443//', '2026-04-09 16:52:48');
 
 --
 -- Índices para tablas volcadas
@@ -974,13 +1052,13 @@ ALTER TABLE `about`
 -- AUTO_INCREMENT de la tabla `audit_logs`
 --
 ALTER TABLE `audit_logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
 
 --
 -- AUTO_INCREMENT de la tabla `comments`
 --
 ALTER TABLE `comments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `newsletter`
@@ -1010,7 +1088,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT de la tabla `visit_logs`
 --
 ALTER TABLE `visit_logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=638;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=682;
 
 --
 -- Restricciones para tablas volcadas
