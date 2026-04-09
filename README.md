@@ -68,6 +68,17 @@ Blog de tutoriales para **Lenin Obregón Espinoza** (Ingeniero Nicaragüense). S
 
 ---
 
+## 🔑 Credenciales de Acceso
+
+| Campo | Valor |
+|-------|-------|
+| Admin URL | `/admin/` |
+| Usuario | `admin` |
+| Email | `admin@blog.com` |
+| Contraseña | `blog$$` |
+
+---
+
 ## 🏗️ Arquitectura PHP POO - MVC
 
 El blog está desarrollado con **Programación Orientada a Objetos (POO)** siguiendo el patrón **MVC (Modelo - Vista - Controlador)**.
@@ -1073,17 +1084,6 @@ blog_responsivo/
 ├── user/                      # Panel de usuario
 └── uploads/                   # Imágenes subidas
 ```
-
----
-
-## 🔑 Credenciales de Acceso
-
-| Campo | Valor |
-|-------|-------|
-| Admin URL | `/admin/` |
-| Usuario | `admin` |
-| Email | `admin@blog.com` |
-| Contraseña | `blog$$` |
 
 ---
 
