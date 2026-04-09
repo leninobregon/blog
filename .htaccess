@@ -1,16 +1,22 @@
-# 1. Activar el motor de reescritura
+# Activar RewriteEngine
 RewriteEngine On
 
-# 2. Evitar listado de archivos (Seguridad)
+# Evitar listado de directorios (Muy importante para seguridad)
 Options -Indexes
 
-# 3. --- MVC ROUTING UNIVERSAL ---
+# Bloquear acceso directo a archivos de configuración
+<FilesMatch "^(config\.php|db/)">
+    Require all denied
+</FilesMatch>
 
-# Si el archivo solicitado NO existe
+# Bloquear acceso a la carpeta db desde fuera
+RewriteRule ^db/ - [F,L]
+
+# --- MVC ROUTING ---
+# Redirige todo a index.php para el MVC
 RewriteCond %{REQUEST_FILENAME} !-f
-# Si la carpeta solicitada NO existe
 RewriteCond %{REQUEST_FILENAME} !-d
-
-# Redirigir a index.php de la carpeta actual
-# Nota: Quitamos la barra inicial "/" antes de index.php para que sea relativo
 RewriteRule ^(.*)$ index.php [L,QSA]
+
+# Redirigir errores 404 al blog
+ErrorDocument 404 /
