@@ -21,12 +21,8 @@ if (isset($_GET['lang'])) {
     if (empty($redir)) $redir = '/';
     
     $scheme = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
-    $host = $_SERVER['HTTP_HOST'];
-    $port = '';
-    if (isset($_SERVER['SERVER_PORT']) && !in_array($_SERVER['SERVER_PORT'], [80, 443])) {
-        $port = ':' . $_SERVER['SERVER_PORT'];
-    }
-    $fullUrl = $scheme . '://' . $host . $port . $redir;
+    $host = $_SERVER['HTTP_HOST']; // Ya incluye el puerto si existe
+    $fullUrl = $scheme . '://' . $host . $redir;
     header('Location: ' . $fullUrl);
     exit;
 }
