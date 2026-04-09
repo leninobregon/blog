@@ -174,271 +174,6 @@ Puedes importar el archivo SQL directamente:
 ),
 ```
 
-> ⚠️ **NOTA**: El instalador ya no se incluye. Usa las opciones de arriba para importar la base de datos.
-
-### URLs de Acceso
-
-| Página | URL |
-|--------|-----|
-| Blog | `http://localhost/proyecto/blog_responsivo/` |
-| Admin | `http://localhost/proyecto/blog_responsivo/admin/` |
-| Login | `http://localhost/proyecto/blog_responsivo/auth.php` |
-
-### Credenciales por defecto
-
-| Campo | Valor |
-|-------|-------|
-| Usuario | `admin` |
-| Email | `admin@blog.com` |
-| Contraseña | `blog$$` |
-
----
-
-## 🐧 Linux (Debian/Ubuntu) con LAMP
-
-### Requisitos
-- Debian 11+ o Ubuntu 20.04+
-- Acceso root o sudo
-
-### Pasos
-
-1. **Actualizar sistema**:
-```bash
-sudo apt update && sudo apt upgrade -y
-```
-
-2. **Instalar LAMP**:
-```bash
-sudo apt install apache2 mariadb-server php php-mysql php-cli php-zip php-curl php-xml php-mbstring php-gd unzip git -y
-```
-
-3. **Habilitar servicios**:
-```bash
-sudo systemctl enable apache2 mariadb
-sudo systemctl start apache2 mariadb
-```
-
-4. **IMPORTANTE: Configurar acceso root para PHP**:
-```bash
-sudo mysql -u root -p -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password; FLUSH PRIVILEGES;"
-```
-(presiona Enter cuando pida contraseña)
-
-5. **Configurar MariaDB**:
-```bash
-sudo mysql -u root
-```
-
-```sql
-CREATE DATABASE blog_tutoriales CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-CREATE USER 'bloguser'@'localhost' IDENTIFIED BY 'blogpass';
-GRANT ALL PRIVILEGES ON blog_tutoriales.* TO 'bloguser'@'localhost';
-FLUSH PRIVILEGES;
-EXIT;
-```
-
-5. **Descargar proyecto**:
-```bash
-cd /var/www/html
-sudo git clone https://github.com/leninobregon/blog_v2.git blog_responsivo
-```
-
-6. **Permisos**:
-```bash
-sudo chown -R www-data:www-data /var/www/html/blog_responsivo
-sudo chmod -R 755 /var/www/html/blog_responsivo
-sudo chmod 777 /var/www/html/blog_responsivo/uploads
-sudo chmod 777 /var/www/html/blog_responsivo/db
-```
-
-7. **Instalar** (elige una opción):
-
-   **Opción A - Importar SQL (con datos de ejemplo)**:
-   ```bash
-   sudo mysql -u bloguser -p blog_tutoriales < /var/www/html/blog_responsivo/db/blog_tutoriales.sql
-   ```
-
-   **Opción B - Importar SQL (vacío, solo admin)**:
-   ```bash
-   sudo mysql -u bloguser -p blog_tutoriales < /var/www/html/blog_responsivo/db/blog_tutoriales_empty.sql
-   ```
-
-8. **Configurar credenciales** en `config.php`:
-```php
-'db' => array (
-  'host' => 'localhost',
-  'user' => 'bloguser',
-  'pass' => 'blogpass',
-  'name' => 'blog_tutoriales',
-),
-```
-
-9. **Habilitar Apache**:
-```bash
-sudo a2enmod rewrite
-sudo systemctl reload apache2
-```
-
-10. **Configurar VirtualHost** (opcional - para acceder con dominio):
-```bash
-sudo nano /etc/apache2/sites-available/blog_responsivo.conf
-```
-
-```apache
-<VirtualHost *:80>
-    ServerName blog.local
-    DocumentRoot /var/www/html/blog_responsivo
-
-    <Directory /var/www/html/blog_responsivo>
-        Options -Indexes +FollowSymLinks
-        AllowOverride All
-        Require all granted
-    </Directory>
-
-    ErrorLog ${APACHE_LOG_DIR}/blog_responsivo_error.log
-    CustomLog ${APACHE_LOG_DIR}/blog_responsivo_access.log combined
-</VirtualHost>
-```
-
-```bash
-sudo a2ensite blog_responsivo.conf
-sudo a2enmod rewrite
-sudo systemctl reload apache2
-
-# Si hay errores, usar:
-sudo a2ensite blog_responsivo.conf --force
-sudo systemctl restart apache2
-```
-
-11. **Deshabilitar sitio por defecto** (si carga la página de Apache):
-```bash
-sudo a2dissite 000-default.conf
-sudo systemctl restart apache2
-```
-
-12. **Agregar al archivo hosts** (si usas dominio local):
-```bash
-sudo nano /etc/hosts
-```
-Agregar línea:
-```
-127.0.0.1    blog.local
-```
-
-> ⚠️ **NOTA**: El instalador ya no se incluye. Usa las opciones de arriba para importar la base de datos.
-
----
-
-## 🐧 Linux (Debian/Ubuntu) con LEMP (Nginx)
-
-### Requisitos
-- Debian 11+ o Ubuntu 20.04+
-- Acceso root o sudo
-
-### Pasos
-
-1. **Actualizar sistema**:
-```bash
-sudo apt update && sudo apt upgrade -y
-```
-
-2. **Instalar LEMP**:
-```bash
-sudo apt install nginx mariadb-server php-fpm php-mysql php-cli php-zip php-curl php-xml php-mbstring php-gd unzip git -y
-```
-
-3. **Habilitar servicios**:
-```bash
-sudo systemctl enable nginx mariadb php-fpm
-sudo systemctl start nginx mariadb php-fpm
-```
-
-4. **Configurar MariaDB**:
-```bash
-sudo mysql -u root
-```
-
-```sql
-CREATE DATABASE blog_tutoriales CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-CREATE USER 'bloguser'@'localhost' IDENTIFIED BY 'blogpass';
-GRANT ALL PRIVILEGES ON blog_tutoriales.* TO 'bloguser'@'localhost';
-FLUSH PRIVILEGES;
-EXIT;
-```
-
-5. **Descargar proyecto**:
-```bash
-cd /var/www/html
-sudo git clone https://github.com/leninobregon/blog_v2.git blog_responsivo
-```
-
-6. **Permisos**:
-```bash
-sudo chown -R www-data:www-data /var/www/html/blog_responsivo
-sudo chmod -R 755 /var/www/html/blog_responsivo
-sudo chmod 777 /var/www/html/blog_responsivo/uploads
-sudo chmod 777 /var/www/html/blog_responsivo/db
-```
-
-7. **Configurar Nginx**:
-```bash
-sudo nano /etc/nginx/sites-available/blog_responsivo
-```
-
-```nginx
-server {
-    listen 80;
-    server_name tu-servidor;
-    root /var/www/html/blog_responsivo;
-    index index.php index.html;
-
-    location / {
-        try_files $uri $uri/ /index.php?$query_string;
-    }
-
-    location ~ \.php$ {
-        include fastcgi_params;
-        fastcgi_pass unix:/run/php/php-fpm.sock;
-        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-    }
-
-    location ~ /\.ht {
-        deny all;
-    }
-}
-```
-
-8. **Habilitar sitio**:
-```bash
-sudo ln -s /etc/nginx/sites-available/blog_responsivo /etc/nginx/sites-enabled/
-sudo nginx -t
-sudo systemctl reload nginx
-```
-
-9. **Instalar** (elige una opción):
-
-   **Opción A - Importar SQL (con datos de ejemplo)**:
-   ```bash
-   sudo mysql -u bloguser -p blog_tutoriales < /var/www/html/blog_responsivo/db/blog_tutoriales.sql
-   ```
-
-   **Opción B - Importar SQL (vacío, solo admin)**:
-   ```bash
-   sudo mysql -u bloguser -p blog_tutoriales < /var/www/html/blog_responsivo/db/blog_tutoriales_empty.sql
-   ```
-
-10. **Configurar credenciales** en `config.php`:
-```php
-'db' => array (
-  'host' => 'localhost',
-  'user' => 'bloguser',
-  'pass' => 'blogpass',
-  'name' => 'blog_tutoriales',
-),
-```
-
-> ⚠️ **NOTA**: El instalador ya no se incluye. Usa las opciones de arriba para importar la base de datos.
-
 ---
 
 ## 🦊 Linux (Fedora) con LAMP
@@ -461,7 +196,7 @@ sudo dnf install httpd mariadb-server php php-mysqlnd php-json php-zip php-curl 
 
 3. **Habilitar servicios**:
 ```bash
-sudo systemctl enable --now httpd mariadb
+sudo systemctl enable httpd mariadb
 sudo systemctl start httpd mariadb
 ```
 
@@ -530,24 +265,25 @@ sudo nano /etc/httpd/conf.d/blog_responsivo.conf
 </VirtualHost>
 ```
 
+11. **Reiniciar Apache**:
 ```bash
 sudo httpd -t
 sudo systemctl restart httpd
 ```
 
-11. **Instalar** (elige una opción):
+12. **Instalar** (elige una opción):
 
-   **Opción A - Importar SQL (con datos de ejemplo)**:
-   ```bash
-   sudo mysql -u bloguser -p blog_tutoriales < /var/www/html/blog_responsivo/db/blog_tutoriales.sql
-   ```
+**Opción A - Importar SQL (con datos de ejemplo)**:
+```bash
+sudo mysql -u bloguser -p blog_tutoriales < /var/www/html/blog_responsivo/db/blog_tutoriales.sql
+```
 
-   **Opción B - Importar SQL (vacío, solo admin)**:
-   ```bash
-   sudo mysql -u bloguser -p blog_tutoriales < /var/www/html/blog_responsivo/db/blog_tutoriales_empty.sql
-   ```
+**Opción B - Importar SQL (vacío, solo admin)**:
+```bash
+sudo mysql -u bloguser -p blog_tutoriales < /var/www/html/blog_responsivo/db/blog_tutoriales_empty.sql
+```
 
-12. **Configurar credenciales** en `config.php`:
+13. **Configurar credenciales** en `config.php`:
 ```php
 'db' => array (
   'host' => 'localhost',
@@ -572,7 +308,7 @@ sudo systemctl restart httpd
 sudo dnf update -y
 ```
 
-2. **Instalar EPEL, Nginx, PHP-FPM y MariaDB**:
+2. **Instalar LEMP**:
 ```bash
 sudo dnf install epel-release -y
 sudo dnf install nginx -y
@@ -589,6 +325,220 @@ sudo systemctl start nginx mariadb php-fpm
 4. **IMPORTANTE: Configurar acceso root para PHP**:
 ```bash
 sudo mysql -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password; FLUSH PRIVILEGES;"
+```
+
+5. **Configurar MariaDB**:
+```bash
+sudo mysql -u root
+```
+
+```sql
+CREATE DATABASE blog_tutoriales CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER 'bloguser'@'localhost' IDENTIFIED BY 'blogpass';
+GRANT ALL PRIVILEGES ON blog_tutoriales.* TO 'bloguser'@'localhost';
+FLUSH PRIVILEGES;
+EXIT;
+```
+
+6. **Descargar proyecto**:
+```bash
+cd /var/www/html
+sudo git clone https://github.com/leninobregon/blog_v2.git blog_responsivo
+```
+
+7. **Permisos**:
+```bash
+sudo chown -R nginx:nginx /var/www/html/blog_responsivo
+sudo chmod -R 755 /var/www/html/blog_responsivo
+sudo chmod 777 /var/www/html/blog_responsivo/uploads
+sudo chmod 777 /var/www/html/blog_responsivo/db
+```
+
+8. **Configurar Nginx**:
+```bash
+sudo nano /etc/nginx/conf.d/blog_responsivo.conf
+```
+
+```nginx
+server {
+    listen 80;
+    server_name tu-servidor;
+    root /var/www/html/blog_responsivo;
+    index index.php index.html;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location ~ \.php$ {
+        fastcgi_pass unix:/run/php-fpm/www.sock;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+
+    location ~ /\.ht {
+        deny all;
+    }
+}
+```
+
+9. **Verificar y reiniciar**:
+```bash
+sudo nginx -t
+sudo systemctl restart nginx php-fpm
+```
+
+10. **Configurar firewall**:
+```bash
+sudo firewall-cmd --permanent --add-service=http --add-service=https
+sudo firewall-cmd --reload
+```
+
+11. **Permitir Nginx en SELinux**:
+```bash
+sudo setsebool -P httpd_can_network_connect 1
+```
+
+12. **Instalar** (elige una opción):
+
+**Opción A - Importar SQL (con datos de ejemplo)**:
+```bash
+sudo mysql -u bloguser -p blog_tutoriales < /var/www/html/blog_responsivo/db/blog_tutoriales.sql
+```
+
+**Opción B - Importar SQL (vacío, solo admin)**:
+```bash
+sudo mysql -u bloguser -p blog_tutoriales < /var/www/html/blog_responsivo/db/blog_tutoriales_empty.sql
+```
+
+13. **Configurar credenciales** en `config.php`:
+```php
+'db' => array (
+  'host' => 'localhost',
+  'user' => 'bloguser',
+  'pass' => 'blogpass',
+  'name' => 'blog_tutoriales',
+),
+```
+
+---
+
+## 🐉 Linux (RHEL/CentOS/Rocky/AlmaLinux) con LAMP
+
+### Requisitos
+- RHEL 8+ / CentOS 8+ / Rocky 8+ / AlmaLinux 8+
+- Acceso root o sudo
+
+### Pasos
+
+1. **Actualizar sistema**:
+```bash
+sudo dnf update -y
+```
+
+2. **Instalar LAMP**:
+```bash
+sudo dnf install httpd mariadb-server php php-mysqlnd php-json php-zip php-curl php-xml php-mbstring php-gd php-intl git unzip -y
+```
+
+3. **Habilitar servicios**:
+```bash
+sudo systemctl enable httpd mariadb
+sudo systemctl start httpd mariadb
+```
+
+4. **IMPORTANTE: Configurar acceso root para PHP**:
+```bash
+sudo mysql -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password; FLUSH PRIVILEGES;"
+```
+
+5. **Configurar MariaDB**:
+```bash
+sudo mysql -u root
+```
+
+```sql
+CREATE DATABASE blog_tutoriales CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER 'bloguser'@'localhost' IDENTIFIED BY 'blogpass';
+GRANT ALL PRIVILEGES ON blog_tutoriales.* TO 'bloguser'@'localhost';
+FLUSH PRIVILEGES;
+EXIT;
+```
+
+6. **Descargar proyecto**:
+```bash
+cd /var/www/html
+sudo git clone https://github.com/leninobregon/blog_v2.git blog_responsivo
+```
+
+7. **Permisos**:
+```bash
+sudo chown -R apache:apache /var/www/html/blog_responsivo
+sudo chmod -R 755 /var/www/html/blog_responsivo
+sudo chmod 777 /var/www/html/blog_responsivo/uploads
+sudo chmod 777 /var/www/html/blog_responsivo/db
+```
+
+8. **Configurar firewall**:
+```bash
+sudo firewall-cmd --permanent --add-service=http --add-service=https
+sudo firewall-cmd --reload
+```
+
+9. **Permitir Apache en SELinux**:
+```bash
+sudo setsebool -P httpd_can_network_connect 1
+sudo setsebool -P httpd_read_user_content 1
+```
+
+10. **Configurar VirtualHost**:
+```bash
+sudo nano /etc/httpd/conf.d/blog_responsivo.conf
+```
+
+```apache
+<VirtualHost *:80>
+    ServerName tu-servidor
+    DocumentRoot /var/www/html/blog_responsivo
+
+    <Directory /var/www/html/blog_responsivo>
+        Options -Indexes +FollowSymLinks
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+    ErrorLog /var/log/httpd/blog_error.log
+    CustomLog /var/log/httpd/blog_access.log combined
+</VirtualHost>
+```
+
+11. **Reiniciar Apache**:
+```bash
+sudo httpd -t
+sudo systemctl restart httpd
+```
+
+12. **Instalar** (elige una opción):
+
+**Opción A - Importar SQL (con datos de ejemplo)**:
+```bash
+sudo mysql -u bloguser -p blog_tutoriales < /var/www/html/blog_responsivo/db/blog_tutoriales.sql
+```
+
+**Opción B - Importar SQL (vacío, solo admin)**:
+```bash
+sudo mysql -u bloguser -p blog_tutoriales < /var/www/html/blog_responsivo/db/blog_tutoriales_empty.sql
+```
+
+13. **Configurar credenciales** en `config.php`:
+```php
+'db' => array (
+  'host' => 'localhost',
+  'user' => 'bloguser',
+  'pass' => 'blogpass',
+  'name' => 'blog_tutoriales',
+),
 ```
 
 5. **Configurar MariaDB**:
