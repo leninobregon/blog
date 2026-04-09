@@ -536,6 +536,15 @@ sudo mysql -u bloguser -p blog_tutoriales < /var/www/html/blog_responsivo/db/blo
 ),
 ```
 
+14. **Agregar al archivo hosts** (si usas dominio local):
+```bash
+sudo nano /etc/hosts
+```
+Agregar línea:
+```
+127.0.0.1    blog.local
+```
+
 ---
 
 ## 🦊 Linux (Fedora) con LEMP (Nginx)
@@ -665,6 +674,15 @@ sudo mysql -u bloguser -p blog_tutoriales < /var/www/html/blog_responsivo/db/blo
 ),
 ```
 
+14. **Agregar al archivo hosts** (si usas dominio local):
+```bash
+sudo nano /etc/hosts
+```
+Agregar línea:
+```
+127.0.0.1    blog.local
+```
+
 ---
 
 ## 🐉 Linux (RHEL/CentOS/Rocky/AlmaLinux) con LAMP
@@ -997,16 +1015,15 @@ sudo systemctl restart httpd
   'name' => 'blog_tutoriales',
 ),
 ```
+
+14. **Agregar al archivo hosts** (si usas dominio local):
 ```bash
-sudo setsebool -P httpd_can_network_connect 1
-sudo setsebool -P httpd_read_user_content 1
+sudo nano /etc/hosts
 ```
-
-8. **Instalar** (elige una opción):
-   - Opción A: Importar `db/blog_tutoriales.sql`
-   - Opción B: Importar `db/blog_tutoriales_empty.sql`
-
-9. **Configurar credenciales** en `config.php`
+Agregar línea:
+```
+127.0.0.1    blog.local
+```
 
 ---
 
