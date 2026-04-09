@@ -131,6 +131,55 @@ Usuario → index.php (Router) → Controlador → Modelo → Vista → HTML
 
 ---
 
+## 📊 Estructura de la Base de Datos
+
+| Tabla | Descripción |
+|-------|-------------|
+| users | Usuarios del sistema (admin, autor, user) |
+| posts | Publicaciones del blog |
+| comments | Comentarios en posts |
+| newsletter | Suscriptores al newsletter |
+| visit_logs | Registro de visitas al sitio |
+| audit_logs | Registro de acciones de usuarios |
+| about | Página "Acerca de" (editable) |
+| site_stats | Estadísticas globales del sitio |
+
+### Notas sobre la Base de Datos
+- No se utilizan **foreign keys** para mayor compatibilidad entre servidores
+- La aplicación gestiona las relaciones lógicamente
+- Charset: `utf8mb4` para soportar caracteres especiales y emojis
+
+---
+
+## 📂 Estructura de Archivos
+
+```
+blog_responsivo/
+├── index.php                  # Página principal (MVC Entry Point)
+├── autoload.php               # Carga automática de clases
+├── config.php                 # Configuración del sitio
+├── subscribe.php              # Suscripción al newsletter
+├── db/
+│   ├── blog_tutoriales.sql    # Script SQL con datos de ejemplo
+│   └── blog_tutoriales_empty.sql  # Script SQL solo admin
+├── core/                      # Clases base del MVC
+│   ├── Database.php           # Conexión PDO (Singleton)
+│   ├── Session.php            # Manejo de sesiones
+│   ├── Controller.php         # Clase base controladores
+│   ├── Model.php              # Clase base modelos
+│   └── theme_colors.php       # Colores de los 20 temas
+├── models/                    # Modelos de datos
+├── controllers/               # Controladores
+├── views/                     # Plantillas HTML
+├── includes/                  # Funciones helper
+├── languages/                 # Traducciones (es, en)
+├── admin/                     # Panel de administración
+├── user/                      # Panel de usuario
+└── uploads/                   # Imágenes subidas
+```
+
+---
+
 ## 🚀 Instalación
 
 ### Opción 1: Importar base de datos manualmente (recomendado)
@@ -1055,35 +1104,6 @@ Agregar línea:
 - No se utilizan **foreign keys** para mayor compatibilidad entre servidores
 - La aplicación gestiona las relaciones lógicamente
 - Charset: `utf8mb4` para soportar caracteres especiales y emojis
-
----
-
-## 📂 Estructura de Archivos
-
-```
-blog_responsivo/
-├── index.php                  # Página principal (MVC Entry Point)
-├── autoload.php               # Carga automática de clases
-├── config.php                 # Configuración del sitio
-├── subscribe.php              # Suscripción al newsletter
-├── db/
-│   ├── blog_tutoriales.sql    # Script SQL con datos de ejemplo
-│   └── blog_tutoriales_empty.sql  # Script SQL solo admin
-├── core/                      # Clases base del MVC
-│   ├── Database.php           # Conexión PDO (Singleton)
-│   ├── Session.php            # Manejo de sesiones
-│   ├── Controller.php         # Clase base controladores
-│   ├── Model.php              # Clase base modelos
-│   └── theme_colors.php       # Colores de los 20 temas
-├── models/                    # Modelos de datos
-├── controllers/               # Controladores
-├── views/                     # Plantillas HTML
-├── includes/                  # Funciones helper
-├── languages/                 # Traducciones (es, en)
-├── admin/                     # Panel de administración
-├── user/                      # Panel de usuario
-└── uploads/                   # Imágenes subidas
-```
 
 ---
 
