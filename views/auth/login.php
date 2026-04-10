@@ -230,10 +230,10 @@ $isLogin = $isLogin ?? true;
                 <label><i class="fas fa-question-circle"></i> <?= $lang['register_question'] ?? 'Pregunta de seguridad' ?></label>
                 <select name="recovery_question" style="width:100%;padding:0.9rem;border:2px solid var(--border);border-radius:10px;background:var(--bg);color:var(--text);">
                     <option value=""><?= $currentLang === 'es' ? 'Selecciona una pregunta' : 'Select a question' ?></option>
-                    <option value="first_pet"><?= $currentLang === 'es' ? '¿Nombre de tu primera mascota?' : 'First pet name?' ?></option>
-                    <option value="hometown"><?= $currentLang === 'es' ? '¿Tu ciudad natal?' : 'Your hometown?' ?></option>
-                    <option value="best_friend"><?= $currentLang === 'es' ? '¿Nombre de tu mejor amigo?' : 'Best friend name?' ?></option>
-                    <option value="favorite_food"><?= $currentLang === 'es' ? '¿Tu comida favorita?' : 'Favorite food?' ?></option>
+                    <option value="first_pet"><?= $_COOKIE['language'] === 'en' ? 'First pet name?' : '¿Nombre de tu primera mascota?' ?></option>
+                    <option value="hometown"><?= $_COOKIE['language'] === 'en' ? 'Your hometown?' : '¿Tu ciudad natal?' ?></option>
+                    <option value="best_friend"><?= $_COOKIE['language'] === 'en' ? 'Best friend name?' : '¿Nombre de tu mejor amigo?' ?></option>
+                    <option value="favorite_food"><?= $_COOKIE['language'] === 'en' ? 'Your favorite food?' : '¿Tu comida favorita?' ?></option>
                 </select>
             </div>
             <div class="form-group">
