@@ -7,8 +7,40 @@ setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES', 'spanish');
 if(empty($_SESSION['logged'])) { header('Location: login.php'); exit; }
 include '../includes/functions.php';
 
+// Language
+$currentLang = getActiveLanguage();
+
+// Handle language switch
+if(isset($_GET['lang']) && in_array($_GET['lang'], ['es', 'en'])) {
+    setLanguage($_GET['lang']);
+    $currentLang = $_GET['lang'];
+}
+
 $currentTheme = getActiveTheme();
 $colors = getThemeColors($currentTheme);
+
+// Labels translations
+$labels = [
+    'es' => [
+        'dashboard' => 'Dashboard', 'new' => 'Nueva', 'users' => 'Usuarios', 'newsletter' => 'Newsletter', 
+        'about' => 'Acerca de', 'config' => 'Config', 'logout' => 'Salir', 'home' => 'Inicio',
+        'all_posts' => 'Todas las Publicaciones', 'backup_db' => 'Respaldar DB', 'statistics' => 'Estadísticas',
+        'publications' => 'Publicaciones', 'comments' => 'Comentarios', 'total_visits' => 'Visitas Totales',
+        'subscribers' => 'Suscriptores', 'recent_activity' => 'Actividad Reciente', 'recent_posts' => 'Publicaciones Recientes',
+        'recent_users' => 'Usuarios Recientes', 'recent_comments' => 'Comentarios Recientes',
+        'audit_log' => 'Registro de Auditoría', 'no_records' => 'No hay registros', 'delete_old' => 'Eliminar > 3 meses', 'delete_all' => 'Eliminar Todo'
+    ],
+    'en' => [
+        'dashboard' => 'Dashboard', 'new' => 'New', 'users' => 'Users', 'newsletter' => 'Newsletter', 
+        'about' => 'About', 'config' => 'Config', 'logout' => 'Logout', 'home' => 'Home',
+        'all_posts' => 'All Publications', 'backup_db' => 'Backup DB', 'statistics' => 'Statistics',
+        'publications' => 'Publications', 'comments' => 'Comments', 'total_visits' => 'Total Visits',
+        'subscribers' => 'Subscribers', 'recent_activity' => 'Recent Activity', 'recent_posts' => 'Recent Posts',
+        'recent_users' => 'Recent Users', 'recent_comments' => 'Recent Comments',
+        'audit_log' => 'Audit Log', 'no_records' => 'No records', 'delete_old' => 'Delete > 3 months', 'delete_all' => 'Delete All'
+    ]
+];
+$l = $labels[$currentLang] ?? $labels['es'];
 
 // Statistics
 $totalPosts = getTotalPosts();
@@ -209,13 +241,17 @@ $recentComments = getRecentComments(5);
     <nav class="navbar">
         <h1><i class="fas fa-tachometer-alt"></i> Dashboard <a href="audit.php" style="float:right;font-size:0.9rem;margin-left:1rem;"><i class="fas fa-shield-alt"></i> Auditoría</a></h1>
         <nav>
-            <a href="../index.php"><i class="fas fa-home"></i> Inicio</a>
-            <a href="index.php?action=new"><i class="fas fa-plus"></i> Nueva</a>
-            <a href="users.php"><i class="fas fa-users"></i> Usuarios</a>
+            <a href="../index.php"><i class="fas fa-home"></i> <?= $currentLang === 'es' ? 'Inicio' : 'Home' ?></a>
+            <a href="index.php?action=new"><i class="fas fa-plus"></i> <?= $currentLang === 'es' ? 'Nueva' : 'New' ?></a>
+            <a href="users.php"><i class="fas fa-users"></i> <?= $currentLang === 'es' ? 'Usuarios' : 'Users' ?></a>
             <a href="newsletter.php"><i class="fas fa-envelope"></i> Newsletter</a>
-            <a href="about.php"><i class="fas fa-user-circle"></i> Acerca de</a>
-            <a href="config.php"><i class="fas fa-cog"></i> Config</a>
-            <a href="logout.php"><i class="fas fa-sign-out-alt"></i> Salir</a>
+            <a href="about.php"><i class="fas fa-user-circle"></i> <?= $currentLang === 'es' ? 'Acerca de' : 'About' ?></a>
+            <a href="config.php"><i class="fas fa-cog"></i> <?= $currentLang === 'es' ? 'Config' : 'Config' ?></a>
+            <div style="display:flex;gap:0.3rem;">
+                <a href="?lang=es" style="padding:0.4rem 0.6rem;background:<?= $currentLang==='es'?'var(--accent)':''?>;">ES</a>
+                <a href="?lang=en" style="padding:0.4rem 0.6rem;background:<?= $currentLang==='en'?'var(--accent)':''?>;">EN</a>
+            </div>
+            <a href="logout.php"><i class="fas fa-sign-out-alt"></i> <?= $currentLang === 'es' ? 'Salir' : 'Logout' ?></a>
         </nav>
     </nav>
     

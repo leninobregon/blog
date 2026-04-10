@@ -5,10 +5,26 @@ header('Cache-Control: no-cache, no-store, must-revalidate');
 header('Pragma: no-cache');
 header('Expires: 0');
 setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES', 'spanish');
-include 'views/layouts/header.php'; 
 include 'includes/functions.php';
 include 'includes/functions_helpers.php';
-$post = getPost((int)$_GET['id']);
+
+// Load theme
+$validThemes = ['white','blue','dark-blue','black','green','red','purple','orange','pink','teal','yellow','cyan','brown','indigo','lime','amber','rose','slate','emerald','sky','violet'];
+$currentTheme = (isset($_COOKIE['theme']) && in_array($_COOKIE['theme'], $validThemes)) ? $_COOKIE['theme'] : 'blue';
+$colors = getThemeColors($currentTheme);
+
+$config = require 'config.php';
+$currentLang = isset($_COOKIE['language']) && in_array($_COOKIE['language'], ['es','en']) ? $_COOKIE['language'] : 'es';
+
+// Base URL for links
+$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+$scriptDir = dirname($_SERVER['SCRIPT_NAME']);
+$baseUrl = $protocol . '://' . $host . $scriptDir;
+
+include 'views/layouts/header.php'; 
+
+$post = getPost((int)($_GET['id'] ?? 0));
 if(!$post) { 
     echo '<main class="container"><div class="post-card" style="text-align:center;"><i class="fas fa-exclamation-triangle" style="font-size:3rem;color:var(--text-secondary);"></i><h3>Publicación no encontrada</h3><a href="index.php" class="btn"><i class="fas fa-arrow-left"></i> Volver</a></div></main>'; 
     include 'views/layouts/footer.php'; 

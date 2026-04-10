@@ -7,6 +7,13 @@ setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES', 'spanish');
 if(empty($_SESSION['logged'])) { header('Location: login.php'); exit; }
 include '../includes/functions.php';
 
+// Language
+$currentLang = getActiveLanguage();
+if(isset($_GET['lang']) && in_array($_GET['lang'], ['es', 'en'])) {
+    setLanguage($_GET['lang']);
+    $currentLang = $_GET['lang'];
+}
+
 $currentTheme = getActiveTheme();
 $colors = getThemeColors($currentTheme);
 $users = getAllUsers();

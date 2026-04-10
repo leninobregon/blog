@@ -11,6 +11,12 @@ if (isset($_COOKIE['language']) && in_array($_COOKIE['language'], ['es', 'en']))
 } elseif (isset($_SESSION['language'])) {
     $Lang = $_SESSION['language'];
 }
+
+// Auto-detect base URL
+$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+$scriptDir = dirname($_SERVER['SCRIPT_NAME']);
+$baseUrl = $protocol . '://' . $host . $scriptDir;
 ?>
 <!DOCTYPE html>
 <html lang="<?= $Lang ?>">

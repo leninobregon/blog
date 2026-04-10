@@ -2,10 +2,17 @@
 session_start();
 header('Cache-Control: no-cache, no-store, must-revalidate');
 header('Pragma: no-cache');
-header('Expires: 0');
+header('Expires: 0);
 setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES', 'spanish');
 if(empty($_SESSION['logged'])) { header('Location: login.php'); exit; }
 include '../includes/functions.php';
+
+// Language
+$currentLang = getActiveLanguage();
+if(isset($_GET['lang']) && in_array($_GET['lang'], ['es', 'en'])) {
+    setLanguage($_GET['lang']);
+    $currentLang = $_GET['lang'];
+}
 
 // Si accede a admin/ sin acción, redirigir a dashboard
 if(!isset($_GET['action']) || $_GET['action'] === '') {
@@ -90,9 +97,13 @@ if($action === 'list') {
     <div class="navbar">
         <h1><a href="dashboard.php"><i class="fas fa-cog"></i> Admin</a></h1>
         <nav>
-            <a href="dashboard.php"><i class="fas fa-arrow-left"></i> Volver</a>
-            <a href="index.php?action=new"><i class="fas fa-plus"></i> Nueva</a>
-            <a href="logout.php"><i class="fas fa-sign-out-alt"></i> Salir</a>
+            <a href="dashboard.php"><i class="fas fa-arrow-left"></i> <?= $currentLang === 'es' ? 'Volver' : 'Back' ?></a>
+            <a href="index.php?action=new"><i class="fas fa-plus"></i> <?= $currentLang === 'es' ? 'Nueva' : 'New' ?></a>
+            <div style="display:flex;gap:0.3rem;">
+                <a href="?lang=es" style="padding:0.4rem 0.6rem;background:<?= $currentLang==='es'?'var(--accent)':''?>;">ES</a>
+                <a href="?lang=en" style="padding:0.4rem 0.6rem;background:<?= $currentLang==='en'?'var(--accent)':''?>;">EN</a>
+            </div>
+            <a href="logout.php"><i class="fas fa-sign-out-alt"></i> <?= $currentLang === 'es' ? 'Salir' : 'Logout' ?></a>
         </nav>
     </div>
     
