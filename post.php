@@ -7,6 +7,7 @@ header('Expires: 0');
 setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES', 'spanish');
 include 'header.php'; 
 include 'includes/functions.php';
+include 'includes/functions_helpers.php';
 $post = getPost((int)$_GET['id']);
 if(!$post) { 
     echo '<main class="container"><div class="post-card" style="text-align:center;"><i class="fas fa-exclamation-triangle" style="font-size:3rem;color:var(--text-secondary);"></i><h3>Publicación no encontrada</h3><a href="index.php" class="btn"><i class="fas fa-arrow-left"></i> Volver</a></div></main>'; 
