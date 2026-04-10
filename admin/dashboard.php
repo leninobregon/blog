@@ -324,7 +324,7 @@ $recentComments = getRecentComments(5);
                             <strong><?= htmlspecialchars(mb_substr($post['title'], 0, 40)) ?></strong>
                             <?php if(mb_strlen($post['title']) > 40): ?>...<?php endif; ?>
                         </td>
-                        <td><?= htmlspecialchars($post['author_name'] ?? 'Sistema') ?></td>
+                        <td><?= htmlspecialchars($post['author_name'] ?? 'admin') ?></td>
                         <td><?= strftime('%d/%b/%Y', strtotime($post['created_at'])) ?></td>
                         <td>
                             <a href="index.php?action=edit&id=<?= $post['id'] ?>" class="btn btn-sm" title="Editar"><i class="fas fa-edit"></i></a>
@@ -352,7 +352,7 @@ $recentComments = getRecentComments(5);
                         <tr>
                             <td>
                                 <strong><?= htmlspecialchars(mb_substr($post['title'], 0, 30)) ?>...</strong><br>
-                                <span class="time-ago"><?= htmlspecialchars($post['author_name'] ?? 'Sistema') ?></span>
+                                <span class="time-ago"><?= htmlspecialchars($post['author_name'] ?? 'admin') ?></span>
                             </td>
                             <td style="text-align: right;">
                                 <span class="time-ago"><?= strftime('%d/%b', strtotime($post['created_at'])) ?></span>

@@ -95,6 +95,14 @@ function getPost($id) {
 }
 }
 
+if (!function_exists('getAllPostsList')) {
+function getAllPostsList() {
+    $pdo = getDB();
+    $stmt = $pdo->query("SELECT p.*, u.username as author_name FROM posts p LEFT JOIN users u ON p.author_id = u.id ORDER BY p.created_at DESC");
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+}
+
 if (!function_exists('getCategories')) {
 function getCategories() {
     $pdo = getDB();

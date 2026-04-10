@@ -12,7 +12,132 @@ $id = (int)($_GET['id'] ?? 0);
 
 if($action === 'delete' && $id) {
     deletePost($id);
-    header('Location: index.php'); exit;
+    header('Location: index.php?action=list'); exit;
+}
+
+if($action === 'list') {
+    $allPosts = getAllPostsList();
+    $currentTheme = getActiveTheme();
+    $colors = getThemeColors($currentTheme);
+?>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Todas las Publicaciones</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            <?php foreach($colors as $k=>$v): ?><?php echo "--$k: $v;"; ?><?php endforeach; ?>
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
+            --shadow-md: 0 4px 20px rgba(0,0,0,0.12);
+            --shadow-lg: 0 8px 40px rgba(0,0,0,0.15);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 20px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text); }
+        
+        .navbar {
+            background: var(--header-bg);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .navbar h1 a { color: var(--header-text); text-decoration: none; display: flex; align-items: center; gap: 0.5rem; }
+        .navbar nav { display: flex; gap: 1rem; }
+        .navbar nav a { color: var(--header-text); text-decoration: none; display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; border-radius: var(--radius-sm); transition: all 0.3s; }
+        
+        .container { max-width: 1200px; margin: 0 auto; padding: 2rem 1rem; }
+        
+        .toolbar { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+        .btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.7rem 1.2rem; background: var(--primary); color: #fff; text-decoration: none; border-radius: var(--radius-sm); font-weight: 500; border: none; cursor: pointer; transition: all 0.3s; }
+        .btn:hover { opacity: 0.9; transform: translateY(-2px); }
+        .btn-secondary { background: var(--bg-secondary); color: var(--text); border: 1px solid var(--border); }
+        .btn-danger { background: #e53e3e; color: #fff; }
+        .btn-sm { padding: 0.4rem 0.7rem; font-size: 0.85rem; }
+        
+        .card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 1.5rem;
+        }
+        
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 1rem; text-align: left; border-bottom: 1px solid var(--border); }
+        th { background: var(--bg); font-weight: 600; }
+        td { vertical-align: middle; }
+        .badge { display: inline-block; padding: 0.25rem 0.5rem; border-radius: var(--radius-sm); font-size: 0.75rem; font-weight: 500; }
+        
+        .empty { text-align: center; padding: 3rem; color: var(--text-secondary); }
+        .empty i { font-size: 3rem; margin-bottom: 1rem; opacity: 0.5; }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1><a href="dashboard.php"><i class="fas fa-cog"></i> Admin</a></h1>
+        <nav>
+            <a href="dashboard.php"><i class="fas fa-arrow-left"></i> Volver</a>
+            <a href="index.php?action=new"><i class="fas fa-plus"></i> Nueva</a>
+            <a href="logout.php"><i class="fas fa-sign-out-alt"></i> Salir</a>
+        </nav>
+    </div>
+    
+    <div class="container">
+        <h2 style="margin-bottom: 1.5rem;"><i class="fas fa-file-alt"></i> Todas las Publicaciones</h2>
+        
+        <div class="card">
+            <?php if(empty($allPosts)): ?>
+            <div class="empty">
+                <i class="fas fa-file-alt"></i>
+                <p>No hay publicaciones</p>
+                <a href="index.php?action=new" class="btn" style="margin-top: 1rem;"><i class="fas fa-plus"></i> Crear Primera Publicación</a>
+            </div>
+            <?php else: ?>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Título</th>
+                        <th>Categoría</th>
+                        <th>Autor</th>
+                        <th>Fecha</th>
+                        <th>Visitas</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach($allPosts as $post): ?>
+                    <tr>
+                        <td>
+                            <strong><?= htmlspecialchars($post['title']) ?></strong>
+                        </td>
+                        <td><span class="badge"><?= htmlspecialchars($post['category']) ?></span></td>
+                        <td><?= htmlspecialchars($post['author_name'] ?: 'admin') ?></td>
+                        <td><?= date('d/m/Y', strtotime($post['created_at'])) ?></td>
+                        <td><?= number_format($post['visits']) ?></td>
+                        <td>
+                            <a href="index.php?action=edit&id=<?= $post['id'] ?>" class="btn btn-sm" title="Editar"><i class="fas fa-edit"></i></a>
+                            <a href="index.php?action=delete&id=<?= $post['id'] ?>" class="btn btn-sm btn-danger" title="Eliminar" onclick="return confirm('¿Eliminar publicación?')"><i class="fas fa-trash"></i></a>
+                            <a href="../post.php?id=<?= $post['id'] ?>" class="btn btn-sm btn-secondary" target="_blank" title="Ver"><i class="fas fa-eye"></i></a>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+            <?php endif; ?>
+        </div>
+    </div>
+</body>
+</html>
+<?php
+exit;
 }
 
 if($action === 'new' || $action === 'edit') {
