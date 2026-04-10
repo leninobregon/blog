@@ -163,22 +163,24 @@ $showQuestion = $showQuestion ?? false;
                 <?php 
                 $q = $user['recovery_question'] ?? '';
                 $lang = $_COOKIE['language'] ?? 'es';
+                
+                // Debug
+                // file_put_contents('debug.txt', "q=$q, lang=$lang\n", FILE_APPEND);
+                
                 if ($lang === 'en') {
-                    $trans = [
-                        'first_pet' => 'Name of your first pet?',
-                        'hometown' => 'Your hometown?',
-                        'best_friend' => " Your best friend's name?",
-                        'favorite_food' => 'Your favorite food?'
-                    ];
-                    $q = $trans[$q] ?? $q;
+                    switch($q) {
+                        case 'first_pet': $q = 'Name of your first pet?'; break;
+                        case 'hometown': $q = 'Your hometown?'; break;
+                        case 'best_friend': $q = "Your best friend's name?"; break;
+                        case 'favorite_food': $q = 'Your favorite food?'; break;
+                    }
                 } else {
-                    $trans = [
-                        'first_pet' => '¿Nombre de tu primera mascota?',
-                        'hometown' => '¿Tu ciudad natal?',
-                        'best_friend' => '¿Nombre de tu mejor amigo?',
-                        'favorite_food' => '¿Tu comida favorita?'
-                    ];
-                    $q = $trans[$q] ?? $q;
+                    switch($q) {
+                        case 'first_pet': $q = '¿Nombre de tu primera mascota?'; break;
+                        case 'hometown': $q = '¿Tu ciudad natal?'; break;
+                        case 'best_friend': $q = '¿Nombre de tu mejor amigo?'; break;
+                        case 'favorite_food': $q = '¿Tu comida favorita?'; break;
+                    }
                 }
                 echo htmlspecialchars($q);
                 ?>
