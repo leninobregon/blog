@@ -75,6 +75,10 @@ $msgType = $msgType ?? '';
         <p class="section-title"><i class="fas fa-id-card"></i> <?= $currentLang === 'es' ? 'Datos Personales' : 'Personal Info' ?></p>
         <div class="form-grid">
             <div class="form-group">
+                <label><i class="fas fa-envelope"></i> Email</label>
+                <input type="email" value="<?= htmlspecialchars($user['email'] ?? '') ?>" readonly style="background: var(--bg-secondary);">
+            </div>
+            <div class="form-group">
                 <label><i class="fas fa-user"></i> <?= $currentLang === 'es' ? 'Nombre' : 'First Name' ?></label>
                 <input type="text" name="first_name" value="<?= htmlspecialchars($user['first_name'] ?? '') ?>">
             </div>
