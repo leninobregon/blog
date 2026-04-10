@@ -162,11 +162,12 @@ $showQuestion = $showQuestion ?? false;
                 <label><i class="fas fa-question-circle"></i> 
                 <?php 
                 $q = $user['recovery_question'] ?? '';
-                if ($currentLang === 'en') {
-                    $trans = ['first_pet'=>'First pet name?', 'hometown'=>'Your hometown?', 'best_friend'=>'Best friend name?', 'favorite_food'=>'Favorite food?'];
-                    $q = $trans[$q] ?? 'Security question';
+                $lang = $_COOKIE['language'] ?? 'es';
+                if ($lang === 'en') {
+                    $trans = ['first_pet'=>'First pet name?', 'hometown'=>'Your hometown?', 'best_friend'=>'Best friend name?', 'favorite_food'=>'Your favorite food?'];
+                    $q = $trans[$q] ?? $q;
                 }
-                echo $q;
+                echo htmlspecialchars($q);
                 ?>
                 </label>
                 <input type="text" name="recovery_answer" required placeholder="<?= $currentLang === 'es' ? 'Tu respuesta' : 'Your answer' ?>">
