@@ -121,7 +121,7 @@ if($action === 'list') {
                         <td><span class="badge"><?= htmlspecialchars($post['category']) ?></span></td>
                         <td><?= htmlspecialchars($post['author_name'] ?: 'admin') ?></td>
                         <td><?= date('d/m/Y', strtotime($post['created_at'])) ?></td>
-                        <td><?= number_format($post['visits']) ?></td>
+                        <td><?= number_format($post['visits'] ?? 0) ?></td>
                         <td>
                             <a href="index.php?action=edit&id=<?= $post['id'] ?>" class="btn btn-sm" title="Editar"><i class="fas fa-edit"></i></a>
                             <a href="index.php?action=delete&id=<?= $post['id'] ?>" class="btn btn-sm btn-danger" title="Eliminar" onclick="return confirm('¿Eliminar publicación?')"><i class="fas fa-trash"></i></a>
