@@ -199,6 +199,13 @@ $loggedUser = $loggedUser ?? null;
                     <span class="brand-tagline"><?= $config['description'] ?></span>
                 </div>
             </a>
+            
+            <!-- Buscador -->
+            <form action="<?= $baseUrl ?>/search.php" method="GET" class="search-form" style="display: flex; align-items: center; gap: 0.5rem; margin: 0 1rem;">
+                <input type="text" name="q" placeholder="<?= $lang['search'] ?? 'Buscar...' ?>" required style="padding: 0.5rem; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg); color: var(--text);">
+                <button type="submit" class="nav-btn" style="padding: 0.5rem 0.8rem;"><i class="fas fa-search"></i></button>
+            </form>
+            
             <div class="navbar-menu">
                 <?php if($loggedUser): ?>
                     <a href="<?= $baseUrl ?>/profile.php" class="nav-btn">

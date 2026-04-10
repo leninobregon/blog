@@ -11,6 +11,88 @@ if (!function_exists('getThemeColors')) {
     require_once $basePath . '/core/theme_colors.php';
 }
 
+// ========== FUNCIONES DE SEGURIDAD ==========
+
+// Sanitizar entrada de usuario
+if (!function_exists('sanitize')) {
+function sanitize($input, $type = 'string') {
+    if (is_array($input)) {
+        $result = [];
+        foreach ($input as $k => $v) {
+            $result[$k] = sanitize($v, $type);
+        }
+        return $result;
+    }
+    
+    $input = trim($input);
+    
+    switch ($type) {
+        case 'email':
+            return filter_var($input, FILTER_SANITIZE_EMAIL);
+        case 'url':
+            return filter_var($input, FILTER_SANITIZE_URL);
+        case 'int':
+            return (int) preg_replace('/[^0-9]/', '', $input);
+        case 'html':
+            return htmlspecialchars($input, ENT_QUOTES, 'UTF-8');
+        case 'username':
+            return preg_replace('/[^a-zA-Z0-9_]/', '', $input);
+        default:
+            return htmlspecialchars($input, ENT_QUOTES, 'UTF-8');
+    }
+}
+}
+
+// CSRF Token functions
+if (!function_exists('csrf_token')) {
+function csrf_token() {
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+    if (!isset($_SESSION['csrf_token'])) {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    }
+    return $_SESSION['csrf_token'];
+}
+}
+
+if (!function_exists('csrf_field')) {
+function csrf_field() {
+    return '<input type="hidden" name="csrf_token" value="' . csrf_token() . '">';
+}
+}
+
+if (!function_exists('verify_csrf')) {
+function verify_csrf($token) {
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+    return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token);
+}
+}
+
+// Validar contraseña segura
+if (!function_exists('validate_password')) {
+function validate_password($password) {
+    $errors = [];
+    if (strlen($password) < 8) {
+        $errors[] = 'Mínimo 8 caracteres';
+    }
+    if (!preg_match('/[A-Z]/', $password)) {
+        $errors[] = 'Al menos una mayúscula';
+    }
+    if (!preg_match('/[a-z]/', $password)) {
+        $errors[] = 'Al menos una minúscula';
+    }
+    if (!preg_match('/[0-9]/', $password)) {
+        $errors[] = 'Al menos un número';
+    }
+    return $errors;
+}
+}
+
+// ========== FIN FUNCIONES DE SEGURIDAD ==========
+
 if (!function_exists('getDB')) {
 function getDB() {
     static $pdo = null;

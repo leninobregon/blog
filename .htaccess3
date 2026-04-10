@@ -1,0 +1,22 @@
+# Activar RewriteEngine
+RewriteEngine On
+
+# Evitar listado de directorios (Muy importante para seguridad)
+Options -Indexes
+
+# Bloquear acceso directo a archivos de configuración
+<FilesMatch "^(config\.php|db/)">
+    Require all denied
+</FilesMatch>
+
+# Bloquear acceso a la carpeta db desde fuera
+RewriteRule ^db/ - [F,L]
+
+# --- MVC ROUTING ---
+# Redirige todo a index.php para el MVC
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php [L,QSA]
+
+# Redirigir errores 404 al blog
+ErrorDocument 404 /

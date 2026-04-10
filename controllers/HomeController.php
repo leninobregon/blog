@@ -68,4 +68,16 @@ class HomeController extends Controller {
             'totalPages' => ceil($totalPosts / $perPage)
         ]);
     }
+    
+    public function search(): void {
+        $q = $_GET['q'] ?? '';
+        $q = trim($q);
+        
+        if (empty($q)) {
+            header('Location: /');
+            exit;
+        }
+        
+        include __DIR__ . '/../views/search.php';
+    }
 }

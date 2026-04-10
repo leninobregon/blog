@@ -1,0 +1,10 @@
+# Activar RewriteEngine
+RewriteEngine On
+
+# Evitar listado de directorios
+Options -Indexes
+
+# --- MVC ROUTING ---
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php [L,QSA]

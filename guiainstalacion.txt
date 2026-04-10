@@ -1,0 +1,80 @@
+🐧 Linux (Debian/Ubuntu) con LAMP
+Requisitos
+Debian 11+ o Ubuntu 20.04+
+Acceso root o sudo
+Pasos
+Actualizar sistema:
+sudo apt update && sudo apt upgrade -y
+Instalar LAMP:
+sudo apt install apache2 mariadb-server php php-mysql php-cli php-zip php-curl php-xml php-mbstring php-gd unzip git -y
+Habilitar servicios:
+sudo systemctl enable apache2 mariadb
+sudo systemctl start apache2 mariadb
+IMPORTANTE: Configurar acceso root para PHP:
+sudo mysql -u root -p -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password; FLUSH PRIVILEGES;"
+(presiona Enter cuando pida contraseña)
+
+Configurar MariaDB:
+sudo mysql -u root
+CREATE DATABASE blog_tutoriales CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER 'bloguser'@'localhost' IDENTIFIED BY 'blogpass';
+GRANT ALL PRIVILEGES ON blog_tutoriales.* TO 'bloguser'@'localhost';
+FLUSH PRIVILEGES;
+EXIT;
+Descargar proyecto:
+cd /var/www/html
+sudo git clone https://github.com/leninobregon/blog_v2.git blog_responsivo
+Permisos:
+sudo chown -R www-data:www-data /var/www/html/blog_responsivo
+sudo chmod -R 755 /var/www/html/blog_responsivo
+sudo chmod 777 /var/www/html/blog_responsivo/uploads
+sudo chmod 777 /var/www/html/blog_responsivo/db
+Instalar (elige una opción):
+
+Opción A - Importar SQL (con datos de ejemplo):
+
+sudo mysql -u bloguser -p blog_tutoriales < /var/www/html/blog_responsivo/db/blog_tutoriales.sql
+Opción B - Importar SQL (vacío, solo admin):
+
+sudo mysql -u bloguser -p blog_tutoriales < /var/www/html/blog_responsivo/db/blog_tutoriales_empty.sql
+Configurar credenciales en config.php:
+
+'db' => array (
+  'host' => 'localhost',
+  'user' => 'bloguser',
+  'pass' => 'blogpass',
+  'name' => 'blog_tutoriales',
+),
+Habilitar Apache:
+sudo a2enmod rewrite
+sudo systemctl reload apache2
+Configurar VirtualHost (opcional - para acceder con dominio):
+sudo nano /etc/apache2/sites-available/blog_responsivo.conf
+<VirtualHost *:80>
+    ServerName blog.local
+    DocumentRoot /var/www/html/blog_responsivo
+
+    <Directory /var/www/html/blog_responsivo>
+        Options -Indexes +FollowSymLinks
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+    ErrorLog ${APACHE_LOG_DIR}/blog_responsivo_error.log
+    CustomLog ${APACHE_LOG_DIR}/blog_responsivo_access.log combined
+</VirtualHost>
+sudo a2ensite blog_responsivo.conf
+sudo a2enmod rewrite
+sudo systemctl reload apache2
+
+# Si hay errores, usar:
+sudo a2ensite blog_responsivo.conf --force
+sudo systemctl restart apache2
+Deshabilitar sitio por defecto (si carga la página de Apache):
+sudo a2dissite 000-default.conf
+sudo systemctl restart apache2
+Agregar al archivo hosts (si usas dominio local):
+sudo nano /etc/hosts
+Agregar línea:
+
+127.0.0.1    blog.local no lo hivistes para ferdora el equivalente y

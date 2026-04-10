@@ -1,0 +1,21 @@
+Para que tu archivo funcione de forma universal, ya sea que estés en la raíz (localhost/) o en una subcarpeta (localhost/blog_responsivo/), lo ideal es usar una configuración relativa.
+
+Aquí tienes el código "todoterreno". Este no depende de RewriteBase, por lo que funcionará en Fedora, Windows o cualquier servidor sin tener que editar el nombre de la carpeta:
+
+Apache
+# 1. Activar el motor de reescritura
+RewriteEngine On
+
+# 2. Evitar listado de archivos (Seguridad)
+Options -Indexes
+
+# 3. --- MVC ROUTING UNIVERSAL ---
+
+# Si el archivo solicitado NO existe
+RewriteCond %{REQUEST_FILENAME} !-f
+# Si la carpeta solicitada NO existe
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Redirigir a index.php de la carpeta actual
+# Nota: Quitamos la barra inicial "/" antes de index.php para que sea relativo
+RewriteRule ^(.*)$ index.php [L,QSA]

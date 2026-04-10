@@ -58,6 +58,7 @@ $routes = [
         '/recover.php' => ['AuthController', 'recover'],
         '/logout.php' => ['AuthController', 'logout'],
         '/profile.php' => ['ProfileController', 'index'],
+        '/search.php' => ['HomeController', 'search'],
     ],
     'POST' => [
         '/auth.php' => ['AuthController', 'login'],
