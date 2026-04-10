@@ -315,6 +315,8 @@ $colors = getThemeColors($currentTheme);
     
     <script>
         function setTheme(theme) {
+            // Also update the select dropdown
+            document.querySelector('select[name="theme"]').value = theme;
             document.cookie = 'theme=' + theme + '; path=/; max-age=31536000';
             location.reload();
         }
