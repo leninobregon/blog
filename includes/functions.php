@@ -71,6 +71,27 @@ function verify_csrf($token) {
 }
 }
 
+// Obtener URL del sitio automáticamente
+if (!function_exists('getSiteURL')) {
+function getSiteURL() {
+    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    $host = $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? 'localhost';
+    $port = $_SERVER['SERVER_PORT'] ?? 80;
+    $basePath = dirname($_SERVER['SCRIPT_NAME'] ?? '');
+    if ($basePath === '/' || $basePath === '\\') {
+        $basePath = '';
+    }
+    
+    $url = $scheme . '://' . $host;
+    if ($port != 80 && $port != 443) {
+        $url .= ':' . $port;
+    }
+    $url .= $basePath;
+    
+    return rtrim($url, '/');
+}
+}
+
 // Validar contraseña segura
 if (!function_exists('validate_password')) {
 function validate_password($password) {
