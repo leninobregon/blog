@@ -212,7 +212,7 @@ $showQuestion = $showQuestion ?? false;
         </form>
         <?php endif; ?>
         
-        <a href="<?= $baseUrl ?>/auth.php" class="back-link">
+        <a href="auth.php" class="back-link">
             <i class="fas fa-arrow-left"></i> <?= $currentLang === 'es' ? 'Volver a Iniciar Sesión' : 'Back to Login' ?>
         </a>
     </div>
