@@ -7,6 +7,12 @@ setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES', 'spanish');
 if(empty($_SESSION['logged'])) { header('Location: login.php'); exit; }
 include '../includes/functions.php';
 
+// Si accede a admin/ sin acción, redirigir a dashboard
+if(!isset($_GET['action']) || $_GET['action'] === '') {
+    header('Location: dashboard.php');
+    exit;
+}
+
 $action = $_GET['action'] ?? 'list';
 $id = (int)($_GET['id'] ?? 0);
 
