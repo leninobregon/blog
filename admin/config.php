@@ -10,18 +10,27 @@ include '../includes/functions.php';
 $msg = '';
 if($_SERVER['REQUEST_METHOD'] === 'POST') {
     $newConfig = CONFIG;
-    $newConfig['site_name'] = $_POST['site_name'];
-    $newConfig['site_url'] = $_POST['site_url'];
-    $newConfig['email'] = $_POST['email'];
-    $newConfig['author'] = $_POST['author'];
-    $newConfig['description'] = $_POST['description'];
+    $newConfig['site_name'] = trim($_POST['site_name']);
+    $newConfig['site_url'] = trim($_POST['site_url']);
+    $newConfig['email'] = trim($_POST['email']);
+    $newConfig['author'] = trim($_POST['author']);
+    $newConfig['description'] = trim($_POST['description']);
     $newConfig['theme'] = $_POST['theme'];
     $newConfig['posts_per_page'] = (int)$_POST['posts_per_page'];
-    file_put_contents('../config.php', '<?php return ' . var_export($newConfig, true) . ';');
+    $content = '<?php return ' . var_export($newConfig, true) . ';';
+    file_put_contents('../config.php', $content);
+    
+    // Recargar configuración después de guardar
+    $newConfigFile = include '../config.php';
+    foreach($newConfigFile as $k => $v) {
+        define(strtoupper($k), $v);
+    }
+    
     $msg = 'Configuración guardada';
 }
 
-$colors = getThemeColors(CONFIG['theme']);
+$currentTheme = CONFIG['theme'];
+$colors = getThemeColors($currentTheme);
 ?>
 <!DOCTYPE html>
 <html lang="es">
