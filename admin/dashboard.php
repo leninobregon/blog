@@ -238,6 +238,7 @@ $recentComments = getRecentComments(5);
         <!-- Toolbar -->
         <div class="toolbar">
             <a href="index.php?action=new" class="btn"><i class="fas fa-plus"></i> Nueva Publicación</a>
+            <a href="index.php?action=list" class="btn"><i class="fas fa-list"></i> Todas las Publicaciones</a>
             <a href="?backup=1" class="btn btn-secondary" onclick="return confirm('¿Crear respaldo de la base de datos?')"><i class="fas fa-database"></i> Respaldar DB</a>
             <a href="config.php" class="btn btn-secondary"><i class="fas fa-cog"></i> Configuración</a>
         </div>
