@@ -7,6 +7,10 @@ setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES', 'spanish');
 if(empty($_SESSION['logged'])) { header('Location: login.php'); exit; }
 include '../includes/functions.php';
 
+// Verificar si hay un tema en cookie (seleccionado via paleta)
+$cookieTheme = isset($_COOKIE['theme']) ? $_COOKIE['theme'] : '';
+$currentTheme = $cookieTheme ?: CONFIG['theme'];
+
 $msg = '';
 
 if($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -16,7 +20,8 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
     $newConfig['email'] = trim($_POST['email']);
     $newConfig['author'] = trim($_POST['author']);
     $newConfig['description'] = trim($_POST['description']);
-    $newConfig['theme'] = $_POST['theme'];
+    // Usar el theme del select o de la cookie (paleta)
+    $newConfig['theme'] = $_POST['theme'] ?: $cookieTheme ?: CONFIG['theme'];
     $newConfig['posts_per_page'] = (int)$_POST['posts_per_page'];
     $content = '<?php return ' . var_export($newConfig, true) . ';';
     file_put_contents('../config.php', $content);
@@ -33,7 +38,6 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
     $msg = 'Configuración guardada';
 }
 
-$currentTheme = CONFIG['theme'];
 $colors = getThemeColors($currentTheme);
 ?>
 <!DOCTYPE html>
