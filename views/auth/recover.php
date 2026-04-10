@@ -159,7 +159,16 @@ $showQuestion = $showQuestion ?? false;
                 <input type="text" value="<?= htmlspecialchars($user['username']) ?>" readonly style="background: var(--bg-secondary);">
             </div>
             <div class="form-group">
-                <label><i class="fas fa-question-circle"></i> <?= $user['recovery_question'] ?? 'Pregunta de seguridad' ?></label>
+                <label><i class="fas fa-question-circle"></i> 
+                <?php 
+                $q = $user['recovery_question'] ?? '';
+                if ($currentLang === 'en') {
+                    $trans = ['first_pet'=>'First pet name?', 'hometown'=>'Your hometown?', 'best_friend'=>'Best friend name?', 'favorite_food'=>'Favorite food?'];
+                    $q = $trans[$q] ?? 'Security question';
+                }
+                echo $q;
+                ?>
+                </label>
                 <input type="text" name="recovery_answer" required placeholder="<?= $currentLang === 'es' ? 'Tu respuesta' : 'Your answer' ?>">
             </div>
             <div class="form-group">
