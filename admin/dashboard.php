@@ -299,6 +299,44 @@ $recentComments = getRecentComments(5);
             </div>
         </div>
         
+        <!-- All Posts with Edit/Delete -->
+        <div class="card">
+            <h3><i class="fas fa-file-alt"></i> Todas las Publicaciones</h3>
+            <a href="index.php?action=list" class="btn" style="margin-bottom: 1rem;"><i class="fas fa-list"></i> Ver Todas</a>
+            <?php if(empty($recentPosts)): ?>
+            <p style="color: var(--text-secondary);">No hay publicaciones</p>
+            <a href="index.php?action=new" class="btn"><i class="fas fa-plus"></i> Crear Primera Publicación</a>
+            <?php else: ?>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Título</th>
+                        <th>Autor</th>
+                        <th>Fecha</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach($recentPosts as $post): ?>
+                    <tr>
+                        <td>
+                            <strong><?= htmlspecialchars(mb_substr($post['title'], 0, 40)) ?></strong>
+                            <?php if(mb_strlen($post['title']) > 40): ?>...<?php endif; ?>
+                        </td>
+                        <td><?= htmlspecialchars($post['author_name'] ?? 'Sistema') ?></td>
+                        <td><?= strftime('%d/%b/%Y', strtotime($post['created_at'])) ?></td>
+                        <td>
+                            <a href="index.php?action=edit&id=<?= $post['id'] ?>" class="btn btn-sm" title="Editar"><i class="fas fa-edit"></i></a>
+                            <a href="index.php?action=delete&id=<?= $post['id'] ?>" class="btn btn-sm btn-danger" title="Eliminar" onclick="return confirm('¿Eliminar publicación?')"><i class="fas fa-trash"></i></a>
+                            <a href="../post.php?id=<?= $post['id'] ?>" class="btn btn-sm btn-secondary" target="_blank" title="Ver"><i class="fas fa-eye"></i></a>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+            <?php endif; ?>
+        </div>
+        
         <!-- Recent Activity -->
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 1.5rem;">
             <!-- Recent Posts -->
@@ -309,7 +347,7 @@ $recentComments = getRecentComments(5);
                 <?php else: ?>
                 <table>
                     <tbody>
-                        <?php foreach($recentPosts as $post): ?>
+                        <?php foreach(array_slice($recentPosts, 0, 5) as $post): ?>
                         <tr>
                             <td>
                                 <strong><?= htmlspecialchars(mb_substr($post['title'], 0, 30)) ?>...</strong><br>
