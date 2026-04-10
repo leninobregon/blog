@@ -7,7 +7,7 @@ require_once 'includes/functions.php';
 header('Content-Type: application/rss+xml; charset=utf-8');
 $posts = getPosts(20, 0);
 $siteName = CONFIG['site_name'] ?? 'Mi Blog';
-$siteUrl = CONFIG['site_url'] ?? 'http://localhost';
+$siteUrl = function_exists('getSiteURL') ? getSiteURL() : (CONFIG['site_url'] ?? 'http://localhost');
 
 echo '<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
