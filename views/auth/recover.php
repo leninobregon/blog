@@ -164,7 +164,20 @@ $showQuestion = $showQuestion ?? false;
                 $q = $user['recovery_question'] ?? '';
                 $lang = $_COOKIE['language'] ?? 'es';
                 if ($lang === 'en') {
-                    $trans = ['first_pet'=>'First pet name?', 'hometown'=>'Your hometown?', 'best_friend'=>'Best friend name?', 'favorite_food'=>'Your favorite food?'];
+                    $trans = [
+                        'first_pet' => 'Name of your first pet?',
+                        'hometown' => 'Your hometown?',
+                        'best_friend' => " Your best friend's name?",
+                        'favorite_food' => 'Your favorite food?'
+                    ];
+                    $q = $trans[$q] ?? $q;
+                } else {
+                    $trans = [
+                        'first_pet' => '¿Nombre de tu primera mascota?',
+                        'hometown' => '¿Tu ciudad natal?',
+                        'best_friend' => '¿Nombre de tu mejor amigo?',
+                        'favorite_food' => '¿Tu comida favorita?'
+                    ];
                     $q = $trans[$q] ?? $q;
                 }
                 echo htmlspecialchars($q);
