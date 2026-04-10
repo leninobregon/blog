@@ -16,7 +16,7 @@ $msg = '';
 if($_SERVER['REQUEST_METHOD'] === 'POST') {
     $newConfig = CONFIG;
     $newConfig['site_name'] = trim($_POST['site_name']);
-    $newConfig['site_url'] = trim($_POST['site_url']);
+    // NO guardar site_url - se detecta automáticamente
     $newConfig['email'] = trim($_POST['email']);
     $newConfig['author'] = trim($_POST['author']);
     $newConfig['description'] = trim($_POST['description']);
@@ -238,7 +238,7 @@ $colors = getThemeColors($currentTheme);
                 </div>
                 <div class="form-group">
                     <label><i class="fas fa-link"></i> URL del Sitio</label>
-                    <input type="text" name="site_url" value="<?= htmlspecialchars(CONFIG['site_url']) ?>" required>
+                    <input type="text" name="site_url" value="<?= getSiteURL() ?>" readonly style="background: var(--bg-secondary);">
                 </div>
                 <div class="form-group">
                     <label><i class="fas fa-envelope"></i> Email</label>
