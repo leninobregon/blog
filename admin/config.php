@@ -8,6 +8,7 @@ if(empty($_SESSION['logged'])) { header('Location: login.php'); exit; }
 include '../includes/functions.php';
 
 $msg = '';
+
 if($_SERVER['REQUEST_METHOD'] === 'POST') {
     $newConfig = CONFIG;
     $newConfig['site_name'] = trim($_POST['site_name']);
@@ -25,6 +26,9 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
     foreach($newConfigFile as $k => $v) {
         define(strtoupper($k), $v);
     }
+    
+    // Limpiar cookie al guardar
+    setcookie('theme', '', time() - 3600, '/');
     
     $msg = 'Configuración guardada';
 }
@@ -247,27 +251,27 @@ $colors = getThemeColors($currentTheme);
                 <div class="form-group">
                     <label><i class="fas fa-palette"></i> Tema por Defecto</label>
                     <select name="theme">
-                        <option value="white" <?= CONFIG['theme']=='white'?'selected':'' ?>>Blanco</option>
-                        <option value="blue" <?= CONFIG['theme']=='blue'?'selected':'' ?>>Azul</option>
-                        <option value="dark-blue" <?= CONFIG['theme']=='dark-blue'?'selected':'' ?>>Azul Oscuro</option>
-                        <option value="black" <?= CONFIG['theme']=='black'?'selected':'' ?>>Negro</option>
-                        <option value="green" <?= CONFIG['theme']=='green'?'selected':'' ?>>Verde</option>
-                        <option value="red" <?= CONFIG['theme']=='red'?'selected':'' ?>>Rojo</option>
-                        <option value="purple" <?= CONFIG['theme']=='purple'?'selected':'' ?>>Morado</option>
-                        <option value="orange" <?= CONFIG['theme']=='orange'?'selected':'' ?>>Naranja</option>
-                        <option value="pink" <?= CONFIG['theme']=='pink'?'selected':'' ?>>Rosa</option>
-                        <option value="teal" <?= CONFIG['theme']=='teal'?'selected':'' ?>>Teal</option>
-                        <option value="yellow" <?= CONFIG['theme']=='yellow'?'selected':'' ?>>Amarillo</option>
-                        <option value="cyan" <?= CONFIG['theme']=='cyan'?'selected':'' ?>>Cian</option>
-                        <option value="brown" <?= CONFIG['theme']=='brown'?'selected':'' ?>>Marrón</option>
-                        <option value="indigo" <?= CONFIG['theme']=='indigo'?'selected':'' ?>>Índigo</option>
-                        <option value="lime" <?= CONFIG['theme']=='lime'?'selected':'' ?>>Lima</option>
-                        <option value="amber" <?= CONFIG['theme']=='amber'?'selected':'' ?>>Ámbar</option>
-                        <option value="rose" <?= CONFIG['theme']=='rose'?'selected':'' ?>>Rojo Rosa</option>
-                        <option value="slate" <?= CONFIG['theme']=='slate'?'selected':'' ?>>Pizarra</option>
-                        <option value="emerald" <?= CONFIG['theme']=='emerald'?'selected':'' ?>>Esmeralda</option>
-                        <option value="sky" <?= CONFIG['theme']=='sky'?'selected':'' ?>>Cielo</option>
-                        <option value="violet" <?= CONFIG['theme']=='violet'?'selected':'' ?>>Violeta</option>
+                        <option value="white" <?= $currentTheme=='white'?'selected':'' ?>>Blanco</option>
+                        <option value="blue" <?= $currentTheme=='blue'?'selected':'' ?>>Azul</option>
+                        <option value="dark-blue" <?= $currentTheme=='dark-blue'?'selected':'' ?>>Azul Oscuro</option>
+                        <option value="black" <?= $currentTheme=='black'?'selected':'' ?>>Negro</option>
+                        <option value="green" <?= $currentTheme=='green'?'selected':'' ?>>Verde</option>
+                        <option value="red" <?= $currentTheme=='red'?'selected':'' ?>>Rojo</option>
+                        <option value="purple" <?= $currentTheme=='purple'?'selected':'' ?>>Morado</option>
+                        <option value="orange" <?= $currentTheme=='orange'?'selected':'' ?>>Naranja</option>
+                        <option value="pink" <?= $currentTheme=='pink'?'selected':'' ?>>Rosa</option>
+                        <option value="teal" <?= $currentTheme=='teal'?'selected':'' ?>>Teal</option>
+                        <option value="yellow" <?= $currentTheme=='yellow'?'selected':'' ?>>Amarillo</option>
+                        <option value="cyan" <?= $currentTheme=='cyan'?'selected':'' ?>>Cian</option>
+                        <option value="brown" <?= $currentTheme=='brown'?'selected':'' ?>>Marrón</option>
+                        <option value="indigo" <?= $currentTheme=='indigo'?'selected':'' ?>>Índigo</option>
+                        <option value="lime" <?= $currentTheme=='lime'?'selected':'' ?>>Lima</option>
+                        <option value="amber" <?= $currentTheme=='amber'?'selected':'' ?>>Ámbar</option>
+                        <option value="rose" <?= $currentTheme=='rose'?'selected':'' ?>>Rojo Rosa</option>
+                        <option value="slate" <?= $currentTheme=='slate'?'selected':'' ?>>Pizarra</option>
+                        <option value="emerald" <?= $currentTheme=='emerald'?'selected':'' ?>>Esmeralda</option>
+                        <option value="sky" <?= $currentTheme=='sky'?'selected':'' ?>>Cielo</option>
+                        <option value="violet" <?= $currentTheme=='violet'?'selected':'' ?>>Violeta</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -320,7 +324,7 @@ $colors = getThemeColors($currentTheme);
             document.cookie = 'theme=' + theme + '; path=/; max-age=31536000';
             location.reload();
         }
-        var currentTheme = '<?= CONFIG['theme'] ?>';
+        var currentTheme = '<?= $currentTheme ?>';
         document.querySelectorAll('.theme-dot').forEach(function(el) {
             if(el.classList.contains('theme-' + currentTheme)) {
                 el.classList.add('active');
