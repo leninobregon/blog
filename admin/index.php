@@ -2,8 +2,7 @@
 session_start();
 header('Cache-Control: no-cache, no-store, must-revalidate');
 header('Pragma: no-cache');
-header('Expires: 0);
-// setlocale(LC_TIME, 'Spanish');
+header('Expires: 0');
 if(empty($_SESSION['logged'])) { header('Location: login.php'); exit; }
 include '../includes/functions.php';
 
