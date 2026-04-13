@@ -1,0 +1,25 @@
+# --- SEGURIDAD ---
+RewriteEngine On
+
+# Evitar listado de directorios
+Options -Indexes
+
+# Permitir acceso a admin/ y admin/config.php
+RewriteCond %{REQUEST_URI} ^/admin/ [NC]
+RewriteRule ^ - [L]
+
+# Bloquear acceso a config.php en raíz
+RewriteCond %{REQUEST_URI} ^/config\.php$ [NC]
+RewriteRule ^ - [F]
+
+# Bloquear acceso a la carpeta db
+RewriteRule ^db/ - [F,L]
+
+# --- MVC ROUTING ---
+# Redirige todo a index.php para el MVC
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php [L,QSA]
+
+# Redirigir errores 404 al blog
+ErrorDocument 404 /

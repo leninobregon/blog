@@ -19,7 +19,7 @@ $currentLang = isset($_COOKIE['language']) && in_array($_COOKIE['language'], ['e
 // Base URL for links
 $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
 $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-$scriptDir = dirname($_SERVER['SCRIPT_NAME']);
+$scriptDir = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
 $baseUrl = $protocol . '://' . $host . $scriptDir;
 
 // Get logged user

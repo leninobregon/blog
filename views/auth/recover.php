@@ -18,7 +18,7 @@ $siteUrl = $config['site_url'] ?? '';
 if (empty($siteUrl)) {
     $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
     $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-    $scriptDir = dirname($_SERVER['SCRIPT_NAME'] ?? '/');
+    $scriptDir = rtrim(dirname($_SERVER['SCRIPT_NAME'] ?? '/'), '/');
     $siteUrl = $protocol . '://' . $host . $scriptDir;
 }
 $baseUrl = rtrim($siteUrl, '/');

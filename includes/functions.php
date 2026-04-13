@@ -86,7 +86,7 @@ function getSiteURL() {
     if ($port != 80 && $port != 443) {
         $url .= ':' . $port;
     }
-    $url .= $basePath;
+    $url .= rtrim($basePath, '/');
     
     return rtrim($url, '/');
 }
