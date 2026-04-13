@@ -14,7 +14,14 @@ $currentTheme = (isset($_COOKIE['theme']) && in_array($_COOKIE['theme'], $validT
 $colors = getThemeColors($currentTheme);
 
 $config = require 'config.php';
-$currentLang = isset($_COOKIE['language']) && in_array($_COOKIE['language'], ['es','en']) ? $_COOKIE['language'] : 'es';
+
+// Handle language from URL parameter
+if(isset($_GET['lang']) && in_array($_GET['lang'], ['es','en'])) {
+    setLanguage($_GET['lang']);
+    $currentLang = $_GET['lang'];
+} else {
+    $currentLang = isset($_COOKIE['language']) && in_array($_COOKIE['language'], ['es','en']) ? $_COOKIE['language'] : 'es';
+}
 
 // Base URL for links
 $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';

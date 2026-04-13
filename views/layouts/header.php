@@ -228,6 +228,10 @@ $loggedUser = $loggedUser ?? null;
                 <?php endif; ?>
                 
                 <?php 
+                // Ensure currentLang is set properly
+                if(!isset($currentLang)) {
+                    $currentLang = isset($_COOKIE['language']) && in_array($_COOKIE['language'], ['es','en']) ? $_COOKIE['language'] : 'es';
+                }
                 $queryParams = $_GET;
                 unset($queryParams['lang']);
                 $queryString = http_build_query($queryParams);
