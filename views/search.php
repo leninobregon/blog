@@ -16,6 +16,17 @@ $currentTheme = getActiveTheme();
 $colors = getThemeColors($currentTheme);
 $currentLang = getActiveLanguage();
 
+$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+$scriptDir = dirname($_SERVER['SCRIPT_NAME']);
+$baseUrl = $protocol . '://' . $host . $scriptDir;
+
+// Get logged user
+$loggedUser = null;
+if (!empty($_SESSION['user_id'])) {
+    $loggedUser = getUser($_SESSION['user_id']);
+}
+
 $posts = searchPosts($q, 20, 0);
 $pageTitle = 'Buscar: ' . htmlspecialchars($q);
 
