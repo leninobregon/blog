@@ -227,9 +227,16 @@ $loggedUser = $loggedUser ?? null;
                     <a href="auth.php" class="nav-btn"><i class="fas fa-sign-in-alt"></i> <?= $lang['nav_login'] ?? 'Login' ?></a>
                 <?php endif; ?>
                 
+                <?php 
+                $queryParams = $_GET;
+                unset($queryParams['lang']);
+                $queryString = http_build_query($queryParams);
+                $queryString = $queryString ? '?' . $queryString . '&' : '?';
+                ?>
+                
                 <div class="lang-switcher">
-                    <a href="?lang=es" class="nav-btn <?= $currentLang === 'es' ? 'active' : '' ?>" title="Español">ES</a>
-                    <a href="?lang=en" class="nav-btn <?= $currentLang === 'en' ? 'active' : '' ?>" title="English">EN</a>
+                    <a href="<?= $queryString ?>lang=es" class="nav-btn <?= $currentLang === 'es' ? 'active' : '' ?>" title="Español">ES</a>
+                    <a href="<?= $queryString ?>lang=en" class="nav-btn <?= $currentLang === 'en' ? 'active' : '' ?>" title="English">EN</a>
                 </div>
                 <a href="<?= $baseUrl ?>/about.php" class="nav-btn" title="<?= $lang['nav_about'] ?? 'Acerca de' ?>"><i class="fas fa-user-circle"></i></a>
                 <a href="https://www.youtube.com/@leninobregonespinoza2160" target="_blank" class="nav-btn" title="YouTube"><i class="fab fa-youtube"></i></a>
