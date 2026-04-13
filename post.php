@@ -22,6 +22,12 @@ $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
 $scriptDir = dirname($_SERVER['SCRIPT_NAME']);
 $baseUrl = $protocol . '://' . $host . $scriptDir;
 
+// Get logged user
+$loggedUser = null;
+if (!empty($_SESSION['user_id'])) {
+    $loggedUser = getUser($_SESSION['user_id']);
+}
+
 include 'views/layouts/header.php'; 
 
 $post = getPost((int)($_GET['id'] ?? 0));
