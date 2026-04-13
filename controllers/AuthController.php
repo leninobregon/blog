@@ -71,7 +71,8 @@ class AuthController extends Controller {
                     Session::set('username', $user['username']);
                     Session::set('role', $user['role']);
                     logAudit('user_login', $user['id'], $user['username'], 'auth.php', "User logged in successfully");
-                    $this->redirect($this->getBaseUrl() . '/');
+                    $redirect = $_POST['redirect'] ?? $_GET['redirect'] ?? $this->getBaseUrl() . '/';
+                    $this->redirect($redirect);
                     return;
                 } else {
                     logAudit('login_failed', null, $email, 'auth.php', "Failed login attempt");

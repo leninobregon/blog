@@ -168,7 +168,7 @@ $currentUrl = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
     </form>
     <?php else: ?>
     <div class="login-prompt">
-        <i class="fas fa-info-circle"></i> <a href="auth.php"><?= $currentLang === 'es' ? 'Inicia sesión' : 'Login' ?></a> <?= $currentLang === 'es' ? 'para comentar' : 'to comment' ?>
+        <i class="fas fa-info-circle"></i> <a href="auth.php?redirect=<?= urlencode($baseUrl . '/post.php?id=' . $post['id']) ?>"><?= $currentLang === 'es' ? 'Inicia sesión' : 'Login' ?></a> <?= $currentLang === 'es' ? 'para comentar' : 'to comment' ?>
     </div>
     <?php endif; ?>
     
