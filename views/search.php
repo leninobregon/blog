@@ -49,7 +49,7 @@ require 'views/layouts/header.php';
                                 <?= htmlspecialchars($post['title']) ?>
                             </a>
                         </h2>
-                        <p class="post-excerpt"><?= htmlspecialchars(mb_substr(strip_tags($post['content']), 0, 150) ?>...</p>
+                        <p class="post-excerpt"><?= htmlspecialchars(mb_substr(strip_tags($post['content']), 0, 150)) ?>...</p>
                         <div class="post-meta">
                             <span><i class="fas fa-user"></i> <?= htmlspecialchars($post['author_name'] ?? 'admin') ?></span>
                             <span><i class="fas fa-calendar"></i> <?= strftime('%d %b %Y', strtotime($post['created_at'])) ?></span>
