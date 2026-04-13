@@ -15,6 +15,9 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
     $pass = $_POST['pass'] ?? '';
     if($user === 'admin' && $pass === 'blog$$') {
         $_SESSION['logged'] = true;
+        $_SESSION['user_id'] = 1;
+        $_SESSION['username'] = 'admin';
+        $_SESSION['role'] = 'admin';
         logAudit('admin_login', 1, 'admin', 'admin/login.php', 'Admin logged in successfully');
         header('Location: dashboard.php');
         exit;
