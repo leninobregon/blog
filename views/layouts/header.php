@@ -220,7 +220,7 @@ $loggedUser = $loggedUser ?? null;
                     <a href="<?= $baseUrl ?>/user/index.php" class="nav-btn"><i class="fas fa-pen"></i> <?= $lang['nav_admin'] ?? 'Mi Panel' ?></a>
                     <?php endif; ?>
                     <?php if($loggedUser['role'] === 'admin'): ?>
-                    <a href="<?= $baseUrl ?>/admin/" class="nav-btn" title="Admin"><i class="fas fa-cog"></i></a>
+                    <a href="<?= $baseUrl ?>/admin/login.php" class="nav-btn" title="Admin"><i class="fas fa-cog"></i></a>
                     <?php endif; ?>
                     <a href="<?= $baseUrl ?>/logout.php" class="nav-btn"><i class="fas fa-sign-out-alt"></i></a>
                 <?php else: ?>
