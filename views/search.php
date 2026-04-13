@@ -12,6 +12,10 @@ if (empty($q)) {
     exit;
 }
 
+$currentTheme = getActiveTheme();
+$colors = getThemeColors($currentTheme);
+$currentLang = getActiveLanguage();
+
 $posts = searchPosts($q, 20, 0);
 $pageTitle = 'Buscar: ' . htmlspecialchars($q);
 
