@@ -28,6 +28,9 @@ if (!empty($_SESSION['user_id'])) {
     $loggedUser = getUser($_SESSION['user_id']);
 }
 
+// Load categories BEFORE header
+$categories = getCategories();
+
 include 'views/layouts/header.php'; 
 
 $post = getPost((int)($_GET['id'] ?? 0));
@@ -175,7 +178,6 @@ ob_end_flush();
             
             <!-- Categorías -->
             <?php 
-            $categories = getCategories();
             $categoriesCount = count($categories);
             ?>
             <div class="sidebar-widget">
