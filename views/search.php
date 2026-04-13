@@ -46,7 +46,7 @@ require 'views/layouts/header.php';
         <div class="empty-state">
             <i class="fas fa-search"></i>
             <p>No se encontraron resultados</p>
-            <a href="/" class="btn">Volver al inicio</a>
+            <a href="<?= $baseUrl ?>/" class="btn">Volver al inicio</a>
         </div>
     <?php else: ?>
         <div class="posts-grid">
