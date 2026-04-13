@@ -6,7 +6,12 @@ class AuthController extends Controller {
     
     public function login(): void {
         if (Session::isLoggedIn()) {
-            $this->redirect($this->getBaseUrl() . '/');
+            $role = Session::get('role', 'user');
+            if ($role === 'admin') {
+                $this->redirect($this->getBaseUrl() . '/admin/dashboard.php');
+            } else {
+                $this->redirect($this->getBaseUrl() . '/');
+            }
             return;
         }
         
