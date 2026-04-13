@@ -217,7 +217,7 @@ $loggedUser = $loggedUser ?? null;
                         <?= htmlspecialchars($loggedUser['username']) ?>
                     </a>
                     <?php if(in_array($loggedUser['role'], ['admin', 'author'])): ?>
-                    <a href="<?= $baseUrl ?>/user/index.php" class="nav-btn"><i class="fas fa-pen"></i> <?= $lang['nav_admin'] ?? 'Mi Panel' ?></a>
+                    <a href="<?= $baseUrl ?>/<?= $loggedUser['role'] === 'admin' ? 'admin/dashboard.php' : 'user/index.php' ?>" class="nav-btn"><i class="fas fa-pen"></i> <?= $lang['nav_admin'] ?? 'Mi Panel' ?></a>
                     <?php endif; ?>
                     <?php if($loggedUser['role'] === 'admin'): ?>
                     <a href="<?= $baseUrl ?>/admin/login.php" class="nav-btn" title="Admin"><i class="fas fa-cog"></i></a>
