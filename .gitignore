@@ -25,5 +25,3 @@ cookies_test.txt
 # Archivos subidos en entorno local
 uploads/
 
-# Backups automáticos locales
-db/backups/
