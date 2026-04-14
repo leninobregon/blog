@@ -133,6 +133,6 @@ CREATE TABLE `visit_logs` (
 --
 
 INSERT INTO `users` (`id`, `username`, `email`, `password`, `role`, `first_name`, `last_name`, `phone`, `avatar`, `bio`, `facebook`, `twitter`, `telegram`, `instagram`, `youtube`, `linkedin`, `website`, `recovery_question`, `recovery_answer`, `created_at`) VALUES
-(1, 'admin', 'admin@blog.com', '$2y$12$H4Guv2Pbyb9o3MfZZs1LzucgCBt/dZuXNem9UurTN.67L3x4sByju', 'admin', 'Admin', 'Principal', '+5911234567', NULL, 'Administrador del blog', '', '', '', '', 'www.youtube.com/@leninobregonespinoza2160', '', '', '¿Cuál es el nombre de tu primera mascota?', 'blog$$', '2026-04-01 15:07:39');
+(1, 'admin', 'admin@blog.com', '$2y$10$t6XKqllOPjYFhibqpxVAq.7bDxUe.3Tf7neiQM0EQU9pbalTbnspy', 'admin', 'Admin', 'Principal', '+5911234567', NULL, 'Administrador del blog', '', '', '', '', 'www.youtube.com/@leninobregonespinoza2160', '', '', '¿Cuál es el nombre de tu primera mascota?', 'blog$$', '2026-04-01 15:07:39');
 
 COMMIT;
