@@ -75,11 +75,12 @@ Sistema completo de publicaciones con panel de administración, usuarios por rol
 |-------|-------|
 | Admin URL | `/admin/login.php` |
 | Login general | `/auth.php` |
-| Usuario admin | definido en tabla `users` |
-| Contraseña admin | definida en base de datos (hash bcrypt) |
+| Usuario admin (inicial) | `admin` |
+| Email admin (inicial) | `admin@blog.com` |
+| Contraseña admin (inicial) | `blog$$` |
 
-> **Importante:** el sistema ya no usa contraseña fija hardcodeada para admin.  
-> Todas las autenticaciones se validan contra la base de datos.
+> **Importante:** la autenticación se valida contra base de datos (no hardcodeada en código).  
+> Estas credenciales son las iniciales del SQL de ejemplo y se recomienda cambiarlas al primer ingreso.
 
 ---
 
