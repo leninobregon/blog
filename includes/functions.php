@@ -652,11 +652,12 @@ function updateComment($commentId, $userId, $content, $isAdmin = false) {
     $pdo = getDB();
     if ($isAdmin) {
         $stmt = $pdo->prepare("UPDATE comments SET content = ? WHERE id = ?");
-        $result = $stmt->execute([$content, $commentId]);
+        $stmt->execute([$content, $commentId]);
     } else {
         $stmt = $pdo->prepare("UPDATE comments SET content = ? WHERE id = ? AND user_id = ?");
-        $result = $stmt->execute([$content, $commentId, $userId]);
+        $stmt->execute([$content, $commentId, $userId]);
     }
+    $result = $stmt->rowCount() > 0;
     if ($result) {
         logAudit('comment_update', $userId, $_SESSION['username'] ?? 'unknown', 'post.php', "Comment updated (ID: $commentId)");
     }
@@ -669,11 +670,12 @@ function deleteCommentById($commentId, $userId, $isAdmin = false) {
     $pdo = getDB();
     if ($isAdmin) {
         $stmt = $pdo->prepare("DELETE FROM comments WHERE id = ?");
-        $result = $stmt->execute([$commentId]);
+        $stmt->execute([$commentId]);
     } else {
         $stmt = $pdo->prepare("DELETE FROM comments WHERE id = ? AND user_id = ?");
-        $result = $stmt->execute([$commentId, $userId]);
+        $stmt->execute([$commentId, $userId]);
     }
+    $result = $stmt->rowCount() > 0;
     if ($result) {
         logAudit('comment_delete', $userId, $_SESSION['username'] ?? 'unknown', 'post.php', "Comment deleted (ID: $commentId)");
     }

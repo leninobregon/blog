@@ -121,13 +121,23 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && $loggedUser) {
         $commentId = (int)($_POST['comment_id'] ?? 0);
         $newContent = trim($_POST['comment'] ?? '');
         $target = getCommentById($commentId);
-        if ($target && (int)$target['post_id'] === (int)$post['id'] && $newContent !== '') {
+        $canManageTarget = $target
+            && (
+                (int)$target['user_id'] === (int)$_SESSION['user_id']
+                || $isAdminCommentAction
+            );
+        if ($target && (int)$target['post_id'] === (int)$post['id'] && $newContent !== '' && $canManageTarget) {
             updateComment($commentId, (int)$_SESSION['user_id'], $newContent, $isAdminCommentAction);
         }
     } elseif ($commentAction === 'delete') {
         $commentId = (int)($_POST['comment_id'] ?? 0);
         $target = getCommentById($commentId);
-        if ($target && (int)$target['post_id'] === (int)$post['id']) {
+        $canManageTarget = $target
+            && (
+                (int)$target['user_id'] === (int)$_SESSION['user_id']
+                || $isAdminCommentAction
+            );
+        if ($target && (int)$target['post_id'] === (int)$post['id'] && $canManageTarget) {
             deleteCommentById($commentId, (int)$_SESSION['user_id'], $isAdminCommentAction);
         }
     }
