@@ -36,6 +36,7 @@ $showQuestion = $showQuestion ?? false;
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $currentLang === 'es' ? 'Recuperar Contraseña' : 'Recover Password' ?> - <?= $config['site_name'] ?></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="<?= $baseUrl ?>/assets/css/icon-pro.css?v=1">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {

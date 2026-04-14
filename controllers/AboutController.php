@@ -8,6 +8,10 @@ class AboutController extends Controller {
         $aboutModel = new About();
         $about = $aboutModel->get();
         
-        $this->view('about', ['about' => $about]);
+        $this->view('about', [
+            'about' => $about,
+            'pageTitle' => ($about['title'] ?? 'Acerca de') . ' - ' . (CONFIG['site_name'] ?? 'Blog'),
+            'metaDescription' => !empty($about['subtitle']) ? $about['subtitle'] : (CONFIG['description'] ?? 'Blog de tutoriales')
+        ]);
     }
 }

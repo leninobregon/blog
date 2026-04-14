@@ -5,6 +5,18 @@
 
 if (!function_exists('parseMarkdown')) {
 function parseMarkdown($text) {
+    $text = (string)$text;
+    $text = str_replace('\\/', '/', $text);
+    
+    // If content already comes from visual editor (HTML) or encoded HTML,
+    // render it directly (decode entities once to avoid showing raw tags/entities)
+    if (
+        preg_match('/<\s*(p|div|h1|h2|h3|h4|h5|h6|ul|ol|li|blockquote|pre|code|table|img|a|br|hr)\b/i', $text) ||
+        preg_match('/&lt;\s*(p|div|h1|h2|h3|h4|h5|h6|ul|ol|li|blockquote|pre|code|table|img|a|br|hr)\b/i', $text)
+    ) {
+        return html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    }
+
     $text = htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
     
     // YouTube URLs to embed

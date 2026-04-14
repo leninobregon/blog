@@ -1,0 +1,59 @@
+/* Pro icon polish layer (theme-safe) */
+
+:root {
+  --icon-pro-bg: color-mix(in srgb, var(--bg-secondary, #f3f4f6) 70%, transparent);
+  --icon-pro-border: color-mix(in srgb, var(--border, #d1d5db) 80%, transparent);
+  --icon-pro-fg: var(--primary, #2563eb);
+}
+
+i.fas,
+i.far,
+i.fab,
+i.fa-solid,
+i.fa-regular,
+i.fa-brands {
+  vertical-align: -0.08em;
+  line-height: 1;
+}
+
+a i.fas,
+a i.far,
+a i.fab,
+button i.fas,
+button i.far,
+button i.fab,
+.btn i.fas,
+.btn i.far,
+.btn i.fab,
+.nav-btn i.fas,
+.nav-btn i.far,
+.nav-btn i.fab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.8em;
+  height: 1.8em;
+  padding: 0.2em;
+  border-radius: 999px;
+  background: var(--icon-pro-bg);
+  border: 1px solid var(--icon-pro-border);
+  color: var(--icon-pro-fg);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+
+a:hover i.fas,
+a:hover i.far,
+a:hover i.fab,
+button:hover i.fas,
+button:hover i.far,
+button:hover i.fab,
+.btn:hover i.fas,
+.btn:hover i.far,
+.btn:hover i.fab,
+.nav-btn:hover i.fas,
+.nav-btn:hover i.far,
+.nav-btn:hover i.fab {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.14);
+}
+

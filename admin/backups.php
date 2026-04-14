@@ -2,8 +2,8 @@
 if(session_status() === PHP_SESSION_NONE) session_start();
 header('Cache-Control: no-cache, no-store, must-revalidate');
 setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES', 'spanish');
-if(empty($_SESSION['logged'])) { header('Location: login.php'); exit; }
 include '../includes/functions.php';
+if(!isAdminAuthenticated()) { header('Location: login.php'); exit; }
 
 $currentTheme = getActiveTheme();
 $colors = getThemeColors($currentTheme);
@@ -42,6 +42,7 @@ if(isset($_GET['delete'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Respaldos - <?= CONFIG['site_name'] ?></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/icon-pro.css?v=1">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {

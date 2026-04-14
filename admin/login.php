@@ -6,24 +6,49 @@ header('Expires: 0');
 setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES', 'spanish');
 include '../includes/functions.php';
 
+// Si ya existe sesión activa de admin, no volver a mostrar login.
+if (!empty($_SESSION['logged']) || (!empty($_SESSION['user_id']) && (($_SESSION['role'] ?? '') === 'admin'))) {
+    if (empty($_SESSION['logged']) && !empty($_SESSION['user_id']) && (($_SESSION['role'] ?? '') === 'admin')) {
+        // Compatibilidad con el flujo MVC que usa user_id/role.
+        $_SESSION['logged'] = true;
+    }
+    header('Location: dashboard.php');
+    exit;
+}
+
 $currentTheme = getActiveTheme();
 $colors = getThemeColors($currentTheme);
 $error = '';
 
 if($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!verify_csrf($_POST['csrf_token'] ?? '')) {
+        http_response_code(403);
+        $error = 'Token CSRF inválido';
+    } else {
     $user = $_POST['user'] ?? '';
     $pass = $_POST['pass'] ?? '';
-    if($user === 'admin' && $pass === 'blog$$') {
+    $status = getLoginThrottleStatus($user, 'admin');
+    if ($status['blocked']) {
+        $wait = max(1, (int)ceil($status['retry_after'] / 60));
+        $error = 'Demasiados intentos. Intenta nuevamente en ' . $wait . ' minuto(s).';
+    } else {
+    $authUser = loginUser($user, $pass);
+    if($authUser && (($authUser['role'] ?? '') === 'admin')) {
+        clearLoginFailures($user, 'admin');
+        session_regenerate_id(true);
         $_SESSION['logged'] = true;
-        $_SESSION['user_id'] = 1;
-        $_SESSION['username'] = 'admin';
+        $_SESSION['user_id'] = (int)$authUser['id'];
+        $_SESSION['username'] = $authUser['username'] ?? 'admin';
         $_SESSION['role'] = 'admin';
-        logAudit('admin_login', 1, 'admin', 'admin/login.php', 'Admin logged in successfully');
+        logAudit('admin_login', (int)$authUser['id'], $authUser['username'] ?? 'admin', 'admin/login.php', 'Admin logged in successfully');
         header('Location: dashboard.php');
         exit;
     } else {
+        registerLoginFailure($user, 'admin');
         logAudit('login_failed', null, $user, 'admin/login.php', "Failed login attempt");
         $error = 'Credenciales incorrectas';
+    }
+    }
     }
 }
 ?>
@@ -34,6 +59,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - <?= CONFIG['site_name'] ?></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/icon-pro.css?v=1">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -136,6 +162,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
         <p class="subtitle"><?= CONFIG['site_name'] ?></p>
         <?php if($error): ?><p class="error"><i class="fas fa-exclamation-circle"></i> <?= $error ?></p><?php endif; ?>
         <form method="post">
+            <?= csrf_field() ?>
             <div class="input-group">
                 <i class="fas fa-user"></i>
                 <input type="text" name="user" placeholder="Usuario" required>

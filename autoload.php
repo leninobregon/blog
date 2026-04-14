@@ -8,6 +8,7 @@ spl_autoload_register(function (string $class) {
         __DIR__ . '/core/',
         __DIR__ . '/models/',
         __DIR__ . '/controllers/',
+        __DIR__ . '/services/',
     ];
     
     foreach ($paths as $path) {

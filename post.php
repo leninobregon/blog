@@ -26,7 +26,12 @@ if(isset($_GET['lang']) && in_array($_GET['lang'], ['es','en'])) {
 // Base URL for links
 $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
 $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-$scriptDir = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
+$scriptDir = dirname($_SERVER['SCRIPT_NAME'] ?? '');
+$scriptDir = str_replace('\\', '/', $scriptDir);
+$scriptDir = rtrim($scriptDir, '/');
+if ($scriptDir === '.' || $scriptDir === '\\') {
+    $scriptDir = '';
+}
 $baseUrl = $protocol . '://' . $host . $scriptDir;
 
 // Get logged user
@@ -46,8 +51,26 @@ if(!$post) {
     include 'views/layouts/footer.php'; 
     exit; 
 }
-incrementViews($post['id']);
-incrementTotalHits();
+
+// Contadores consistentes con flujo MVC:
+// - views del post: solo visitantes no logueados
+// - total_hits y visit_logs: máximo 1 vez por hora por post/sesión
+if (!$loggedUser) {
+    incrementViews($post['id']);
+    $sessionKey = 'last_visit_post_' . (int)$post['id'];
+    $lastVisit = $_SESSION[$sessionKey] ?? 0;
+    $now = time();
+    if (!$lastVisit || ($now - (int)$lastVisit) > 3600) {
+        incrementTotalHits();
+        logVisit(
+            $_SERVER['REQUEST_URI'] ?? '',
+            $_SERVER['REMOTE_ADDR'] ?? '',
+            $_SERVER['HTTP_USER_AGENT'] ?? '',
+            $_SERVER['HTTP_REFERER'] ?? ''
+        );
+        $_SESSION[$sessionKey] = $now;
+    }
+}
 $content = parseMarkdown($post['content']);
 $comments = getComments($post['id']);
 $pdo = getDB();
@@ -80,14 +103,38 @@ $currentUrl = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 $shareTitle = urlencode($post['title']);
 $shareUrl = urlencode($currentUrl);
 
-if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['comment']) && $loggedUser) {
-    $comment = trim($_POST['comment'] ?? '');
-    if($comment) {
-        addComment($post['id'], $_SESSION['user_id'], $comment);
-        ob_end_clean();
-        header("Location: post.php?id={$post['id']}");
-        exit;
+if($_SERVER['REQUEST_METHOD'] === 'POST' && $loggedUser) {
+    if (!verify_csrf($_POST['csrf_token'] ?? '')) {
+        http_response_code(403);
+        exit('Token CSRF inválido.');
     }
+
+    $commentAction = $_POST['comment_action'] ?? 'create';
+    $isAdminCommentAction = (($loggedUser['role'] ?? '') === 'admin');
+
+    if($commentAction === 'create' && isset($_POST['comment'])) {
+        $comment = trim($_POST['comment'] ?? '');
+        if($comment !== '') {
+            addComment($post['id'], $_SESSION['user_id'], $comment);
+        }
+    } elseif ($commentAction === 'edit') {
+        $commentId = (int)($_POST['comment_id'] ?? 0);
+        $newContent = trim($_POST['comment'] ?? '');
+        $target = getCommentById($commentId);
+        if ($target && (int)$target['post_id'] === (int)$post['id'] && $newContent !== '') {
+            updateComment($commentId, (int)$_SESSION['user_id'], $newContent, $isAdminCommentAction);
+        }
+    } elseif ($commentAction === 'delete') {
+        $commentId = (int)($_POST['comment_id'] ?? 0);
+        $target = getCommentById($commentId);
+        if ($target && (int)$target['post_id'] === (int)$post['id']) {
+            deleteCommentById($commentId, (int)$_SESSION['user_id'], $isAdminCommentAction);
+        }
+    }
+
+    ob_end_clean();
+    header("Location: post.php?id={$post['id']}");
+    exit;
 }
 ob_end_flush();
 ?>
@@ -230,7 +277,7 @@ ob_end_flush();
                 FROM posts 
                 GROUP BY mes 
                 ORDER BY mes DESC
-                LIMIT 12
+                LIMIT 50
             ")->fetchAll(PDO::FETCH_ASSOC);
             $mesesEsp = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
             $mesesEng = ['', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -298,6 +345,8 @@ ob_end_flush();
             
             <?php if($loggedUser): ?>
             <form method="post" class="comment-form">
+                <?= csrf_field() ?>
+                <input type="hidden" name="comment_action" value="create">
                 <textarea name="comment" placeholder="<?= t('comments_write') ?>" required></textarea>
                 <button type="submit" class="btn"><i class="fas fa-paper-plane"></i> <?= t('send') ?></button>
             </form>
@@ -312,10 +361,39 @@ ob_end_flush();
                 <?php foreach($comments as $comment): ?>
                 <div class="comment">
                     <div class="comment-header">
-                        <span><i class="fas fa-user"></i> <?= htmlspecialchars($comment['username']) ?></span>
+                        <?php
+                        $commentDisplayName = trim(($comment['first_name'] ?? '') . ' ' . ($comment['last_name'] ?? ''));
+                        if ($commentDisplayName === '') {
+                            $commentDisplayName = $comment['username'] ?? 'Usuario';
+                        }
+                        ?>
+                        <span><i class="fas fa-user"></i> <?= htmlspecialchars($commentDisplayName) ?></span>
                         <span class="comment-date"><?= strftime('%d %b, %Y %H:%M', strtotime($comment['created_at'])) ?></span>
                     </div>
                     <div style="margin-top:0.5rem;"><?= nl2br(htmlspecialchars($comment['content'])) ?></div>
+                    <?php if($loggedUser && (((int)$comment['user_id'] === (int)$loggedUser['id']) || (($loggedUser['role'] ?? '') === 'admin'))): ?>
+                    <div class="comment-actions">
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="toggleCommentEdit(<?= (int)$comment['id'] ?>)">
+                            <i class="fas fa-pen"></i> <?= $currentLang === 'es' ? 'Editar' : 'Edit' ?>
+                        </button>
+                        <form method="post" style="display:inline-block;" onsubmit="return confirm('<?= $currentLang === 'es' ? '¿Eliminar este comentario?' : 'Delete this comment?' ?>')">
+                            <?= csrf_field() ?>
+                            <input type="hidden" name="comment_action" value="delete">
+                            <input type="hidden" name="comment_id" value="<?= (int)$comment['id'] ?>">
+                            <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i> <?= $currentLang === 'es' ? 'Eliminar' : 'Delete' ?></button>
+                        </form>
+                    </div>
+                    <form method="post" id="comment-edit-<?= (int)$comment['id'] ?>" class="comment-edit-form" style="display:none;margin-top:0.8rem;">
+                        <?= csrf_field() ?>
+                        <input type="hidden" name="comment_action" value="edit">
+                        <input type="hidden" name="comment_id" value="<?= (int)$comment['id'] ?>">
+                        <textarea name="comment" required><?= htmlspecialchars($comment['content']) ?></textarea>
+                        <div style="margin-top:0.5rem;display:flex;gap:0.5rem;">
+                            <button type="submit" class="btn btn-sm"><i class="fas fa-save"></i> <?= $currentLang === 'es' ? 'Guardar' : 'Save' ?></button>
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="toggleCommentEdit(<?= (int)$comment['id'] ?>)"><i class="fas fa-times"></i> <?= $currentLang === 'es' ? 'Cancelar' : 'Cancel' ?></button>
+                        </div>
+                    </form>
+                    <?php endif; ?>
                 </div>
                 <?php endforeach; ?>
                 <?php if(empty($comments)): ?>
@@ -665,6 +743,17 @@ ob_end_flush();
         .post-content pre {
             position: relative;
         }
+        .post-content {
+            text-align: justify;
+            text-justify: inter-word;
+            line-height: 1.8;
+        }
+        .post-content p,
+        .post-content li,
+        .post-content blockquote {
+            text-align: justify;
+            text-justify: inter-word;
+        }
         .copy-code-btn {
             position: absolute;
             top: 0.5rem;
@@ -693,14 +782,76 @@ ob_end_flush();
         .comment-form textarea {
             width: 100%;
             padding: 1rem;
-            border: 2px solid var(--border);
+            border: 1px solid var(--border);
             border-radius: var(--radius-md);
             background: var(--bg);
             color: var(--text);
             min-height: 120px;
-            margin-bottom: 1rem;
+            margin-bottom: 0.9rem;
             font-family: inherit;
             resize: vertical;
+            transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+        }
+        .comment-form textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 24%, transparent);
+            background: var(--bg-secondary);
+        }
+        .comment-form .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: none;
+            border-radius: 999px;
+            padding: 0.72rem 1.2rem;
+            font-weight: 600;
+            letter-spacing: 0.2px;
+            background: linear-gradient(135deg, var(--primary), var(--header-bg));
+            color: #fff;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+        }
+        .comment-form .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+            opacity: 0.98;
+        }
+        .comment-actions .btn,
+        .comment-edit-form .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            border: none;
+            border-radius: 999px;
+            padding: 0.6rem 1rem;
+            font-weight: 600;
+            letter-spacing: 0.2px;
+            color: #fff;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+        }
+        .comment-actions .btn:hover,
+        .comment-edit-form .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+            opacity: 0.98;
+        }
+        .comment-actions .btn.btn-secondary,
+        .comment-edit-form .btn.btn-secondary {
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            color: #fff;
+            border: none;
+        }
+        .comment-actions .btn.btn-danger {
+            background: linear-gradient(135deg, #ef4444, #b91c1c);
+            color: #fff;
+            border: none;
+        }
+        .comment-edit-form .btn:not(.btn-secondary) {
+            background: linear-gradient(135deg, var(--primary), var(--header-bg));
+            color: #fff;
+            border: none;
         }
         .comment {
             background: var(--bg);
@@ -708,6 +859,21 @@ ob_end_flush();
             border-radius: var(--radius-md);
             margin-bottom: 1rem;
             border: 1px solid var(--border);
+        }
+        .comment-actions {
+            margin-top: 0.8rem;
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        .comment-edit-form textarea {
+            width: 100%;
+            min-height: 90px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 0.7rem;
+            background: var(--bg-secondary);
+            color: var(--text);
         }
         .comment-header {
             display: flex;
@@ -783,4 +949,10 @@ ob_end_flush();
                 pre.appendChild(btn);
             });
         });
+
+        function toggleCommentEdit(commentId) {
+            const form = document.getElementById('comment-edit-' + commentId);
+            if (!form) return;
+            form.style.display = form.style.display === 'none' ? 'block' : 'none';
+        }
     </script>

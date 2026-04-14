@@ -63,6 +63,33 @@ $meses = $currentLang === 'en' ? $mesesEng : $mesesEsp;
                 </div>
             </article>
             <?php endforeach; ?>
+            
+            <!-- Pagination -->
+            <?php if(isset($totalPages) && $totalPages > 1): ?>
+            <div class="pagination" style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 2rem;">
+                <?php if($page > 1): ?>
+                <a href="<?= $baseUrl ?>/?page=<?= $page-1 ?><?= $currentCategory ? '&cat=' . urlencode($currentCategory) : '' ?>" style="padding: 0.5rem 1rem; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text);">
+                    <i class="fas fa-chevron-left"></i> <?= $currentLang === 'es' ? 'Anterior' : 'Previous' ?>
+                </a>
+                <?php endif; ?>
+                
+                <?php 
+                $startPage = max(1, $page - 2);
+                $endPage = min($totalPages, $page + 2);
+                for($i = $startPage; $i <= $endPage; $i++): 
+                ?>
+                <a href="<?= $baseUrl ?>/?page=<?= $i ?><?= $currentCategory ? '&cat=' . urlencode($currentCategory) : '' ?>" style="padding: 0.5rem 1rem; background: <?= $i === $page ? 'var(--primary)' : 'var(--bg-secondary)' ?>; border: 1px solid var(--border); border-radius: var(--radius-sm); color: <?= $i === $page ? 'white' : 'var(--text)' ?>;">
+                    <?= $i ?>
+                </a>
+                <?php endfor; ?>
+                
+                <?php if($page < $totalPages): ?>
+                <a href="<?= $baseUrl ?>/?page=<?= $page+1 ?><?= $currentCategory ? '&cat=' . urlencode($currentCategory) : '' ?>" style="padding: 0.5rem 1rem; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text);">
+                    <?= $currentLang === 'es' ? 'Siguiente' : 'Next' ?> <i class="fas fa-chevron-right"></i>
+                </a>
+                <?php endif; ?>
+            </div>
+            <?php endif; ?>
         <?php endif; ?>
     </div>
     

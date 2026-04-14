@@ -71,6 +71,179 @@ function verify_csrf($token) {
 }
 }
 
+if (!function_exists('isAdminAuthenticated')) {
+function isAdminAuthenticated(): bool {
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+
+    // Flujo legacy de admin
+    if (!empty($_SESSION['logged'])) {
+        if (!empty($_SESSION['role']) && $_SESSION['role'] !== 'admin') {
+            return false;
+        }
+        if (empty($_SESSION['role'])) {
+            $_SESSION['role'] = 'admin';
+        }
+        return true;
+    }
+
+    // Flujo MVC unificado
+    if (!empty($_SESSION['user_id']) && (($_SESSION['role'] ?? '') === 'admin')) {
+        // Compatibilidad hacia atrás para pantallas antiguas.
+        $_SESSION['logged'] = true;
+        return true;
+    }
+
+    return false;
+}
+}
+
+if (!function_exists('getClientIpAddress')) {
+function getClientIpAddress(): string {
+    return $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+}
+}
+
+if (!function_exists('loginThrottleFilePath')) {
+function loginThrottleFilePath(): string {
+    return rtrim(sys_get_temp_dir(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'blog_login_throttle.json';
+}
+}
+
+if (!function_exists('readLoginThrottleData')) {
+function readLoginThrottleData(): array {
+    $file = loginThrottleFilePath();
+    if (!file_exists($file)) {
+        return [];
+    }
+    $raw = @file_get_contents($file);
+    if ($raw === false || $raw === '') {
+        return [];
+    }
+    $data = json_decode($raw, true);
+    return is_array($data) ? $data : [];
+}
+}
+
+if (!function_exists('writeLoginThrottleData')) {
+function writeLoginThrottleData(array $data): void {
+    $file = loginThrottleFilePath();
+    @file_put_contents($file, json_encode($data, JSON_UNESCAPED_UNICODE), LOCK_EX);
+}
+}
+
+if (!function_exists('buildLoginThrottleKey')) {
+function buildLoginThrottleKey(string $identifier, string $scope = 'global'): string {
+    $ip = getClientIpAddress();
+    $id = mb_strtolower(trim($identifier));
+    if ($id === '') {
+        $id = 'empty';
+    }
+    return $scope . '|' . $ip . '|' . $id;
+}
+}
+
+if (!function_exists('resolveLoginThrottleSettings')) {
+function resolveLoginThrottleSettings(?int $maxAttempts = null, ?int $windowSeconds = null, ?int $lockSeconds = null): array {
+    $cfg = defined('CONFIG') ? CONFIG : [];
+    $throttle = $cfg['login_throttle'] ?? [];
+
+    $cfgMax = (int)($throttle['max_attempts'] ?? 5);
+    $cfgWindowMin = (int)($throttle['window_minutes'] ?? 15);
+    $cfgLockMin = (int)($throttle['lock_minutes'] ?? 15);
+
+    $max = $maxAttempts ?? $cfgMax;
+    $window = $windowSeconds ?? ($cfgWindowMin * 60);
+    $lock = $lockSeconds ?? ($cfgLockMin * 60);
+
+    return [
+        'max_attempts' => max(1, (int)$max),
+        'window_seconds' => max(60, (int)$window),
+        'lock_seconds' => max(60, (int)$lock)
+    ];
+}
+}
+
+if (!function_exists('getLoginThrottleStatus')) {
+function getLoginThrottleStatus(string $identifier, string $scope = 'global', ?int $maxAttempts = null, ?int $windowSeconds = null): array {
+    $settings = resolveLoginThrottleSettings($maxAttempts, $windowSeconds, null);
+    $maxAttempts = $settings['max_attempts'];
+    $windowSeconds = $settings['window_seconds'];
+    $now = time();
+    $key = buildLoginThrottleKey($identifier, $scope);
+    $data = readLoginThrottleData();
+    $entry = $data[$key] ?? ['attempts' => [], 'blocked_until' => 0];
+
+    $attempts = array_values(array_filter((array)($entry['attempts'] ?? []), function ($ts) use ($now, $windowSeconds) {
+        return is_int($ts) && $ts > ($now - $windowSeconds);
+    }));
+    $blockedUntil = (int)($entry['blocked_until'] ?? 0);
+
+    if ($blockedUntil > $now) {
+        return [
+            'blocked' => true,
+            'retry_after' => $blockedUntil - $now,
+            'remaining' => 0
+        ];
+    }
+
+    $remaining = max(0, $maxAttempts - count($attempts));
+    return [
+        'blocked' => false,
+        'retry_after' => 0,
+        'remaining' => $remaining
+    ];
+}
+}
+
+if (!function_exists('registerLoginFailure')) {
+function registerLoginFailure(string $identifier, string $scope = 'global', ?int $maxAttempts = null, ?int $windowSeconds = null, ?int $lockSeconds = null): array {
+    $settings = resolveLoginThrottleSettings($maxAttempts, $windowSeconds, $lockSeconds);
+    $maxAttempts = $settings['max_attempts'];
+    $windowSeconds = $settings['window_seconds'];
+    $lockSeconds = $settings['lock_seconds'];
+    $now = time();
+    $key = buildLoginThrottleKey($identifier, $scope);
+    $data = readLoginThrottleData();
+    $entry = $data[$key] ?? ['attempts' => [], 'blocked_until' => 0];
+
+    $attempts = array_values(array_filter((array)($entry['attempts'] ?? []), function ($ts) use ($now, $windowSeconds) {
+        return is_int($ts) && $ts > ($now - $windowSeconds);
+    }));
+    $attempts[] = $now;
+
+    $blockedUntil = 0;
+    if (count($attempts) >= $maxAttempts) {
+        $blockedUntil = $now + $lockSeconds;
+        $attempts = [];
+    }
+
+    $data[$key] = [
+        'attempts' => $attempts,
+        'blocked_until' => $blockedUntil
+    ];
+    writeLoginThrottleData($data);
+
+    return [
+        'blocked' => $blockedUntil > $now,
+        'retry_after' => $blockedUntil > $now ? ($blockedUntil - $now) : 0,
+        'remaining' => max(0, $maxAttempts - count($attempts))
+    ];
+}
+}
+
+if (!function_exists('clearLoginFailures')) {
+function clearLoginFailures(string $identifier, string $scope = 'global'): void {
+    $key = buildLoginThrottleKey($identifier, $scope);
+    $data = readLoginThrottleData();
+    if (isset($data[$key])) {
+        unset($data[$key]);
+        writeLoginThrottleData($data);
+    }
+}
+}
+
 // Obtener URL del sitio automáticamente
 if (!function_exists('getSiteURL')) {
 function getSiteURL() {
@@ -167,13 +340,88 @@ function getPosts($category = null, $limit = 10, $offset = 0) {
 if (!function_exists('searchPosts')) {
 function searchPosts($query, $limit = 10, $offset = 0) {
     $pdo = getDB();
-    $search = "%$query%";
     $limit = (int)$limit;
     $offset = (int)$offset;
-    $sql = "SELECT p.*, u.username as author_name FROM posts p LEFT JOIN users u ON p.author_id = u.id WHERE p.title LIKE ? OR p.content LIKE ? OR p.category LIKE ? ORDER BY p.created_at DESC LIMIT $limit OFFSET $offset";
+    $query = trim($query);
+    
+    // Si la consulta esta vacia, no retornar nada
+    if (empty($query)) {
+        return [];
+    }
+    
+    // Separar palabras por espacios o +
+    $palabras = preg_split('/[\s\+]+/', $query);
+    $palabras = array_filter($palabras, function($p) { return trim($p) !== ''; });
+    $palabras = array_values($palabras);
+    
+    // SI hay 2 o mas palabras: buscar posts con TODAS las palabras (AND)
+    if (count($palabras) >= 2) {
+        $conditions = [];
+        $params = [];
+        foreach ($palabras as $palabra) {
+            $palabra = trim($palabra);
+            if (empty($palabra)) continue;
+            // Buscar solo en titulo y contenido (no en category)
+            $conditions[] = "(p.title LIKE ? OR p.content LIKE ?)";
+            $params[] = "%$palabra%";
+            $params[] = "%$palabra%";
+        }
+        if (!empty($conditions)) {
+            $whereClause = implode(' AND ', $conditions);
+            $sql = "SELECT p.*, u.username as author_name FROM posts p LEFT JOIN users u ON p.author_id = u.id WHERE $whereClause ORDER BY p.created_at DESC LIMIT $limit OFFSET $offset";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute($params);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        }
+    }
+    
+    // 1 palabra: buscar solo en titulo y contenido
+    $search = "%$query%";
+    $sql = "SELECT p.*, u.username as author_name FROM posts p LEFT JOIN users u ON p.author_id = u.id WHERE p.title LIKE ? OR p.content LIKE ? ORDER BY p.created_at DESC LIMIT $limit OFFSET $offset";
     $stmt = $pdo->prepare($sql);
-    $stmt->execute([$search, $search, $search]);
+    $stmt->execute([$search, $search]);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+}
+
+if (!function_exists('searchPostsAdvanced')) {
+function searchPostsAdvanced($query, $limit = 10, $offset = 0) {
+    $pdo = getDB();
+    $limit = (int)$limit;
+    $offset = (int)$offset;
+    $query = trim($query);
+    
+    // Si esta vacio, no retornar nada
+    if (empty($query)) {
+        return [];
+    }
+    
+    $palabras = preg_split('/[\s\+]+/', $query);
+    $palabras = array_filter($palabras, function($p) { return trim($p) !== ''; });
+    $palabras = array_values($palabras);
+    
+    // Busqueda avanzada: TODAS las palabras deben estar (AND)
+    if (count($palabras) >= 1) {
+        $conditions = [];
+        $params = [];
+        foreach ($palabras as $palabra) {
+            $palabra = trim($palabra);
+            if (empty($palabra)) continue;
+            // Solo buscar en titulo y contenido
+            $conditions[] = "(p.title LIKE ? OR p.content LIKE ?)";
+            $params[] = "%$palabra%";
+            $params[] = "%$palabra%";
+        }
+        if (!empty($conditions)) {
+            $whereClause = implode(' AND ', $conditions);
+            $sql = "SELECT p.*, u.username as author_name FROM posts p LEFT JOIN users u ON p.author_id = u.id WHERE $whereClause ORDER BY p.created_at DESC LIMIT $limit OFFSET $offset";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute($params);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        }
+    }
+    
+    return [];
 }
 }
 
@@ -260,7 +508,11 @@ if (!function_exists('savePost')) {
 function savePost($title, $category, $content, $image = null, $video = null, $authorId = null) {
     $pdo = getDB();
     $stmt = $pdo->prepare("INSERT INTO posts (title, category, content, image, video, author_id, created_at) VALUES (?, ?, ?, ?, ?, ?, NOW())");
-    return $stmt->execute([$title, $category, $content, $image, $video, $authorId]);
+    $ok = $stmt->execute([$title, $category, $content, $image, $video, $authorId]);
+    if (!$ok) {
+        return false;
+    }
+    return (int)$pdo->lastInsertId();
 }
 }
 
@@ -282,20 +534,49 @@ function deletePost($id) {
 
 if (!function_exists('uploadImage')) {
 function uploadImage($file) {
-    if ($file['error'] === UPLOAD_ERR_OK) {
-        $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
-        $name = uniqid() . '.' . $ext;
-        $uploadDir = dirname(__DIR__) . '/uploads/';
-        
-        // Create directory if it doesn't exist
-        if (!is_dir($uploadDir)) {
-            mkdir($uploadDir, 0777, true);
-        }
-        
-        move_uploaded_file($file['tmp_name'], $uploadDir . $name);
-        return 'uploads/' . $name;
+    if (!isset($file['error']) || $file['error'] !== UPLOAD_ERR_OK) {
+        return null;
     }
-    return null;
+
+    $maxBytes = 5 * 1024 * 1024; // 5MB
+    if (!isset($file['size']) || (int)$file['size'] <= 0 || (int)$file['size'] > $maxBytes) {
+        return null;
+    }
+
+    $tmp = $file['tmp_name'] ?? '';
+    if (!is_uploaded_file($tmp)) {
+        return null;
+    }
+
+    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+    $mime = $finfo ? finfo_file($finfo, $tmp) : '';
+    if ($finfo) {
+        finfo_close($finfo);
+    }
+
+    $allowedMimes = [
+        'image/jpeg' => 'jpg',
+        'image/png' => 'png',
+        'image/gif' => 'gif',
+        'image/webp' => 'webp'
+    ];
+
+    if (!isset($allowedMimes[$mime])) {
+        return null;
+    }
+
+    $ext = $allowedMimes[$mime];
+    $name = uniqid('img_', true) . '.' . $ext;
+    $uploadDir = dirname(__DIR__) . '/uploads/';
+
+    if (!is_dir($uploadDir) && !mkdir($uploadDir, 0777, true) && !is_dir($uploadDir)) {
+        return null;
+    }
+
+    if (!move_uploaded_file($tmp, $uploadDir . $name)) {
+        return null;
+    }
+    return 'uploads/' . $name;
 }
 }
 
@@ -353,6 +634,49 @@ function addComment($postId, $userId, $content) {
     // Log comment
     logAudit('comment_create', $userId, $user['username'] ?? 'unknown', 'post.php', "Comment added to post ID: $postId");
     
+    return $result;
+}
+}
+
+if (!function_exists('getCommentById')) {
+function getCommentById($commentId) {
+    $pdo = getDB();
+    $stmt = $pdo->prepare("SELECT * FROM comments WHERE id = ?");
+    $stmt->execute([$commentId]);
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+}
+}
+
+if (!function_exists('updateComment')) {
+function updateComment($commentId, $userId, $content, $isAdmin = false) {
+    $pdo = getDB();
+    if ($isAdmin) {
+        $stmt = $pdo->prepare("UPDATE comments SET content = ? WHERE id = ?");
+        $result = $stmt->execute([$content, $commentId]);
+    } else {
+        $stmt = $pdo->prepare("UPDATE comments SET content = ? WHERE id = ? AND user_id = ?");
+        $result = $stmt->execute([$content, $commentId, $userId]);
+    }
+    if ($result) {
+        logAudit('comment_update', $userId, $_SESSION['username'] ?? 'unknown', 'post.php', "Comment updated (ID: $commentId)");
+    }
+    return $result;
+}
+}
+
+if (!function_exists('deleteCommentById')) {
+function deleteCommentById($commentId, $userId, $isAdmin = false) {
+    $pdo = getDB();
+    if ($isAdmin) {
+        $stmt = $pdo->prepare("DELETE FROM comments WHERE id = ?");
+        $result = $stmt->execute([$commentId]);
+    } else {
+        $stmt = $pdo->prepare("DELETE FROM comments WHERE id = ? AND user_id = ?");
+        $result = $stmt->execute([$commentId, $userId]);
+    }
+    if ($result) {
+        logAudit('comment_delete', $userId, $_SESSION['username'] ?? 'unknown', 'post.php', "Comment deleted (ID: $commentId)");
+    }
     return $result;
 }
 }

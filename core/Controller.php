@@ -31,7 +31,12 @@ abstract class Controller {
     protected function getBaseUrl(): string {
         $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
         $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-        $scriptDir = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
+        $scriptDir = dirname($_SERVER['SCRIPT_NAME'] ?? '');
+        $scriptDir = str_replace('\\', '/', $scriptDir);
+        $scriptDir = rtrim($scriptDir, '/');
+        if ($scriptDir === '.' || $scriptDir === '\\') {
+            $scriptDir = '';
+        }
         return $protocol . '://' . $host . $scriptDir;
     }
     

@@ -1,55 +1,57 @@
 # 📚 Blog de Tutoriales
 
-Blog de tutoriales para **Lenin Obregón Espinoza** (Ingeniero Nicaragüense). Sistema completo de publicaciones con soporte Markdown, multi-idioma, 20 temas de color y panel de administración.
+Blog de tutoriales para **Lenin Obregón Espinoza** (Ingeniero Nicaragüense).  
+Sistema completo de publicaciones con panel de administración, usuarios por rol, editor visual, multi-idioma y 20 temas.
 
 ---
 
 ## 🌟 Características Principales
 
-### 📝 Sistema de Publicaciones
-- Editor con soporte Markdown
-- Tabla de contenidos automática
-- Tiempo de lectura estimado
-- Contador de visitas
-- Posts relacionados por categoría
-- Comentarios en cada publicación
-- Botones de compartir (WhatsApp, Telegram, Facebook, Twitter)
-- Botón copiar código en bloques de código
+### 📝 Publicaciones y Contenido
+- Editor visual tipo WordPress (TinyMCE local/offline) en panel admin y autor.
+- Compatibilidad de contenido HTML + Markdown en render de posts.
+- Tabla de contenidos automática en artículos.
+- Tiempo de lectura estimado.
+- Comentarios por publicación.
+- Botones de compartir y copia de código.
+- Subida de imagen de portada + imagen embebida dentro del contenido.
+- Buscador con resultados por título y contenido.
+- Soporte de video de YouTube por URL en publicaciones.
 
-### 👥 Sistema de Usuarios
-- Registro con preguntas de recuperación
-- Login seguro con hash bcrypt
-- Perfil editable (foto, biografía, redes sociales)
-- Roles: Admin, Autor, Usuario
-- Panel de usuario para crear publicaciones
+### 👥 Usuarios y Roles
+- Registro/login con hash bcrypt.
+- Recuperación de contraseña con pregunta de seguridad.
+- Perfil editable.
+- Roles: `admin`, `author`, `user`.
+- Panel para autores con flujo de edición propio.
+- Sesión unificada para login general y login de administración.
+- Compatibilidad de rutas legacy sin romper URLs existentes.
 
-### 📊 Admin Dashboard
-- Estadísticas con gráficas Chart.js
-  - Visitas últimos 30 días
-  - Publicaciones por categoría
-  - Páginas más visitadas
-  - Usuarios por rol
-- Gestión de usuarios
-- Gestión de publicaciones
-- Editor de página "Acerca de"
-- Respaldos de base de datos
+### 📊 Administración
+- Dashboard con métricas (Chart.js).
+- Gestión de publicaciones y usuarios.
+- Gestión de newsletter.
+- Edición de página "Acerca de".
+- Respaldos de base de datos.
+- Auditoría de eventos.
+- Descarga de backups SQL desde panel.
+- Gestión de idioma (ES/EN) en áreas principales.
 
-### 🎨 Sistema de Temas (20 Colores)
-- Blanco, Azul, Azul Oscuro, Negro
-- Verde, Rojo, Morado, Naranja
-- Rosa, Teal, Amarillo, Cian
-- Marrón, Índigo, Lima, Ámbar
-- Rojo Rosa, Pizarra, Esmeralda, Cielo, Violeta
+### 🔐 Seguridad y Estabilidad
+- Validación CSRF en creación/edición/eliminación de publicaciones.
+- Eliminación de posts vía `POST` (ya no `GET`).
+- Endurecimiento de uploads (tipo MIME real + tamaño máximo).
+- Enrutamiento centralizado con router MVC.
+- Soporte HTTP para `GET`, `POST`, `HEAD`, `OPTIONS`.
+- Login admin contra base de datos (sin credencial fija hardcodeada).
+- Regeneración de sesión al autenticar (`session_regenerate_id`).
+- Límite de intentos de login con bloqueo temporal por IP+usuario.
+- Validación de rol admin centralizada en módulos `admin/*`.
 
-### 🌐 Multi-idioma
-- Español (por defecto)
-- English
-- Selector de idioma en el menú
-
-### 📧 Newsletter
-- Suscripción por email
-- Envío masivo desde admin
-- Gestión de suscriptores
+### 🌐 UI y UX
+- Multi-idioma (ES/EN) incluyendo editor.
+- Sistema de temas (20 colores) sin romper consistencia visual.
+- Capa visual global para iconos “pro”.
 
 ---
 
@@ -57,13 +59,12 @@ Blog de tutoriales para **Lenin Obregón Espinoza** (Ingeniero Nicaragüense). S
 
 | Tecnología | Uso |
 |------------|-----|
-| PHP 7.4+ | Backend (PDO) |
-| MySQL / MariaDB | Base de datos |
-| HTML5, CSS3 | Frontend |
-| JavaScript | Interactividad |
-| Chart.js | Gráficos y visualización |
-| Font Awesome 6 | Iconos profesionales |
-| Parsedown | Markdown a HTML |
+| PHP 7.4+ / 8.x | Backend (MVC + PDO) |
+| MySQL / MariaDB | Persistencia |
+| HTML5, CSS3, JS | Frontend |
+| TinyMCE | Editor visual offline |
+| Chart.js | Estadísticas |
+| Font Awesome 6 | Iconografía |
 | Poppins / Fira Code | Tipografías |
 
 ---
@@ -72,40 +73,37 @@ Blog de tutoriales para **Lenin Obregón Espinoza** (Ingeniero Nicaragüense). S
 
 | Campo | Valor |
 |-------|-------|
-| Admin URL | `/admin/` |
-| Usuario | `admin` |
-| Email | `admin@blog.com` |
-| Contraseña | `blog$$` |
+| Admin URL | `/admin/login.php` |
+| Login general | `/auth.php` |
+| Usuario admin | definido en tabla `users` |
+| Contraseña admin | definida en base de datos (hash bcrypt) |
+
+> **Importante:** el sistema ya no usa contraseña fija hardcodeada para admin.  
+> Todas las autenticaciones se validan contra la base de datos.
 
 ---
 
-## 🏗️ Arquitectura PHP POO - MVC
+## 🏗️ Arquitectura Actual
 
-El blog está desarrollado con **Programación Orientada a Objetos (POO)** siguiendo el patrón **MVC (Modelo - Vista - Controlador)**.
+El sistema opera con arquitectura MVC + helpers heredados, en transición controlada hacia separación por capas.
 
-### 🔷 Modelo (Model)
-- Clases que gestionan la base de datos
-- Consultas SQL preparadas con PDO
-- Métodos CRUD reutilizables
-- Ejemplo: `User.php`, `Post.php`, `Comment.php`
+### Capas principales
+- **Controladores**: flujo HTTP y orquestación (`controllers/`).
+- **Modelos**: acceso a datos (`models/`).
+- **Servicios**: lógica reutilizable de contenido (`services/`).
+- **Vistas**: presentación (`views/`).
+- **Core**: router, sesión, base controller/model (`core/`).
 
-### 🔶 Vista (View)
-- Plantillas HTML con código PHP embebido
-- Variables pasadas desde los controladores
-- Layouts reutilizables (header, footer)
-- Ejemplo: `views/index.php`, `views/post.php`
-
-### 🔷 Controlador (Controller)
-- Recibe peticiones del usuario
-- Coordina Modelo y Vista
-- Maneja lógica de negocio
-- Ejemplo: `HomeController.php`, `PostController.php`
-
-### 🔄 Flujo de una Petición
+### Flujo de petición
 
 ```
-Usuario → index.php (Router) → Controlador → Modelo → Vista → HTML
+Cliente → index.php → Router → Controller → Model/Service → View
 ```
+
+### Flujo de autenticación
+- `auth.php`: login/registro/recuperación para usuarios del sistema.
+- `admin/login.php`: acceso directo a administración (mismo backend de autenticación por BD).
+- Sesión compartida entre módulos con validación por rol.
 
 ---
 
@@ -117,65 +115,51 @@ Usuario → index.php (Router) → Controlador → Modelo → Vista → HTML
 |-----------|----------------|
 | PHP | 7.4+ |
 | MySQL / MariaDB | 5.7+ |
-| Apache / Nginx | any |
+| Apache / Nginx | cualquiera |
 
 ### Hardware
 
 | Nivel | CPU | RAM | Disco |
 |-------|-----|-----|-------|
-| **Mínimo** | 1 núcleo | 512 MB | 1 GB |
-| **Óptimo** | 2+ núcleos | 2 GB | 10 GB |
-| **Máximo** | 4+ núcleos | 4+ GB | 50+ GB |
-
-> **Nota**: El blog es ligero y funciona bien en un VPS básico (1 núcleo, 1 GB RAM). 50 GB es más que suficiente para el código, imágenes y datos.
+| Mínimo | 1 núcleo | 512 MB | 1 GB |
+| Óptimo | 2+ núcleos | 2 GB | 10 GB |
+| Recomendado | 4+ núcleos | 4+ GB | 50+ GB |
 
 ---
 
-## 📊 Estructura de la Base de Datos
+## 📊 Estructura de Base de Datos
 
 | Tabla | Descripción |
 |-------|-------------|
-| users | Usuarios del sistema (admin, autor, user) |
-| posts | Publicaciones del blog |
-| comments | Comentarios en posts |
-| newsletter | Suscriptores al newsletter |
-| visit_logs | Registro de visitas al sitio |
-| audit_logs | Registro de acciones de usuarios |
-| about | Página "Acerca de" (editable) |
-| site_stats | Estadísticas globales del sitio |
-
-### Notas sobre la Base de Datos
-- No se utilizan **foreign keys** para mayor compatibilidad entre servidores
-- La aplicación gestiona las relaciones lógicamente
-- Charset: `utf8mb4` para soportar caracteres especiales y emojis
+| users | Usuarios y roles |
+| posts | Publicaciones |
+| comments | Comentarios |
+| newsletter | Suscriptores |
+| visit_logs | Registro de visitas |
+| audit_logs | Registro de acciones |
+| about | Contenido de página "Acerca de" |
+| site_stats | Estadísticas globales |
 
 ---
 
-## 📂 Estructura de Archivos
+## 📂 Estructura de Proyecto (resumen)
 
 ```
 blog_responsivo/
-├── index.php                  # Página principal (MVC Entry Point)
-├── autoload.php               # Carga automática de clases
-├── config.php                 # Configuración del sitio
-├── subscribe.php              # Suscripción al newsletter
-├── db/
-│   ├── blog_tutoriales.sql    # Script SQL con datos de ejemplo
-│   └── blog_tutoriales_empty.sql  # Script SQL solo admin
-├── core/                      # Clases base del MVC
-│   ├── Database.php           # Conexión PDO (Singleton)
-│   ├── Session.php            # Manejo de sesiones
-│   ├── Controller.php         # Clase base controladores
-│   ├── Model.php              # Clase base modelos
-│   └── theme_colors.php       # Colores de los 20 temas
-├── models/                    # Modelos de datos
-├── controllers/               # Controladores
-├── views/                     # Plantillas HTML
-├── includes/                  # Funciones helper
-├── languages/                 # Traducciones (es, en)
-├── admin/                     # Panel de administración
-├── user/                      # Panel de usuario
-└── uploads/                   # Imágenes subidas
+├── index.php
+├── autoload.php
+├── config.php
+├── upload_image.php
+├── services/
+├── core/
+├── controllers/
+├── models/
+├── views/
+├── includes/
+├── admin/
+├── user/
+├── uploads/
+└── db/
 ```
 
 ---

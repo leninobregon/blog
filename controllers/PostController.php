@@ -8,6 +8,7 @@ class PostController extends Controller {
         $postModel = new Post();
         $commentModel = new Comment();
         $siteStats = new SiteStats();
+        $contentService = new ContentService();
         
         $post = $postModel->getWithAuthor($id);
         
@@ -45,19 +46,9 @@ class PostController extends Controller {
         $categories = $postModel->getCategoriesWithCount();
         
         // Parse content
-        $content = parseMarkdown($post['content']);
-        $readingTime = readingTime($post['content']);
-        
-        // Extract TOC
-        preg_match_all('/^#{1,3} (.+)$/m', $post['content'], $headings);
-        $toc = [];
-        if (!empty($headings[0])) {
-            foreach ($headings[1] as $i => $heading) {
-                $level = preg_match('/^#+/', $headings[0][$i]);
-                $slug = strtolower(str_replace([' ', 'á','é','í','ó','ú','ñ'], ['','-','e','i','o','u','n'], $heading));
-                $toc[] = ['text' => $heading, 'level' => $level, 'slug' => $slug];
-            }
-        }
+        $content = $contentService->render($post['content']);
+        $readingTime = $contentService->readingTime($post['content']);
+        $toc = $contentService->extractToc($post['content']);
         
         // Share URLs
         $currentUrl = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
@@ -87,7 +78,10 @@ class PostController extends Controller {
             'toc' => $toc,
             'shareTitle' => $shareTitle,
             'shareUrl' => $shareUrl,
-            'categoriesCount' => count($categories)
+            'categoriesCount' => count($categories),
+            'pageTitle' => $post['title'] . ' - ' . (CONFIG['site_name'] ?? 'Blog'),
+            'metaDescription' => $contentService->plainExcerpt($post['content'], 170),
+            'metaImage' => !empty($post['image']) ? $post['image'] : null
         ]);
     }
 }

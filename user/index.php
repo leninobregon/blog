@@ -21,8 +21,17 @@ $action = $_GET['action'] ?? 'list';
 $id = (int)($_GET['id'] ?? 0);
 
 if($action === 'delete' && $id) {
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        http_response_code(405);
+        exit('Método no permitido.');
+    }
+    if (!verify_csrf($_POST['csrf_token'] ?? '')) {
+        http_response_code(403);
+        exit('Token CSRF inválido.');
+    }
     deletePost($id);
-    header('Location: index.php'); exit;
+    header('Location: index.php?deleted=1');
+    exit;
 }
 
 if(canPost($user)) {
@@ -34,6 +43,10 @@ if(canPost($user)) {
         }
         
         if($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (!verify_csrf($_POST['csrf_token'] ?? '')) {
+                http_response_code(403);
+                exit('Token CSRF inválido.');
+            }
             $title = $_POST['title'] ?? '';
             $category = $_POST['category'] ?? '';
             $content = $_POST['content'] ?? '';
@@ -46,10 +59,13 @@ if(canPost($user)) {
             
             if($id && !empty($_POST['update'])) {
                 updatePost($id, $title, $category, $content, $image, $video);
+                header('Location: index.php?action=edit&id=' . $id . '&saved=1');
+                exit;
             } else {
-                savePost($title, $category, $content, $image, $video, $_SESSION['user_id']);
+                $newId = savePost($title, $category, $content, $image, $video, $_SESSION['user_id']);
+                header('Location: index.php?action=edit&id=' . (int)$newId . '&saved=1');
+                exit;
             }
-            header('Location: index.php'); exit;
         }
         
         $categories = getCategories();
@@ -61,7 +77,9 @@ if(canPost($user)) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $action === 'edit' ? 'Editar' : 'Nueva' ?> Publicación</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/icon-pro.css?v=1">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <script src="../assets/vendor/tinymce/tinymce.min.js"></script>
     <style>
         :root {
             <?php foreach($colors as $k=>$v): ?><?php echo "--$k: $v;"; ?><?php endforeach; ?>
@@ -80,6 +98,22 @@ if(canPost($user)) {
         .form-group input, .form-group textarea { width: 100%; padding: 0.8rem 1rem; border: 2px solid var(--border); border-radius: var(--radius-sm); background: var(--bg); color: var(--text); font-family: inherit; font-size: 1rem; transition: all 0.3s; }
         .form-group input:focus, .form-group textarea:focus { outline: none; border-color: var(--primary); }
         .form-group textarea { min-height: 300px; font-family: 'Fira Code', monospace; text-align: justify; text-justify: inter-word; }
+        .editor-note { margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-secondary); }
+        .editor-lang-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .editor-lang-wrap select {
+            border: 1px solid var(--border);
+            background: var(--bg);
+            color: var(--text);
+            border-radius: var(--radius-sm);
+            padding: 0.35rem 0.5rem;
+            font-size: 0.85rem;
+        }
         
         .editor-toolbar {
             display: flex;
@@ -211,9 +245,15 @@ if(canPost($user)) {
         </nav>
     </nav>
     <main class="container">
+        <?php if(isset($_GET['saved']) && $_GET['saved'] === '1'): ?>
+        <div style="background:#d1fae5;color:#065f46;padding:0.9rem 1rem;border-radius:var(--radius-sm);margin-bottom:1rem;border:1px solid #6ee7b7;">
+            <i class="fas fa-check-circle"></i> Publicación guardada correctamente.
+        </div>
+        <?php endif; ?>
         <div class="card">
             <h2><i class="fas fa-<?= $action === 'edit' ? 'edit' : 'plus' ?>"></i> <?= $post ? 'Editar' : 'Nueva' ?> Publicación</h2>
             <form method="post" enctype="multipart/form-data">
+                <?= csrf_field() ?>
                 <?php if($post): ?><input type="hidden" name="update" value="1"><?php endif; ?>
                 <div class="form-group">
                     <label><i class="fas fa-heading"></i> Título</label>
@@ -230,43 +270,23 @@ if(canPost($user)) {
                 </div>
                 <div class="form-group">
                     <label><i class="fas fa-align-left"></i> Contenido</label>
-                    <div class="editor-toolbar">
+                    <div class="editor-lang-wrap">
+                        <label for="editorLanguage" style="margin:0;font-weight:500;">Idioma editor:</label>
+                        <select id="editorLanguage">
+                            <option value="es" <?= $currentLang === 'es' ? 'selected' : '' ?>>Español</option>
+                            <option value="en" <?= $currentLang === 'en' ? 'selected' : '' ?>>English</option>
+                        </select>
+                    </div>
+                    <div class="editor-toolbar" id="fallback-toolbar">
                         <button type="button" onclick="insertFormat('**', '**')" title="Negrita"><i class="fas fa-bold"></i></button>
                         <button type="button" onclick="insertFormat('*', '*')" title="Cursiva"><i class="fas fa-italic"></i></button>
-                        <button type="button" onclick="insertFormat('`', '`')" title="Código"><i class="fas fa-code"></i></button>
-                        <button type="button" onclick="insertFormat('```\n', '\n```')" title="Bloque de código"><i class="fas fa-terminal"></i></button>
-                        <span class="toolbar-divider"></span>
                         <button type="button" onclick="insertLine('# ')" title="Título"><i class="fas fa-heading"></i></button>
-                        <button type="button" onclick="insertLine('## ')" title="Subtítulo"><i class="fas fa-h2"></i></button>
-                        <button type="button" onclick="insertLine('### ')" title="Sub-subtítulo"><i class="fas fa-h3"></i></button>
-                        <span class="toolbar-divider"></span>
                         <button type="button" onclick="insertLine('- ')" title="Lista"><i class="fas fa-list-ul"></i></button>
-                        <button type="button" onclick="insertLine('> ')" title="Cita"><i class="fas fa-quote-right"></i></button>
-                        <span class="toolbar-divider"></span>
                         <button type="button" onclick="insertFormat('[', '](url)')" title="Enlace"><i class="fas fa-link"></i></button>
                         <button type="button" onclick="insertFormat('![alt](', ')')" title="Imagen"><i class="fas fa-image"></i></button>
                     </div>
-                    <div class="editor-tabs">
-                        <button type="button" class="tab-btn active" onclick="showTab('editor')"><i class="fas fa-edit"></i> Editor</button>
-                        <button type="button" class="tab-btn" onclick="showTab('preview')"><i class="fas fa-eye"></i> Vista Previa</button>
-                    </div>
-                    <div id="editor-tab">
-                        <textarea name="content" id="content-editor" required><?= $post ? htmlspecialchars($post['content']) : '' ?></textarea>
-                    </div>
-                    <div id="preview-tab" style="display:none;">
-                        <div id="preview-content" class="post-content-preview"></div>
-                    </div>
-                    <div class="markdown-help">
-                        <p class="help-title"><i class="fas fa-info-circle"></i> Formato Markdown</p>
-                        <div class="help-grid">
-                            <div class="help-item"><code>**texto**</code><span>Negrita</span></div>
-                            <div class="help-item"><code>*texto*</code><span>Cursiva</span></div>
-                            <div class="help-item"><code>`código`</code><span>Código</span></div>
-                            <div class="help-item"><code>```bash</code><span>Bloque</span></div>
-                            <div class="help-item"><code>## Título</code><span>Título</span></div>
-                            <div class="help-item"><code>- item</code><span>Lista</span></div>
-                        </div>
-                    </div>
+                    <textarea name="content" id="content-editor" required><?= $post ? htmlspecialchars($post['content']) : '' ?></textarea>
+                    <p class="editor-note"><i class="fas fa-info-circle"></i> Editor visual estilo WordPress habilitado para autores.</p>
                 </div>
                 <div class="form-group">
                     <label><i class="fas fa-image"></i> Imagen</label>
@@ -314,7 +334,7 @@ if(canPost($user)) {
             textarea.selectionStart = start + before.length;
             textarea.selectionEnd = start + before.length + (selected || 'texto').length;
         }
-        
+
         function insertLine(prefix) {
             const textarea = document.getElementById('content-editor');
             const start = textarea.selectionStart;
@@ -323,39 +343,81 @@ if(canPost($user)) {
             textarea.focus();
         }
         
-        function showTab(tab) {
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById('editor-tab').style.display = 'none';
-            document.getElementById('preview-tab').style.display = 'none';
-            
-            if(tab === 'editor') {
-                document.querySelector('.tab-btn:first-child').classList.add('active');
-                document.getElementById('editor-tab').style.display = 'block';
-            } else {
-                document.querySelector('.tab-btn:last-child').classList.add('active');
-                document.getElementById('preview-tab').style.display = 'block';
-                renderPreview();
+        function initEditor(editorLang) {
+            if (typeof tinymce === 'undefined') return;
+            if (tinymce.get('content-editor')) {
+                tinymce.get('content-editor').remove();
             }
+            const lang = editorLang || '<?= $currentLang === 'en' ? 'en' : 'es' ?>';
+            const config = {
+                    selector: '#content-editor',
+                    height: 520,
+                    language: lang,
+                    menubar: 'file edit view insert format tools table help',
+                    plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table code help wordcount autosave',
+                    toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image table | blockquote codesample | removeformat | code preview fullscreen',
+                    content_style: 'body { font-family:Poppins,Arial,sans-serif; font-size:16px; line-height:1.7; text-align: justify; }',
+                    branding: false,
+                    promotion: false,
+                    convert_urls: false,
+                    relative_urls: false,
+                    images_upload_url: '../upload_image.php',
+                    automatic_uploads: true,
+                    image_title: true,
+                    file_picker_types: 'image',
+                    file_picker_callback: function(callback) {
+                        const input = document.createElement('input');
+                        input.setAttribute('type', 'file');
+                        input.setAttribute('accept', 'image/*');
+                        input.onchange = function() {
+                            const file = this.files && this.files[0];
+                            if (!file) return;
+                            const formData = new FormData();
+                            formData.append('file', file);
+                            fetch('../upload_image.php', {
+                                method: 'POST',
+                                body: formData
+                            })
+                            .then(function(response) { return response.json(); })
+                            .then(function(data) {
+                                if (data && data.location) {
+                                    callback(data.location, { alt: file.name });
+                                } else {
+                                    alert('No se pudo subir la imagen.');
+                                }
+                            })
+                            .catch(function() {
+                                alert('Error al subir la imagen.');
+                            });
+                        };
+                        input.click();
+                    },
+                    setup: function() {
+                        const fallback = document.getElementById('fallback-toolbar');
+                        if (fallback) fallback.style.display = 'none';
+                    }
+                };
+            if (lang === 'es') {
+                config.language_url = '../assets/vendor/tinymce/langs/es.js?v=2';
+            }
+            tinymce.init(config);
         }
-        
-        function renderPreview() {
-            let content = document.getElementById('content-editor').value;
-            content = content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-            content = content.replace(/```(\w*)\n([\s\S]*?)```/g, '<pre><code>$2</code></pre>');
-            content = content.replace(/`([^`]+)`/g, '<code class="inline">$1</code>');
-            content = content.replace(/^### (.+)$/gm, '<h3>$1</h3>');
-            content = content.replace(/^## (.+)$/gm, '<h2>$1</h2>');
-            content = content.replace(/^# (.+)$/gm, '<h1>$1</h1>');
-            content = content.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-            content = content.replace(/\*([^*]+)\*/g, '<em>$1</em>');
-            content = content.replace(/^- (.+)$/gm, '<li>$1</li>');
-            content = content.replace(/^&gt; (.+)$/gm, '<blockquote>$1</blockquote>');
-            content = content.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1">');
-            content = content.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
-            content = content.replace(/\n\n/g, '</p><p>');
-            content = '<p>' + content + '</p>';
-            document.getElementById('preview-content').innerHTML = content;
-        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const select = document.getElementById('editorLanguage');
+            const saved = localStorage.getItem('editorLangPreference');
+            const initial = saved || '<?= $currentLang === 'en' ? 'en' : 'es' ?>';
+            if (select) select.value = initial;
+            initEditor(initial);
+
+            if (select) {
+                select.addEventListener('change', function() {
+                    const lang = this.value === 'en' ? 'en' : 'es';
+                    localStorage.setItem('editorLangPreference', lang);
+                    initEditor(lang);
+                });
+            }
+        });
     </script>
 </body>
 </html>
@@ -379,6 +441,7 @@ if(canPost($user)) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mi Panel - <?= CONFIG['site_name'] ?></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/icon-pro.css?v=1">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -426,10 +489,21 @@ if(canPost($user)) {
         </nav>
     </nav>
     <main class="container">
+        <?php if(isset($_GET['deleted']) && $_GET['deleted'] === '1'): ?>
+        <div style="background:#fee2e2;color:#991b1b;padding:0.9rem 1rem;border-radius:var(--radius-sm);margin-bottom:1rem;border:1px solid #fca5a5;">
+            <i class="fas fa-trash-check"></i> Publicación eliminada correctamente.
+        </div>
+        <?php endif; ?>
         <div class="user-card">
             <div class="user-avatar"><i class="fas fa-user"></i></div>
             <div class="user-info">
-                <h2><?= htmlspecialchars($user['username']) ?><span class="role-badge"><?= htmlspecialchars($user['role']) ?></span></h2>
+                <?php
+                $profileDisplayName = trim(($user['first_name'] ?? '') . ' ' . ($user['last_name'] ?? ''));
+                if ($profileDisplayName === '') {
+                    $profileDisplayName = $user['username'];
+                }
+                ?>
+                <h2><?= htmlspecialchars($profileDisplayName) ?><span class="role-badge"><?= htmlspecialchars($user['role']) ?></span></h2>
                 <p><i class="fas fa-envelope"></i> <?= htmlspecialchars($user['email']) ?></p>
                 <p><i class="fas fa-calendar"></i> Miembro desde: <?= strftime('%d/%m/%Y', strtotime($user['created_at'])) ?></p>
             </div>
@@ -463,7 +537,10 @@ if(canPost($user)) {
                     <td class="actions">
                         <a href="../post.php?id=<?= $post['id'] ?>" class="btn btn-secondary" target="_blank"><i class="fas fa-eye"></i></a>
                         <a href="index.php?action=edit&id=<?= $post['id'] ?>" class="btn btn-secondary"><i class="fas fa-edit"></i></a>
-                        <a href="index.php?action=delete&id=<?= $post['id'] ?>" class="btn btn-danger" onclick="return confirm('¿Eliminar?')"><i class="fas fa-trash"></i></a>
+                        <form method="post" action="index.php?action=delete&id=<?= $post['id'] ?>" style="display:inline-block;" onsubmit="return confirm('¿Eliminar?')">
+                            <?= csrf_field() ?>
+                            <button type="submit" class="btn btn-danger"><i class="fas fa-trash"></i></button>
+                        </form>
                     </td>
                 </tr>
                 <?php endforeach; ?>

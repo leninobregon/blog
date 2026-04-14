@@ -8,14 +8,49 @@ $lang = $lang ?? [];
 $currentTheme = $currentTheme ?? 'blue';
 $colors = $colors ?? [];
 $loggedUser = $loggedUser ?? null;
+$displayUserName = '';
+if ($loggedUser) {
+    $firstName = trim((string)($loggedUser['first_name'] ?? ''));
+    $lastName = trim((string)($loggedUser['last_name'] ?? ''));
+    $fullName = trim($firstName . ' ' . $lastName);
+    $displayUserName = $fullName !== '' ? $fullName : ($loggedUser['username'] ?? '');
+}
+$pageTitle = $pageTitle ?? ($config['site_name'] ?? 'Blog');
+$metaDescription = $metaDescription ?? ($config['description'] ?? '');
+$currentUrl = (isset($_SERVER['REQUEST_SCHEME']) ? $_SERVER['REQUEST_SCHEME'] : ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http')) . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost') . ($_SERVER['REQUEST_URI'] ?? '/');
+$metaImage = $metaImage ?? null;
+if ($metaImage && strpos($metaImage, 'http') !== 0) {
+    $metaImage = rtrim($baseUrl, '/') . '/' . ltrim($metaImage, '/');
+}
 ?>
 <!DOCTYPE html>
 <html lang="<?= $currentLang ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $config['site_name'] ?></title>
+    <title><?= htmlspecialchars($pageTitle) ?></title>
+    <?php if (!empty($metaDescription)): ?>
+    <meta name="description" content="<?= htmlspecialchars($metaDescription) ?>">
+    <?php endif; ?>
+    <meta property="og:title" content="<?= htmlspecialchars($pageTitle) ?>">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="<?= htmlspecialchars($currentUrl) ?>">
+    <?php if (!empty($metaDescription)): ?>
+    <meta property="og:description" content="<?= htmlspecialchars($metaDescription) ?>">
+    <?php endif; ?>
+    <?php if (!empty($metaImage)): ?>
+    <meta property="og:image" content="<?= htmlspecialchars($metaImage) ?>">
+    <?php endif; ?>
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="<?= htmlspecialchars($pageTitle) ?>">
+    <?php if (!empty($metaDescription)): ?>
+    <meta name="twitter:description" content="<?= htmlspecialchars($metaDescription) ?>">
+    <?php endif; ?>
+    <?php if (!empty($metaImage)): ?>
+    <meta name="twitter:image" content="<?= htmlspecialchars($metaImage) ?>">
+    <?php endif; ?>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="<?= $baseUrl ?>/assets/css/icon-pro.css?v=1">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -214,7 +249,7 @@ $loggedUser = $loggedUser ?? null;
                         <?php else: ?>
                         <i class="fas fa-user"></i>
                         <?php endif; ?>
-                        <?= htmlspecialchars($loggedUser['username']) ?>
+                        <?= htmlspecialchars($displayUserName) ?>
                     </a>
                     <?php if(in_array($loggedUser['role'], ['admin', 'author'])): ?>
                     <a href="<?= $baseUrl ?>/<?= $loggedUser['role'] === 'admin' ? 'admin/dashboard.php' : 'user/index.php' ?>" class="nav-btn"><i class="fas fa-pen"></i> <?= $lang['nav_admin'] ?? 'Mi Panel' ?></a>

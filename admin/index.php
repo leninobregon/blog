@@ -3,8 +3,8 @@ session_start();
 header('Cache-Control: no-cache, no-store, must-revalidate');
 header('Pragma: no-cache');
 header('Expires: 0');
-if(empty($_SESSION['logged'])) { header('Location: login.php'); exit; }
 include '../includes/functions.php';
+if(!isAdminAuthenticated()) { header('Location: login.php'); exit; }
 
 // Language
 $currentLang = getActiveLanguage();
@@ -23,8 +23,17 @@ $action = $_GET['action'] ?? 'list';
 $id = (int)($_GET['id'] ?? 0);
 
 if($action === 'delete' && $id) {
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        http_response_code(405);
+        exit('Método no permitido.');
+    }
+    if (!verify_csrf($_POST['csrf_token'] ?? '')) {
+        http_response_code(403);
+        exit('Token CSRF inválido.');
+    }
     deletePost($id);
-    header('Location: index.php?action=list'); exit;
+    header('Location: index.php?action=list&deleted=1');
+    exit;
 }
 
 if($action === 'list') {
@@ -107,6 +116,11 @@ if($action === 'list') {
     </div>
     
     <div class="container">
+        <?php if(isset($_GET['deleted']) && $_GET['deleted'] === '1'): ?>
+        <div style="background:#fee2e2;color:#991b1b;padding:0.9rem 1rem;border-radius:var(--radius-sm);margin-bottom:1rem;border:1px solid #fca5a5;">
+            <i class="fas fa-trash-check"></i> Publicación eliminada correctamente.
+        </div>
+        <?php endif; ?>
         <h2 style="margin-bottom: 1.5rem;"><i class="fas fa-file-alt"></i> Todas las Publicaciones</h2>
         
         <div class="card">
@@ -137,10 +151,13 @@ if($action === 'list') {
                         <td><span class="badge"><?= htmlspecialchars($post['category']) ?></span></td>
                         <td><?= htmlspecialchars($post['author_name'] ?: 'admin') ?></td>
                         <td><?= date('d/m/Y', strtotime($post['created_at'])) ?></td>
-                        <td><?= number_format($post['visits'] ?? 0) ?></td>
+                        <td><?= number_format((int)($post['views'] ?? 0)) ?></td>
                         <td>
                             <a href="index.php?action=edit&id=<?= $post['id'] ?>" class="btn btn-sm" title="Editar"><i class="fas fa-edit"></i></a>
-                            <a href="index.php?action=delete&id=<?= $post['id'] ?>" class="btn btn-sm btn-danger" title="Eliminar" onclick="return confirm('¿Eliminar publicación?')"><i class="fas fa-trash"></i></a>
+                            <form method="post" action="index.php?action=delete&id=<?= $post['id'] ?>" style="display:inline-block;" onsubmit="return confirm('¿Eliminar publicación?')">
+                                <?= csrf_field() ?>
+                                <button type="submit" class="btn btn-sm btn-danger" title="Eliminar"><i class="fas fa-trash"></i></button>
+                            </form>
                             <a href="../post.php?id=<?= $post['id'] ?>" class="btn btn-sm btn-secondary" target="_blank" title="Ver"><i class="fas fa-eye"></i></a>
                         </td>
                     </tr>
@@ -164,6 +181,10 @@ if($action === 'new' || $action === 'edit') {
     }
     
     if($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (!verify_csrf($_POST['csrf_token'] ?? '')) {
+            http_response_code(403);
+            exit('Token CSRF inválido.');
+        }
         $title = $_POST['title'] ?? '';
         $category = $_POST['category'] ?? '';
         $content = $_POST['content'] ?? '';
@@ -177,11 +198,14 @@ if($action === 'new' || $action === 'edit') {
         if($id && !empty($_POST['update'])) {
             updatePost($id, $title, $category, $content, $image, $video);
             logAudit('post_update', $_SESSION['user_id'] ?? null, $_SESSION['username'] ?? 'admin', 'admin/index.php', "Updated post: $title (ID: $id)");
+            header('Location: index.php?action=edit&id=' . $id . '&saved=1');
+            exit;
         } else {
             $newId = savePost($title, $category, $content, $image, $video, $_SESSION['user_id']);
             logAudit('post_create', $_SESSION['user_id'] ?? null, $_SESSION['username'] ?? 'admin', 'admin/index.php', "Created post: $title (Category: $category)");
+            header('Location: index.php?action=edit&id=' . (int)$newId . '&saved=1');
+            exit;
         }
-        header('Location: index.php'); exit;
     }
     
     $categories = getCategories();
@@ -195,7 +219,9 @@ if($action === 'new' || $action === 'edit') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - <?= $action === 'edit' ? 'Editar' : 'Nueva' ?> Publicación</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/icon-pro.css?v=1">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <script src="../assets/vendor/tinymce/tinymce.min.js"></script>
     <style>
         :root {
             <?php foreach($colors as $k=>$v): ?><?php echo "--$k: $v;"; ?><?php endforeach; ?>
@@ -290,6 +316,26 @@ if($action === 'new' || $action === 'edit') {
             width: 1px;
             background: var(--border);
             margin: 0 0.3rem;
+        }
+        .editor-note {
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        .editor-lang-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .editor-lang-wrap select {
+            border: 1px solid var(--border);
+            background: var(--bg);
+            color: var(--text);
+            border-radius: var(--radius-sm);
+            padding: 0.35rem 0.5rem;
+            font-size: 0.85rem;
         }
         
         .editor-tabs {
@@ -410,9 +456,15 @@ if($action === 'new' || $action === 'edit') {
     </nav>
     
     <main class="container">
+        <?php if(isset($_GET['saved']) && $_GET['saved'] === '1'): ?>
+        <div style="background:#d1fae5;color:#065f46;padding:0.9rem 1rem;border-radius:var(--radius-sm);margin-bottom:1rem;border:1px solid #6ee7b7;">
+            <i class="fas fa-check-circle"></i> Publicación guardada correctamente.
+        </div>
+        <?php endif; ?>
         <div class="card">
             <h2><i class="fas fa-<?= $action === 'edit' ? 'edit' : 'plus' ?>"></i> <?= $post ? 'Editar' : 'Nueva' ?> Publicación</h2>
             <form method="post" enctype="multipart/form-data">
+                <?= csrf_field() ?>
                 <?php if($post): ?><input type="hidden" name="update" value="1"><?php endif; ?>
                 <div class="form-group">
                     <label><i class="fas fa-heading"></i> Título</label>
@@ -429,77 +481,23 @@ if($action === 'new' || $action === 'edit') {
                 </div>
                 <div class="form-group">
                     <label><i class="fas fa-align-left"></i> Contenido</label>
-                    <div class="editor-toolbar">
+                    <div class="editor-lang-wrap">
+                        <label for="editorLanguage" style="margin:0;font-weight:500;">Idioma editor:</label>
+                        <select id="editorLanguage">
+                            <option value="es" <?= $currentLang === 'es' ? 'selected' : '' ?>>Español</option>
+                            <option value="en" <?= $currentLang === 'en' ? 'selected' : '' ?>>English</option>
+                        </select>
+                    </div>
+                    <div class="editor-toolbar" id="fallback-toolbar">
                         <button type="button" onclick="insertFormat('**', '**')" title="Negrita"><i class="fas fa-bold"></i></button>
                         <button type="button" onclick="insertFormat('*', '*')" title="Cursiva"><i class="fas fa-italic"></i></button>
-                        <button type="button" onclick="insertFormat('`', '`')" title="Código"><i class="fas fa-code"></i></button>
-                        <button type="button" onclick="insertFormat('```\n', '\n```')" title="Bloque de código"><i class="fas fa-terminal"></i></button>
-                        <span class="toolbar-divider"></span>
                         <button type="button" onclick="insertLine('# ')" title="Título"><i class="fas fa-heading"></i></button>
-                        <button type="button" onclick="insertLine('## ')" title="Subtítulo"><i class="fas fa-h2"></i></button>
-                        <button type="button" onclick="insertLine('### ')" title="Sub-subtítulo"><i class="fas fa-h3"></i></button>
-                        <span class="toolbar-divider"></span>
                         <button type="button" onclick="insertLine('- ')" title="Lista"><i class="fas fa-list-ul"></i></button>
-                        <button type="button" onclick="insertLine('> ')" title="Cita"><i class="fas fa-quote-right"></i></button>
-                        <span class="toolbar-divider"></span>
                         <button type="button" onclick="insertFormat('[', '](url)')" title="Enlace"><i class="fas fa-link"></i></button>
                         <button type="button" onclick="insertFormat('![alt](', ')')" title="Imagen"><i class="fas fa-image"></i></button>
                     </div>
-                    <div class="editor-tabs">
-                        <button type="button" class="tab-btn active" onclick="showTab('editor')"><i class="fas fa-edit"></i> Editor</button>
-                        <button type="button" class="tab-btn" onclick="showTab('preview')"><i class="fas fa-eye"></i> Vista Previa</button>
-                    </div>
-                    <div id="editor-tab">
-                        <textarea name="content" id="content-editor" required><?= $post ? htmlspecialchars($post['content']) : '' ?></textarea>
-                    </div>
-                    <div id="preview-tab" style="display:none;">
-                        <div id="preview-content" class="post-content-preview"></div>
-                    </div>
-                    <div class="markdown-help">
-                        <p class="help-title"><i class="fas fa-info-circle"></i> Formato Markdown</p>
-                        <div class="help-grid">
-                            <div class="help-item">
-                                <code>**texto**</code>
-                                <span><strong>texto</strong></span>
-                            </div>
-                            <div class="help-item">
-                                <code>*texto*</code>
-                                <span><em>texto</em></span>
-                            </div>
-                            <div class="help-item">
-                                <code>`código`</code>
-                                <span><code style="background:var(--code-bg);padding:2px 6px;border-radius:3px;">código</code></span>
-                            </div>
-                            <div class="help-item">
-                                <code>```bash</code>
-                                <span>Bloque de código</span>
-                            </div>
-                            <div class="help-item">
-                                <code>## Título</code>
-                                <span>Subtítulo</span>
-                            </div>
-                            <div class="help-item">
-                                <code># Título</code>
-                                <span>Título principal</span>
-                            </div>
-                            <div class="help-item">
-                                <code>- item</code>
-                                <span>Lista</span>
-                            </div>
-                            <div class="help-item">
-                                <code>> texto</code>
-                                <span>Cita</span>
-                            </div>
-                            <div class="help-item">
-                                <code>![alt](url)</code>
-                                <span>Imagen</span>
-                            </div>
-                            <div class="help-item">
-                                <code>[texto](url)</code>
-                                <span>Enlace</span>
-                            </div>
-                        </div>
-                    </div>
+                    <textarea name="content" id="content-editor" required><?= $post ? htmlspecialchars($post['content']) : '' ?></textarea>
+                    <p class="editor-note"><i class="fas fa-info-circle"></i> Editor visual estilo WordPress habilitado (con tablas, listas, imágenes, enlaces y vista de código).</p>
                 </div>
                 <div class="form-group">
                     <label><i class="fas fa-image"></i> Imagen</label>
@@ -553,7 +551,7 @@ if($action === 'new' || $action === 'edit') {
             document.cookie = 'theme=' + theme + '; path=/; max-age=31536000';
             location.reload();
         }
-        
+
         function insertFormat(before, after) {
             const textarea = document.getElementById('content-editor');
             const start = textarea.selectionStart;
@@ -565,7 +563,7 @@ if($action === 'new' || $action === 'edit') {
             textarea.selectionStart = start + before.length;
             textarea.selectionEnd = start + before.length + (selected || 'texto').length;
         }
-        
+
         function insertLine(prefix) {
             const textarea = document.getElementById('content-editor');
             const start = textarea.selectionStart;
@@ -574,61 +572,81 @@ if($action === 'new' || $action === 'edit') {
             textarea.focus();
         }
         
-        function showTab(tab) {
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById('editor-tab').style.display = 'none';
-            document.getElementById('preview-tab').style.display = 'none';
-            
-            if(tab === 'editor') {
-                document.querySelector('.tab-btn:first-child').classList.add('active');
-                document.getElementById('editor-tab').style.display = 'block';
-            } else {
-                document.querySelector('.tab-btn:last-child').classList.add('active');
-                document.getElementById('preview-tab').style.display = 'block';
-                renderPreview();
+        function initEditor(editorLang) {
+            if (typeof tinymce === 'undefined') return;
+            if (tinymce.get('content-editor')) {
+                tinymce.get('content-editor').remove();
             }
+            const lang = editorLang || '<?= $currentLang === 'en' ? 'en' : 'es' ?>';
+            const config = {
+                    selector: '#content-editor',
+                    height: 520,
+                    language: lang,
+                    menubar: 'file edit view insert format tools table help',
+                    plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table code help wordcount autosave',
+                    toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image table | blockquote codesample | removeformat | code preview fullscreen',
+                    content_style: 'body { font-family:Poppins,Arial,sans-serif; font-size:16px; line-height:1.7; text-align: justify; }',
+                    branding: false,
+                    promotion: false,
+                    convert_urls: false,
+                    relative_urls: false,
+                    images_upload_url: '../upload_image.php',
+                    automatic_uploads: true,
+                    image_title: true,
+                    file_picker_types: 'image',
+                    file_picker_callback: function(callback) {
+                        const input = document.createElement('input');
+                        input.setAttribute('type', 'file');
+                        input.setAttribute('accept', 'image/*');
+                        input.onchange = function() {
+                            const file = this.files && this.files[0];
+                            if (!file) return;
+                            const formData = new FormData();
+                            formData.append('file', file);
+                            fetch('../upload_image.php', {
+                                method: 'POST',
+                                body: formData
+                            })
+                            .then(function(response) { return response.json(); })
+                            .then(function(data) {
+                                if (data && data.location) {
+                                    callback(data.location, { alt: file.name });
+                                } else {
+                                    alert('No se pudo subir la imagen.');
+                                }
+                            })
+                            .catch(function() {
+                                alert('Error al subir la imagen.');
+                            });
+                        };
+                        input.click();
+                    },
+                    setup: function() {
+                        const fallback = document.getElementById('fallback-toolbar');
+                        if (fallback) fallback.style.display = 'none';
+                    }
+                };
+            if (lang === 'es') {
+                config.language_url = '../assets/vendor/tinymce/langs/es.js?v=2';
+            }
+            tinymce.init(config);
         }
-        
-        function renderPreview() {
-            let content = document.getElementById('content-editor').value;
-            
-            // Escape HTML
-            content = content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-            
-            // Code blocks
-            content = content.replace(/```(\w*)\n([\s\S]*?)```/g, '<pre><code>$2</code></pre>');
-            
-            // Inline code
-            content = content.replace(/`([^`]+)`/g, '<code class="inline">$1</code>');
-            
-            // Headers
-            content = content.replace(/^### (.+)$/gm, '<h3>$1</h3>');
-            content = content.replace(/^## (.+)$/gm, '<h2>$1</h2>');
-            content = content.replace(/^# (.+)$/gm, '<h1>$1</h1>');
-            
-            // Bold and italic
-            content = content.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-            content = content.replace(/\*([^*]+)\*/g, '<em>$1</em>');
-            
-            // Lists
-            content = content.replace(/^- (.+)$/gm, '<li>$1</li>');
-            content = content.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
-            
-            // Blockquote
-            content = content.replace(/^&gt; (.+)$/gm, '<blockquote>$1</blockquote>');
-            
-            // Images
-            content = content.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1">');
-            
-            // Links
-            content = content.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
-            
-            // Line breaks
-            content = content.replace(/\n\n/g, '</p><p>');
-            content = '<p>' + content + '</p>';
-            
-            document.getElementById('preview-content').innerHTML = content;
-        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const select = document.getElementById('editorLanguage');
+            const saved = localStorage.getItem('editorLangPreference');
+            const initial = saved || '<?= $currentLang === 'en' ? 'en' : 'es' ?>';
+            if (select) select.value = initial;
+            initEditor(initial);
+
+            if (select) {
+                select.addEventListener('change', function() {
+                    const lang = this.value === 'en' ? 'en' : 'es';
+                    localStorage.setItem('editorLangPreference', lang);
+                    initEditor(lang);
+                });
+            }
+        });
     </script>
 </body>
 </html>

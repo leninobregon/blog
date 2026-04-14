@@ -1,6 +1,7 @@
 <?php
 if(session_status() === PHP_SESSION_NONE) session_start();
-if(empty($_SESSION['logged'])) { header('Location: login.php'); exit; }
+include '../includes/functions.php';
+if(!isAdminAuthenticated()) { header('Location: login.php'); exit; }
 
 $file = $_GET['file'] ?? '';
 

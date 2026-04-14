@@ -15,11 +15,20 @@ RewriteRule ^ - [F]
 # Bloquear acceso a la carpeta db
 RewriteRule ^db/ - [F,L]
 
+# Manejo HTTP auxiliar (crawler/probes)
+# Fuerza OPTIONS a pasar por index.php para respuesta uniforme (204 + Allow)
+RewriteCond %{REQUEST_METHOD} =OPTIONS
+RewriteRule ^ index.php [L,QSA]
+
 # --- MVC ROUTING ---
 # Redirige todo a index.php para el MVC
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ index.php [L,QSA]
+
+<IfModule mod_headers.c>
+    Header always set Allow "GET, POST, HEAD, OPTIONS"
+</IfModule>
 
 # Redirigir errores 404 al blog
 ErrorDocument 404 /

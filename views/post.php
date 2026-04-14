@@ -18,7 +18,8 @@ $currentUrl = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
     .post-card { flex: 1; min-width: 0; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2rem; }
     .post-sidebar { width: 320px; flex-shrink: 0; }
     .post-meta { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); font-size: 0.9rem; color: var(--text-secondary); }
-    .post-content { line-height: 1.8; font-size: 1.05rem; }
+    .post-content { line-height: 1.8; font-size: 1.05rem; text-align: justify; text-justify: inter-word; }
+    .post-content p, .post-content li, .post-content blockquote { text-align: justify; text-justify: inter-word; }
     .post-content h1, .post-content h2, .post-content h3 { margin-top: 1.5rem; margin-bottom: 1rem; color: var(--primary); }
     .post-content ul, .post-content ol { margin: 1rem 0; padding-left: 2rem; }
     .post-content li { margin-bottom: 0.5rem; }
@@ -52,7 +53,10 @@ $currentUrl = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
     .comment-header { display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.9rem; }
     .comment-header span:first-child { font-weight: 600; }
     .comment-date { color: var(--text-secondary); font-size: 0.8rem; }
-    .comment-form textarea { width: 100%; padding: 1rem; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg); color: var(--text); font-family: inherit; resize: vertical; min-height: 100px; margin-bottom: 1rem; }
+    .comment-form textarea { width: 100%; padding: 1rem; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg); color: var(--text); font-family: inherit; resize: vertical; min-height: 100px; margin-bottom: 0.9rem; transition: border-color 0.2s, box-shadow 0.2s, background 0.2s; }
+    .comment-form textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 24%, transparent); background: var(--bg-secondary); }
+    .comment-form .btn { display: inline-flex; align-items: center; gap: 0.5rem; border: none; border-radius: 999px; padding: 0.72rem 1.2rem; font-weight: 600; letter-spacing: 0.2px; background: linear-gradient(135deg, var(--primary), var(--header-bg)); color: #fff; box-shadow: var(--shadow-sm); transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease; }
+    .comment-form .btn:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); opacity: 0.98; }
     .login-prompt { background: var(--bg); padding: 1rem; border-radius: var(--radius-sm); text-align: center; color: var(--text-secondary); }
     .copy-code-btn { position: absolute; top: 0.5rem; right: 0.5rem; background: var(--primary); color: white; border: none; padding: 0.3rem 0.6rem; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.8rem; }
     .back-to-top { position: fixed; bottom: 80px; right: 30px; width: 45px; height: 45px; background: var(--primary); color: white; border: none; border-radius: 50%; cursor: pointer; font-size: 1.2rem; box-shadow: var(--shadow-md); opacity: 0; visibility: hidden; transition: all 0.3s; }
@@ -179,7 +183,13 @@ $currentUrl = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
             <?php foreach($comments as $comment): ?>
             <div class="comment">
                 <div class="comment-header">
-                    <span><i class="fas fa-user"></i> <?= htmlspecialchars($comment['username']) ?></span>
+                    <?php
+                    $commentDisplayName = trim(($comment['first_name'] ?? '') . ' ' . ($comment['last_name'] ?? ''));
+                    if ($commentDisplayName === '') {
+                        $commentDisplayName = $comment['username'] ?? 'Usuario';
+                    }
+                    ?>
+                    <span><i class="fas fa-user"></i> <?= htmlspecialchars($commentDisplayName) ?></span>
                     <span class="comment-date"><?= strftime('%d %b, %Y %H:%M', strtotime($comment['created_at'])) ?></span>
                 </div>
                 <div style="margin-top: 0.5rem;"><?= nl2br(htmlspecialchars($comment['content'])) ?></div>

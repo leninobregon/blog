@@ -17,3 +17,10 @@ Thumbs.db
 
 # Cache
 cache/
+
+# Temporales locales de pruebas
+cookies_admin.txt
+cookies_test.txt
+
+# Archivos subidos en entorno local
+uploads/

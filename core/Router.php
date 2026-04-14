@@ -12,6 +12,14 @@ class Router {
     public function post(string $path, string $controller, string $method): void {
         $this->addRoute('POST', $path, $controller, $method);
     }
+
+    public function map(string $httpMethod, string $path, callable $handler): void {
+        $this->routes[] = [
+            'method' => strtoupper($httpMethod),
+            'path' => $path,
+            'handler' => $handler
+        ];
+    }
     
     private function addRoute(string $httpMethod, string $path, string $controller, string $method): void {
         $this->routes[] = [
@@ -25,7 +33,10 @@ class Router {
     public function dispatch(string $uri, string $method): void {
         // Remove query string
         $uri = parse_url($uri, PHP_URL_PATH);
-        $uri = rtrim($uri, '/');
+        $uri = '/' . ltrim((string)$uri, '/');
+        if ($uri !== '/') {
+            $uri = rtrim($uri, '/');
+        }
         
         foreach ($this->routes as $route) {
             if ($route['method'] !== strtoupper($method)) {
@@ -38,6 +49,11 @@ class Router {
             
             if (preg_match($pattern, $uri, $matches)) {
                 array_shift($matches); // Remove full match
+
+                if (isset($route['handler']) && is_callable($route['handler'])) {
+                    call_user_func_array($route['handler'], $matches);
+                    return;
+                }
                 
                 $controllerClass = $route['controller'];
                 $action = $route['action'];

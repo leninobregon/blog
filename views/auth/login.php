@@ -19,6 +19,8 @@ $baseUrl = $protocol . '://' . $host . $scriptDir;
 $error = $error ?? '';
 $success = $success ?? '';
 $isLogin = $isLogin ?? true;
+$redirectTarget = $redirectTarget ?? ($_GET['redirect'] ?? '');
+$redirectQuery = $redirectTarget !== '' ? '&redirect=' . urlencode($redirectTarget) : '';
 ?>
 <!DOCTYPE html>
 <html lang="<?= $currentLang ?>">
@@ -27,6 +29,7 @@ $isLogin = $isLogin ?? true;
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $isLogin ? ($currentLang === 'es' ? 'Iniciar Sesión' : 'Login') : ($currentLang === 'es' ? 'Registrarse' : 'Register') ?> - <?= $config['site_name'] ?></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="<?= $baseUrl ?>/assets/css/icon-pro.css?v=1">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -186,10 +189,10 @@ $isLogin = $isLogin ?? true;
         </div>
         
         <div class="auth-tabs">
-            <a href="?action=login" class="<?= $isLogin ? 'active' : '' ?>">
+            <a href="?action=login<?= $redirectQuery ?>" class="<?= $isLogin ? 'active' : '' ?>">
                 <i class="fas fa-sign-in-alt"></i> <?= $lang['nav_login'] ?? 'Login' ?>
             </a>
-            <a href="?action=register" class="<?= !$isLogin ? 'active' : '' ?>">
+            <a href="?action=register<?= $redirectQuery ?>" class="<?= !$isLogin ? 'active' : '' ?>">
                 <i class="fas fa-user-plus"></i> <?= $currentLang === 'es' ? 'Registro' : 'Register' ?>
             </a>
         </div>
@@ -202,6 +205,9 @@ $isLogin = $isLogin ?? true;
         <?php endif; ?>
         
         <form method="post">
+            <?php if($redirectTarget !== ''): ?>
+            <input type="hidden" name="redirect" value="<?= htmlspecialchars($redirectTarget) ?>">
+            <?php endif; ?>
             <?php if(!$isLogin): ?>
             <div class="form-grid">
                 <div class="form-group">
@@ -254,7 +260,7 @@ $isLogin = $isLogin ?? true;
         
         <?php if($isLogin): ?>
         <div style="text-align:center;margin-top:1rem;">
-            <a href="<?= $baseUrl ?>/recover.php" style="color:var(--primary);text-decoration:none;">
+            <a href="<?= $baseUrl ?>/recover.php<?= $redirectTarget !== '' ? '?redirect=' . urlencode($redirectTarget) : '' ?>" style="color:var(--primary);text-decoration:none;">
                 <i class="fas fa-question-circle"></i> <?= $currentLang === 'es' ? '¿Olvidaste tu contraseña?' : 'Forgot your password?' ?>
             </a>
         </div>

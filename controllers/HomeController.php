@@ -65,7 +65,9 @@ class HomeController extends Controller {
             'totalPostsCount' => $totalPostsCount,
             'totalUsers' => $totalUsers,
             'page' => $page,
-            'totalPages' => ceil($totalPosts / $perPage)
+            'totalPages' => ceil($totalPosts / $perPage),
+            'pageTitle' => CONFIG['site_name'] ?? 'Blog',
+            'metaDescription' => CONFIG['description'] ?? 'Blog de tutoriales'
         ]);
     }
     

@@ -6,7 +6,7 @@ class Comment extends Model {
     protected string $table = 'comments';
     
     public function getWithUser(int $postId): array {
-        $sql = "SELECT c.*, u.username, p.title as post_title 
+        $sql = "SELECT c.*, u.username, u.first_name, u.last_name, p.title as post_title 
                 FROM comments c 
                 JOIN users u ON c.user_id = u.id 
                 JOIN posts p ON c.post_id = p.id 
@@ -18,7 +18,7 @@ class Comment extends Model {
     }
     
     public function getRecent(int $limit = 5): array {
-        $sql = "SELECT c.*, u.username, p.title as post_title 
+        $sql = "SELECT c.*, u.username, u.first_name, u.last_name, p.title as post_title 
                 FROM comments c 
                 JOIN users u ON c.user_id = u.id 
                 JOIN posts p ON c.post_id = p.id 

@@ -3,8 +3,8 @@ if(session_status() === PHP_SESSION_NONE) session_start();
 header('Cache-Control: no-cache, no-store, must-revalidate');
 header('Pragma: no-cache');
 header('Expires: 0');
-if(empty($_SESSION['logged'])) { header('Location: login.php'); exit; }
 include '../includes/functions.php';
+if(!isAdminAuthenticated()) { header('Location: login.php'); exit; }
 
 // Language
 $currentLang = getActiveLanguage();
@@ -70,6 +70,7 @@ $recentComments = getRecentComments(5);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - <?= CONFIG['site_name'] ?></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/icon-pro.css?v=1">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -363,7 +364,10 @@ $recentComments = getRecentComments(5);
                         <td><?= strftime('%d/%b/%Y', strtotime($post['created_at'])) ?></td>
                         <td>
                             <a href="index.php?action=edit&id=<?= $post['id'] ?>" class="btn btn-sm" title="Editar"><i class="fas fa-edit"></i></a>
-                            <a href="index.php?action=delete&id=<?= $post['id'] ?>" class="btn btn-sm btn-danger" title="Eliminar" onclick="return confirm('¿Eliminar publicación?')"><i class="fas fa-trash"></i></a>
+                            <form method="post" action="index.php?action=delete&id=<?= $post['id'] ?>" style="display:inline-block;" onsubmit="return confirm('¿Eliminar publicación?')">
+                                <?= csrf_field() ?>
+                                <button type="submit" class="btn btn-sm btn-danger" title="Eliminar"><i class="fas fa-trash"></i></button>
+                            </form>
                             <a href="../post.php?id=<?= $post['id'] ?>" class="btn btn-sm btn-secondary" target="_blank" title="Ver"><i class="fas fa-eye"></i></a>
                         </td>
                     </tr>
@@ -410,7 +414,13 @@ $recentComments = getRecentComments(5);
                         <?php foreach($recentUsers as $user): ?>
                         <tr>
                             <td>
-                                <strong><?= htmlspecialchars($user['username']) ?></strong><br>
+                                <?php
+                                $userDisplayName = trim(($user['first_name'] ?? '') . ' ' . ($user['last_name'] ?? ''));
+                                if ($userDisplayName === '') {
+                                    $userDisplayName = $user['username'];
+                                }
+                                ?>
+                                <strong><?= htmlspecialchars($userDisplayName) ?></strong><br>
                                 <span class="time-ago"><?= htmlspecialchars($user['email']) ?></span>
                             </td>
                             <td style="text-align: right;">
@@ -434,7 +444,13 @@ $recentComments = getRecentComments(5);
                         <?php foreach($recentComments as $comment): ?>
                         <tr>
                             <td>
-                                <strong><?= htmlspecialchars($comment['username']) ?></strong> en <em><?= htmlspecialchars(mb_substr($comment['post_title'], 0, 20)) ?>...</em><br>
+                                <?php
+                                $commentDisplayName = trim(($comment['first_name'] ?? '') . ' ' . ($comment['last_name'] ?? ''));
+                                if ($commentDisplayName === '') {
+                                    $commentDisplayName = $comment['username'];
+                                }
+                                ?>
+                                <strong><?= htmlspecialchars($commentDisplayName) ?></strong> en <em><?= htmlspecialchars(mb_substr($comment['post_title'], 0, 20)) ?>...</em><br>
                                 <span class="time-ago"><?= htmlspecialchars(mb_substr($comment['content'], 0, 40)) ?>...</span>
                             </td>
                             <td style="text-align: right;">

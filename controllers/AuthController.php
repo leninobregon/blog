@@ -3,6 +3,30 @@
  * AuthController - Login, Registro, Recuperación
  */
 class AuthController extends Controller {
+    private function resolveSafeRedirect(string $candidate, string $fallback): string {
+        $candidate = trim($candidate);
+        if ($candidate === '') {
+            return $fallback;
+        }
+
+        $parts = parse_url($candidate);
+        if ($parts === false) {
+            return $fallback;
+        }
+
+        // Relative path is allowed
+        if (!isset($parts['host'])) {
+            return $candidate;
+        }
+
+        // Absolute URL must match current host
+        $currentHost = $_SERVER['HTTP_HOST'] ?? '';
+        if (!empty($currentHost) && strcasecmp($parts['host'], explode(':', $currentHost)[0]) === 0) {
+            return $candidate;
+        }
+
+        return $fallback;
+    }
     
     public function login(): void {
         if (Session::isLoggedIn()) {
@@ -38,6 +62,7 @@ class AuthController extends Controller {
         $error = '';
         $success = '';
         $isLogin = true;
+        $redirectTarget = $_GET['redirect'] ?? $_POST['redirect'] ?? '';
         
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (isset($_POST['register'])) {
@@ -67,19 +92,38 @@ class AuthController extends Controller {
                 // Handle login
                 $email = $_POST['email'] ?? '';
                 $password = $_POST['password'] ?? '';
+                $status = getLoginThrottleStatus($email, 'auth');
+
+                if ($status['blocked']) {
+                    $wait = max(1, (int)ceil($status['retry_after'] / 60));
+                    $error = $currentLang === 'es'
+                        ? ('Demasiados intentos. Intenta nuevamente en ' . $wait . ' minuto(s).')
+                        : ('Too many attempts. Try again in ' . $wait . ' minute(s).');
+                    require __DIR__ . '/../views/auth/login.php';
+                    return;
+                }
                 
                 $userModel = new User();
                 $user = $userModel->authenticate($email, $password);
                 
                 if ($user) {
+                    clearLoginFailures($email, 'auth');
                     Session::set('user_id', $user['id']);
                     Session::set('username', $user['username']);
                     Session::set('role', $user['role']);
+                    // Compatibilidad con pantallas admin legacy.
+                    if (($user['role'] ?? '') === 'admin') {
+                        Session::set('logged', true);
+                    }
                     logAudit('user_login', $user['id'], $user['username'], 'auth.php', "User logged in successfully");
-                    $redirect = $_POST['redirect'] ?? $_GET['redirect'] ?? $this->getBaseUrl() . '/';
+                    $redirect = $this->resolveSafeRedirect(
+                        $_POST['redirect'] ?? $_GET['redirect'] ?? '',
+                        $this->getBaseUrl() . '/'
+                    );
                     $this->redirect($redirect);
                     return;
                 } else {
+                    registerLoginFailure($email, 'auth');
                     logAudit('login_failed', null, $email, 'auth.php', "Failed login attempt");
                     $error = $currentLang === 'es' ? 'Credenciales incorrectas' : 'Invalid credentials';
                 }
