@@ -51,7 +51,8 @@ $totalSubscribers = count(getNewsletterSubscribers(true));
 // Handle backup
 $backupMsg = '';
 if(isset($_GET['backup'])) {
-    $backupMsg = backupDatabase();
+    $backupResult = backupDatabase();
+    $backupMsg = is_array($backupResult) ? ($backupResult['message'] ?? '') : (string)$backupResult;
 }
 
 // Chart data

@@ -12,6 +12,12 @@
     'window_minutes' => 10,
     'lock_minutes' => 10,
   ),
+  'backup_automation' =>
+  array (
+    'enabled' => true,
+    'retention_days' => 30,
+    'directory' => 'db/backups',
+  ),
   'youtube' => 'https://www.youtube.com/@leninobregonespinoza2160',
   'telegram' => '',
   'facebook' => '',

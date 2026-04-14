@@ -877,10 +877,11 @@ function getReferrerStats($limit = 10) {
 }
 
 if (!function_exists('backupDatabase')) {
-function backupDatabase() {
+function backupDatabase($targetDir = null) {
     $pdo = getDB();
     $dbName = CONFIG['db']['name'];
-    $backupDir = dirname(__DIR__) . '/db/';
+    $backupDir = $targetDir ?: (dirname(__DIR__) . '/db/');
+    $backupDir = rtrim($backupDir, '/\\') . DIRECTORY_SEPARATOR;
     
     if (!is_dir($backupDir)) {
         mkdir($backupDir, 0777, true);
@@ -931,7 +932,51 @@ function backupDatabase() {
     
     file_put_contents($filepath, $sql);
     
-    return "Backup creado: <strong>$filename</strong>";
+    return [
+        'filename' => $filename,
+        'filepath' => $filepath,
+        'message' => "Backup creado: <strong>$filename</strong>",
+    ];
+}
+}
+
+if (!function_exists('cleanupOldBackups')) {
+function cleanupOldBackups($directory, $retentionDays = 30, $prefix = '') {
+    $dir = rtrim((string)$directory, '/\\');
+    $retentionDays = max(1, (int)$retentionDays);
+    if ($dir === '' || !is_dir($dir)) {
+        return 0;
+    }
+
+    $deleted = 0;
+    $threshold = time() - ($retentionDays * 86400);
+    $files = @scandir($dir);
+    if (!is_array($files)) {
+        return 0;
+    }
+
+    foreach ($files as $file) {
+        if ($file === '.' || $file === '..') {
+            continue;
+        }
+        if (pathinfo($file, PATHINFO_EXTENSION) !== 'sql') {
+            continue;
+        }
+        if ($prefix !== '' && strpos($file, $prefix) !== 0) {
+            continue;
+        }
+        $path = $dir . DIRECTORY_SEPARATOR . $file;
+        if (!is_file($path)) {
+            continue;
+        }
+        $mtime = @filemtime($path);
+        if ($mtime !== false && $mtime < $threshold) {
+            if (@unlink($path)) {
+                $deleted++;
+            }
+        }
+    }
+    return $deleted;
 }
 }
 

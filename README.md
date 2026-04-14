@@ -165,6 +165,61 @@ blog_responsivo/
 
 ---
 
+## 💾 Backup Automático
+
+- Script CLI: `scripts/auto_backup.php`
+- Directorio destino (por defecto): `db/backups/`
+- Retención (por defecto): `30` días
+- Configuración en `config.php`:
+
+```php
+'backup_automation' =>
+array (
+  'enabled' => true,
+  'retention_days' => 30,
+  'directory' => 'db/backups',
+),
+```
+
+- Ejecución manual:
+```bash
+php scripts/auto_backup.php
+```
+
+### Programación automática en Linux (cron)
+
+> Usa la misma ruta de instalación documentada en esta guía:  
+> `/var/www/html/blog_responsivo`
+
+1. Editar cron:
+```bash
+sudo crontab -e
+```
+
+2. Agregar una de estas líneas (ejecución diaria a las 02:00):
+
+- **Debian/Ubuntu (LAMP/LEMP, usuario web `www-data`)**
+```cron
+0 2 * * * cd /var/www/html/blog_responsivo && /usr/bin/php scripts/auto_backup.php >> /var/log/blog_responsivo_backup.log 2>&1
+```
+
+- **Fedora LAMP (Apache, usuario web `apache`)**
+```cron
+0 2 * * * cd /var/www/html/blog_responsivo && /usr/bin/php scripts/auto_backup.php >> /var/log/blog_responsivo_backup.log 2>&1
+```
+
+- **Fedora LEMP (Nginx, usuario web `nginx`)**
+```cron
+0 2 * * * cd /var/www/html/blog_responsivo && /usr/bin/php scripts/auto_backup.php >> /var/log/blog_responsivo_backup.log 2>&1
+```
+
+3. Verificar que el backup automático se generó:
+```bash
+ls -lah /var/www/html/blog_responsivo/db/backups/
+```
+
+---
+
 ## 🚀 Instalación
 
 ### Opción 1: Importar base de datos manualmente (recomendado)
